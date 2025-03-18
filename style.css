@@ -1,0 +1,118 @@
+/* Import Google Font */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;600&display=swap');
+
+/* Default Dark Mode */
+body {
+    font-family: 'Poppins', sans-serif;
+    text-align: center;
+    margin: 0;
+    background-color: #000;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    transition: all 0.5s ease-in-out;
+}
+
+/* Light Mode Styles */
+body.light-mode {
+    background-color: #fff;
+    color: black;
+}
+
+/* Semi-transparent Dark Container */
+.container {
+    background: rgba(0, 0, 0, 0.85);
+    padding: 40px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5);
+    transition: background 0.5s ease-in-out;
+}
+
+/* Light Mode Container */
+body.light-mode .container {
+    background: rgba(255, 255, 255, 0.85);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* Title Styling */
+h1 {
+    margin-bottom: 25px;
+    font-size: 2.5rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    transition: color 0.5s ease-in-out;
+}
+
+/* Button Container */
+.button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 17.5px;
+}
+
+/* Buttons */
+button {
+    width: 220px;
+    padding: 12px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    background: linear-gradient(90deg, #444, #222);
+    transition: all 0.4s ease-in-out, color 0.5s;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.5);
+}
+
+/* Light Mode Buttons */
+body.light-mode button {
+    background: linear-gradient(90deg, #ccc, #fff);
+    color: black;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
+}
+
+button:hover {
+    transform: scale(1.05);
+}
+
+/* Toggle Switch */
+.toggle-container {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+.toggle-button {
+    width: 60px;
+    height: 30px;
+    border-radius: 15px;
+    background-color: white;
+    border: none;
+    cursor: pointer;
+    position: relative;
+    transition: background 0.5s ease-in-out;
+}
+
+.toggle-button::before {
+    content: '🌙';
+    position: absolute;
+    left: 5px;
+    top: 5px;
+    font-size: 16px;
+    transition: transform 0.5s ease-in-out;
+}
+
+/* Light Mode Toggle */
+body.light-mode .toggle-button {
+    background-color: black;
+    color: white;
+}
+
+body.light-mode .toggle-button::before {
+    content: '☀️';
+    transform: translateX(30px);
+}

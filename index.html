@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exam Wala Maja!</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="toggle-container">
+        <button class="toggle-button" onclick="toggleMode()"></button>
+    </div>
+    <div>
+        <h1>Choose a Subject..!</h1>
+        
+        <!-- Add a container to ensure vertical stacking -->
+        <div class="button-container">
+            <button onclick="location.href='/Construction/index.html'">Math</button>
+            <button onclick="location.href='/Construction/index.html'">DS</button>
+            <button onclick="location.href='/Construction/index.html'">DBMS</button>
+            <button onclick="location.href='/AD/AD.html'">AD</button>
+            <button onclick="location.href='/Construction/index.html'">Web</button>
+        </div>
+        
+    </div>
+
+    <script>
+        function toggleMode() {
+            document.body.classList.toggle('light-mode');
+            localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
+        }
+
+        // Load saved theme preference
+        window.onload = () => {
+            if (localStorage.getItem('theme') === 'light') {
+                document.body.classList.add('light-mode');
+            }
+        };
+    </script>
+</body>
+</html>
