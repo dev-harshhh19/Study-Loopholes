@@ -24,7 +24,7 @@
 - **JAVA** – Core Java programming concepts
 - **OS** – Operating Systems
 - **IoT** – Internet of Things fundamentals
-- **Construction** – Software Construction concepts *(placeholder/future content)*
+- **Construction** – Software Construction concepts *(maintenance page)*
 
 ## Getting Started
 
