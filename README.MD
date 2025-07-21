@@ -25,7 +25,6 @@
 - **OS** – Operating Systems
 - **IoT** – Internet of Things fundamentals
 - **Construction** – Software Construction concepts *(placeholder/future content)*
-- **Web** – Fundamentals of Web Development
 
 ## Getting Started
 
