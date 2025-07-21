@@ -1,6 +1,6 @@
 # Study Loopholes
 
-**Study Loopholes** is an open-source, modular resource hub for students and self-learners focused on core Computer Science and IT subjects. This repository organizes notes, code snippets, and conceptual guides across multiple domains including Algorithms, DBMS, Mathematics, and Web Development.
+**Study Loopholes** is an open-source, modular resource hub for students and self-learners focused on core Computer Science and IT subjects. This repository organizes notes, code snippets, and conceptual guides across multiple domains including Algorithms, DBMS, Operating Systems, and Web Development.
 
 ## Table of Contents
 
@@ -20,10 +20,11 @@
 
 ## Subjects Covered
 
-- **AD** – Algorithms & Data Structures
-- **DBMS** – Database Management Systems
-- **DS** – Data Structures (Standalone)
-- **Math** – Core mathematical concepts for CS
+- **ADBMS** – Advanced Database Management Systems
+- **JAVA** – Core Java programming concepts
+- **OS** – Operating Systems
+- **IoT** – Internet of Things fundamentals
+- **Construction** – Software Construction concepts *(placeholder/future content)*
 - **Web** – Fundamentals of Web Development
 
 ## Getting Started
@@ -31,5 +32,5 @@
 You can start using the resource locally by cloning the repository and opening the `index.html` file in your browser.
 
 ```bash
-git clone https://github.com/dev-harshhh18/Study-Loopholes.git
+git clone https://github.com/dev-harshhh19/Study-Loopholes.git
 cd Study-Loopholes
