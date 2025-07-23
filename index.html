@@ -1,28 +1,24 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Study Loopholes</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/png" href="https://img.icons8.com/color/48/books.png">
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" type="image/png" href="https://img.icons8.com/color/48/books.png" />
 </head>
 <body>
     <div class="toggle-container">
         <button class="toggle-button" onclick="toggleMode()"></button>
     </div>
-    <div>
+    <div class="container">
         <h1>Choose a Subject..!</h1>
-        
-        <!-- Add a container to ensure vertical stacking -->
         <div class="button-container">
-            <button onclick="location.href='Construction/index.html'">ADBMS</button>
-            <button onclick="location.href='Construction/index.html'">OS</button>
-            <button onclick="location.href='Construction/index.html'">JAVA</button>
-            <button onclick="location.href='Construction/index.html'">IoT</button>
-            <!-- <button onclick="location.href='Construction/index.html'">Extra</button> -->
+            <button onclick="location.href='ADBMS/adbms.html'">ADBMS</button>
+            <button onclick="location.href='OS/OS.html'">OS</button>
+            <button onclick="location.href='JAVA/java.html'">JAVA</button>
+            <button onclick="location.href='IoT/iot.html'">IoT</button>
         </div>
-        
     </div>
 
     <script>
@@ -31,7 +27,6 @@
             localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
         }
 
-        // Load saved theme preference
         window.onload = () => {
             if (localStorage.getItem('theme') === 'light') {
                 document.body.classList.add('light-mode');
