@@ -1,1 +1,27 @@
+/* styles.css */
 
+/* Basic Reset */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+/* Heading Style */
+h1 {
+    background-color: #4CAF50;
+    color: white;
+    padding: 20px;
+    text-align: center;
+    margin: 0;
+}
+
+/* Paragraph Style */
+p {
+    padding: 15px 20px;
+    line-height: 1.6;
+    max-width: 800px;
+    margin: 0 auto;
+}
