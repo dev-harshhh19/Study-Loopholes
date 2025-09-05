@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,6 +7,7 @@
     <title>Study Loopholes</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com;">
+    <link rel="stylesheet" href="style.css" />
     <style>
         :root {
             --primary-bg: #1a1a1a;
@@ -78,9 +80,45 @@
             font-weight: 300;
             line-height: 1.6;
         }
+        .toggle-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+        }
+        .toggle-button {
+            width: 60px;
+            height: 30px;
+            border-radius: 15px;
+            background-color: white;
+            border: none;
+            cursor: pointer;
+            position: relative;
+            transition: background 0.5s ease-in-out;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .toggle-button::before {
+            content: '🌙';
+            position: absolute;
+            left: 5px;
+            top: 5px;
+            font-size: 16px;
+            transition: transform 0.5s ease-in-out;
+        }
+        body.light-mode .toggle-button {
+            background-color: black;
+            color: white;
+            box-shadow: 0 2px 8px rgba(255,255,255,0.3);
+        }
+        body.light-mode .toggle-button::before {
+            content: '☀️';
+            transform: translateX(30px);
+        }
     </style>
 </head>
 <body>
+    <div class="toggle-container">
+        <button class="toggle-button" onclick="toggleMode()"></button>
+    </div>
     <header class="header">
         <button class="back-button" onclick="history.back()">← Back</button>
         <h1>Study Loopholes</h1>
@@ -99,6 +137,17 @@
         </div>
     </main>
     <script>
+        function toggleMode() {
+            document.body.classList.toggle('light-mode');
+            localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
+        }
+
+        window.onload = () => {
+            if (localStorage.getItem('theme') === 'light') {
+                document.body.classList.add('light-mode');
+            }
+        };
+
         // Anti-tracking measures
         // Clear local and session storage
         try {
@@ -120,7 +169,45 @@
             var x = Math.sin(seed++) * 10000;
             return x - Math.floor(x);
         };
-
     </script>
 </body>
 </html>
+=======
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Study Loopholes</title>
+    <link rel="stylesheet" href="style.css" />
+    <link rel="icon" type="image/png" href="https://img.icons8.com/color/48/books.png" />
+</head>
+<body>
+    <div class="toggle-container">
+        <button class="toggle-button" onclick="toggleMode()"></button>
+    </div>
+    <div class="container">
+        <h1>Choose a Subject..!</h1>
+        <div class="button-container">
+            <button onclick="location.href='Construction/index.html'">ADBMS</button>
+            <button onclick="location.href='OS/index.html'">OS</button>
+            <button onclick="location.href='Construction/index.html'">JAVA</button>
+            <button onclick="location.href='Construction/index.html'">IoT</button>
+        </div>
+    </div>
+
+    <script>
+        function toggleMode() {
+            document.body.classList.toggle('light-mode');
+            localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
+        }
+
+        window.onload = () => {
+            if (localStorage.getItem('theme') === 'light') {
+                document.body.classList.add('light-mode');
+            }
+        };
+    </script>
+</body>
+</html>
+>>>>>>> 5c3d3601c7660379568ced35a89d58d4790cb630
