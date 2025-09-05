@@ -1,185 +1,11 @@
-<<<<<<< HEAD
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Study Loopholes</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com;">
-    <link rel="stylesheet" href="style.css" />
-    <style>
-        :root {
-            --primary-bg: #1a1a1a;
-            --secondary-bg: #2c2c2c;
-            --accent-color: #00aaff;
-            --text-color: #e0e0e0;
-            --header-height: 60px;
-        }
-        body {
-            background-color: var(--primary-bg);
-            color: var(--text-color);
-            font-family: 'Roboto', sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        .header {
-            background-color: var(--secondary-bg);
-            padding: 0 40px;
-            height: var(--header-height);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid #444;
-        }
-        .back-button {
-            background: none;
-            border: none;
-            color: var(--accent-color);
-            font-size: 18px;
-            cursor: pointer;
-            padding: 10px;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
-        .back-button:hover {
-            background-color: rgba(0, 170, 255, 0.1);
-        }
-        .header h1 {
-            margin: 0;
-            font-size: 24px;
-            color: var(--accent-color);
-        }
-        .container {
-            padding: 40px;
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 30px;
-        }
-        .card {
-            background-color: var(--secondary-bg);
-            border-radius: 10px;
-            padding: 25px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            text-decoration: none;
-            color: var(--text-color);
-            display: block;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        }
-        .card h2 {
-            margin-top: 0;
-            color: var(--accent-color);
-            font-size: 20px;
-        }
-        .card p {
-            font-weight: 300;
-            line-height: 1.6;
-        }
-        .toggle-container {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-        }
-        .toggle-button {
-            width: 60px;
-            height: 30px;
-            border-radius: 15px;
-            background-color: white;
-            border: none;
-            cursor: pointer;
-            position: relative;
-            transition: background 0.5s ease-in-out;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-        }
-        .toggle-button::before {
-            content: '🌙';
-            position: absolute;
-            left: 5px;
-            top: 5px;
-            font-size: 16px;
-            transition: transform 0.5s ease-in-out;
-        }
-        body.light-mode .toggle-button {
-            background-color: black;
-            color: white;
-            box-shadow: 0 2px 8px rgba(255,255,255,0.3);
-        }
-        body.light-mode .toggle-button::before {
-            content: '☀️';
-            transform: translateX(30px);
-        }
-    </style>
-</head>
-<body>
-    <div class="toggle-container">
-        <button class="toggle-button" onclick="toggleMode()"></button>
-    </div>
-    <header class="header">
-        <button class="back-button" onclick="history.back()">← Back</button>
-        <h1>Study Loopholes</h1>
-    </header>
-    <main class="container">
-        <div class="grid">
-            <a href="ADBMS/adbms.html" class="card" rel="noopener noreferrer">
-                <h2>ADBMS</h2>
-            </a>
-            <a href="OS/OS.html" class="card" rel="noopener noreferrer">
-                <h2>OS</h2>
-            </a>
-            <a href="Construction/index.html" class="card" rel="noopener noreferrer">
-                <h2>JAVA</h2>
-            </a>
-        </div>
-    </main>
-    <script>
-        function toggleMode() {
-            document.body.classList.toggle('light-mode');
-            localStorage.setItem('theme', document.body.classList.contains('light-mode') ? 'light' : 'dark');
-        }
-
-        window.onload = () => {
-            if (localStorage.getItem('theme') === 'light') {
-                document.body.classList.add('light-mode');
-            }
-        };
-
-        // Anti-tracking measures
-        // Clear local and session storage
-        try {
-            localStorage.clear();
-            sessionStorage.clear();
-        } catch (e) {
-            console.error("Could not clear storage: ", e);
-        }
-
-        // Disable navigator.sendBeacon
-        if (navigator && navigator.sendBeacon) {
-            navigator.sendBeacon = function() { return false; };
-        }
-
-        // Overwrite Math.random to be less random
-        // This is a simple way to make fingerprinting harder, but not impossible
-        var seed = 1;
-        Math.random = function() {
-            var x = Math.sin(seed++) * 10000;
-            return x - Math.floor(x);
-        };
-    </script>
-</body>
-</html>
-=======
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Study Loopholes</title>
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com;" />
     <style>
         :root {
             --primary-bg: #1a1a1a;
@@ -201,21 +27,8 @@
             height: var(--header-height);
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            justify-content: center;
             border-bottom: 1px solid #444;
-        }
-        .back-button {
-            background: none;
-            border: none;
-            color: var(--accent-color);
-            font-size: 18px;
-            cursor: pointer;
-            padding: 10px;
-            border-radius: 5px;
-            transition: background-color 0.3s ease;
-        }
-        .back-button:hover {
-            background-color: rgba(0, 170, 255, 0.1);
         }
         .header h1 {
             margin: 0;
@@ -229,6 +42,7 @@
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
             gap: 30px;
+            justify-items: center;
         }
         .card {
             background-color: var(--secondary-bg);
@@ -238,6 +52,8 @@
             text-decoration: none;
             color: var(--text-color);
             display: block;
+            width: 300px;
+            text-align: center;
         }
         .card:hover {
             transform: translateY(-5px);
@@ -256,7 +72,6 @@
 </head>
 <body>
     <header class="header">
-        <button class="back-button" onclick="history.back()">← Back</button>
         <h1>Study Loopholes</h1>
     </header>
     <main class="container">
@@ -274,4 +89,3 @@
     </main>
 </body>
 </html>
->>>>>>> 5c3d3601c7660379568ced35a89d58d4790cb630

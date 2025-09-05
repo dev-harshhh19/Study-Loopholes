@@ -5,78 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>ADBMS Practicals</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --primary-bg: #1a1a1a;
-            --secondary-bg: #2c2c2c;
-            --accent-color: #00aaff;
-            --text-color: #e0e0e0;
-            --header-height: 60px;
-        }
-        body {
-            background-color: var(--primary-bg);
-            color: var(--text-color);
-            font-family: 'Roboto', sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        .header {
-            background-color: var(--secondary-bg);
-            padding: 0 40px;
-            height: var(--header-height);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid #444;
-        }
-        .header h1 {
-            margin: 0;
-            font-size: 24px;
-            color: var(--accent-color);
-        }
-        .nav-links a {
-            color: var(--text-color);
-            text-decoration: none;
-            margin-left: 20px;
-            font-weight: 300;
-            transition: color 0.3s ease;
-        }
-        .nav-links a:hover {
-            color: var(--accent-color);
-        }
-        .container {
-            padding: 40px;
-        }
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 30px;
-        }
-        .card {
-            background-color: var(--secondary-bg);
-            border-radius: 10px;
-            padding: 25px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-            text-decoration: none;
-            color: var(--text-color);
-            display: block;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
-        }
-        .card h2 {
-            margin-top: 0;
-            color: var(--accent-color);
-            font-size: 20px;
-        }
-        .card p {
-            font-weight: 300;
-            line-height: 1.6;
-        }
-    </style>
+    <link rel="stylesheet" href="../OS/styles.css">
 </head>
 <body>
+    <header class="header">
+        <button class="back-button" onclick="history.back()">← Back</button>
+        <h1>ADBMS Practicals</h1>
+    </header>
     <main class="container">
         <div class="grid">
             <a href="prac1.html" class="card">
