@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practical 3 - Sequential and Unconstrained LOOP Statements</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Inconsolata&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-bg: #1a1a1a;
+            --secondary-bg: #2c2c2c;
+            --accent-color: #00aaff;
+            --text-color: #e0e0e0;
+            --header-height: 60px;
+        }
+        body {
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            background-color: var(--secondary-bg);
+            padding: 0 40px;
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #444;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            color: var(--accent-color);
+        }
+        .header a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 300;
+            transition: color 0.3s ease;
+        }
+        .header a:hover {
+            color: var(--accent-color);
+        }
+        .main-container {
+            display: flex;
+            height: calc(100vh - var(--header-height));
+        }
+        .sidebar {
+            background-color: var(--secondary-bg);
+            width: 250px;
+            padding: 20px;
+            border-right: 1px solid #444;
+            overflow-y: auto;
+        }
+        .sidebar h2 {
+            color: var(--accent-color);
+            font-size: 18px;
+            margin-top: 0;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .sidebar li a {
+            color: var(--text-color);
+            text-decoration: none;
+            display: block;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-weight: 300;
+            transition: background-color 0.3s ease;
+        }
+        .sidebar li a:hover, .sidebar li a.active {
+            background-color: var(--primary-bg);
+        }
+        .content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+        .program-content {
+            display: none;
+        }
+        .program-content.active {
+            display: block;
+        }
+        .code-block {
+            position: relative;
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            border: 1px solid #444;
+        }
+        pre {
+            margin: 0;
+            font-family: 'Inconsolata', monospace;
+            font-size: 16px;
+            color: #d4d4d4;
+            white-space: pre-wrap;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #444;
+            color: var(--text-color);
+            transition: background-color 0.3s ease;
+        }
+        .copy-btn:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1><a href="adbms.html">ADBMS Practicals</a> / Practical 3</h1>
+    </header>
+
+    <div class="main-container">
+        <aside class="sidebar">
+            <h2>Programs</h2>
+            <ul>
+                <li><a href="#program1" class="active">Program 1: Simple Arithmetic</a></li>
+                <li><a href="#program2">Program 2: Area and Perimeter</a></li>
+                <li><a href="#program3">Program 3: Unconstrained LOOP</a></li>
+                <li><a href="#program4">Program 4: Sum of Digits</a></li>
+                <li><a href="#program5">Program 5: Smallest Divisor</a></li>
+                <li><a href="#program6">Program 6: Swap Two Numbers</a></li>
+                <li><a href="#program7">Program 7: Print Odd Numbers</a></li>
+                <li><a href="#program8">Program 8: Division by 2</a></li>
+            </ul>
+        </aside>
+
+        <main class="content">
+            <div id="program1" class="program-content active">
+                <h2>Program 1: Sequential Statements – Simple Arithmetic</h2>
+                <div class="code-block">
+                    <pre><code>DECLARE
+    a NUMBER := 10;
+    b NUMBER := 5;
+    sum NUMBER;
+    diff NUMBER;
+BEGIN
+    sum := a + b;
+    diff := a - b;
+    DBMS_OUTPUT.PUT_LINE('Sum: ' || sum);
+    DBMS_OUTPUT.PUT_LINE('Difference: ' || diff);
+END;
+/</code></pre>
+                    <button class="copy-btn">Copy</button>
+                </div>
+            </div>
+
+            <div id="program2" class="program-content">
+                <h2>Program 2: Sequential Statements – Area and Perimeter of Rectangle</h2>
+                <div class="code-block">
+                    <pre><code>DECLARE
+    length NUMBER := 8;
+    width NUMBER := 5;
+    area NUMBER;
+    perimeter NUMBER;
+BEGIN
+    area := length * width;
+    perimeter := 2 * (length + width);
+    DBMS_OUTPUT.PUT_LINE('Area: ' || area);
+    DBMS_OUTPUT.PUT_LINE('Perimeter: ' || perimeter);
+END;
+/</code></pre>
+                    <button class="copy-btn">Copy</button>
+                </div>
+            </div>
+
+            <div id="program3" class="program-content">
+                <h2>Program 3: Unconstrained LOOP – Print 1 to 5</h2>
+                <div class="code-block">
+                    <pre><code>DECLARE
+    i NUMBER := 1;
+BEGIN
+    LOOP
+        EXIT WHEN i > 5;
+        DBMS_OUTPUT.PUT_LINE(i);
+        i := i + 1;
+    END LOOP;
+END;
+/</code></pre>
+                    <button class="copy-btn">Copy</button>
+                </div>
+            </div>
+
+            <div id="program4" class="program-content">
+                <h2>Program 4: Unconstrained LOOP – Sum of Digits of a Number</h2>
+                <div class="code-block">
+                    <pre><code>DECLARE
+    num NUMBER := 1234;
+    digit NUMBER;
+    sum_digits NUMBER := 0;
+BEGIN
+    LOOP
+        EXIT WHEN num = 0;
+        digit := MOD(num, 10);
+        sum_digits := sum_digits + digit;
+        num := TRUNC(num / 10);
+    END LOOP;
+    DBMS_OUTPUT.PUT_LINE('Sum of digits: ' || sum_digits);
+END;
+/</code></pre>
+                    <button class="copy-btn">Copy</button>
+                </div>
+            </div>
+
+            <div id="program5" class="program-content">
+                <h2>Program 5: Unconstrained LOOP – Find Smallest Divisor (Except 1)</h2>
+                <div class="code-block">
+                    <pre><code>DECLARE
+    num NUMBER := 91;
+    div NUMBER := 2;
+BEGIN
+    LOOP
+        EXIT WHEN MOD(num, div) = 0;
+        div := div + 1;
+    END LOOP;
+    DBMS_OUTPUT.PUT_LINE('Smallest Divisor of ' || num || ' is: ' || div);
+END;
+/</code></pre>
+                    <button class="copy-btn">Copy</button>
+                </div>
+            </div>
+
+            <div id="program6" class="program-content">
+                <h2>Program 6: Sequential Statements – Swap Two Numbers Using a Third Variable</h2>
+                <div classn="code-block">
+                    <pre><code>DECLARE
+    a NUMBER := 10;
+    b NUMBER := 20;
+    temp NUMBER;
+BEGIN
+    temp := a;
+    a := b;
+    b := temp;
+    DBMS_OUTPUT.PUT_LINE('After Swapping: a = ' || a || ', b = ' || b);
+END;
+/</code></pre>
+                    <button class="copy-btn">Copy</button>
+                </div>
+            </div>
+
+            <div id="program7" class="program-content">
+                <h2>Program 7: Unconstrained LOOP – Print First 5 Odd Numbers</h2>
+                <div class="code-block">
+                    <pre><code>DECLARE
+    i NUMBER := 1;
+    count NUMBER := 0;
+BEGIN
+    LOOP
+        EXIT WHEN count = 5;
+        IF MOD(i, 2) = 1 THEN
+            DBMS_OUTPUT.PUT_LINE(i);
+            count := count + 1;
+        END IF;
+        i := i + 1;
+    END LOOP;
+END;
+/</code></pre>
+                    <button class="copy-btn">Copy</button>
+                </div>
+            </div>
+
+            <div id="program8" class="program-content">
+                <h2>Program 8: Unconstrained LOOP – Count How Many Times Division by 2 is Possible</h2>
+                <div class="code-block">
+                    <pre><code>DECLARE
+    num NUMBER := 64;
+    count NUMBER := 0;
+BEGIN
+    LOOP
+        EXIT WHEN MOD(num, 2) != 0;
+        num := num / 2;
+        count := count + 1;
+    END LOOP;
+    DBMS_OUTPUT.PUT_LINE('Divided by 2, ' || count || ' times until it became odd.');
+END;
+/</code></pre>
+                    <button class="copy-btn">Copy</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const sidebarLinks = document.querySelectorAll('.sidebar a');
+        const programContents = document.querySelectorAll('.program-content');
+
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+
+                sidebarLinks.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+
+                const targetId = link.getAttribute('href').substring(1);
+
+                programContents.forEach(content => {
+                    if (content.id === targetId) {
+                        content.classList.add('active');
+                    } else {
+                        content.classList.remove('active');
+                    }
+                });
+            });
+        });
+
+        const copyButtons = document.querySelectorAll('.copy-btn');
+        copyButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const pre = button.previousElementSibling;
+                const code = pre.querySelector('code').textContent;
+                navigator.clipboard.writeText(code).then(() => {
+                    button.textContent = 'Copied!';
+                    setTimeout(() => {
+                        button.textContent = 'Copy';
+                    }, 2000);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

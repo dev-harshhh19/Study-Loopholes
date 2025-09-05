@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practical 8 - Nested Tables</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Inconsolata&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-bg: #1a1a1a;
+            --secondary-bg: #2c2c2c;
+            --accent-color: #00aaff;
+            --text-color: #e0e0e0;
+            --header-height: 60px;
+        }
+        body {
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            background-color: var(--secondary-bg);
+            padding: 0 40px;
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #444;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            color: var(--accent-color);
+        }
+        .header a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 300;
+            transition: color 0.3s ease;
+        }
+        .header a:hover {
+            color: var(--accent-color);
+        }
+        .main-container {
+            display: flex;
+            height: calc(100vh - var(--header-height));
+        }
+        .sidebar {
+            background-color: var(--secondary-bg);
+            width: 250px;
+            padding: 20px;
+            border-right: 1px solid #444;
+            overflow-y: auto;
+        }
+        .sidebar h2 {
+            color: var(--accent-color);
+            font-size: 18px;
+            margin-top: 0;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .sidebar li a {
+            color: var(--text-color);
+            text-decoration: none;
+            display: block;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-weight: 300;
+            transition: background-color 0.3s ease;
+        }
+        .sidebar li a:hover, .sidebar li a.active {
+            background-color: var(--primary-bg);
+        }
+        .content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+        .program-content {
+            display: none;
+        }
+        .program-content.active {
+            display: block;
+        }
+        .code-block {
+            position: relative;
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            border: 1px solid #444;
+        }
+        pre {
+            margin: 0;
+            font-family: 'Inconsolata', monospace;
+            font-size: 16px;
+            color: #d4d4d4;
+            white-space: pre-wrap;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #444;
+            color: var(--text-color);
+            transition: background-color 0.3s ease;
+        }
+        .copy-btn:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1><a href="adbms.html">ADBMS Practicals</a> / Practical 8</h1>
+    </header>
+
+    <div class="main-container">
+        <aside class="sidebar">
+            <h2>Programs</h2>
+            <ul>
+                <li><a href="#program1" class="active">Program 1: Nested Tables</a></li>
+            </ul>
+        </aside>
+
+        <main class="content">
+            <div id="program1" class="program-content active">
+                <h2>Create nested tables and work with nested tables.</h2>
+                <div class="code-block">
+                    <pre><code>-- Step 1: Create an object type
+CREATE OR REPLACE TYPE phone_list AS TABLE OF VARCHAR2(15);
+/
+
+-- Step 2: Create a table with a nested table column
+CREATE TABLE customer (
+    cust_id NUMBER,
+    cust_name VARCHAR2(50),
+    phones phone_list
+) NESTED TABLE phones STORE AS phones_tab;
+
+-- Step 3: Insert data into nested table
+INSERT INTO customer VALUES (1, 'John', phone_list('111-1111', '222-2222'));
+INSERT INTO customer VALUES (2, 'Mary', phone_list('333-3333'));
+COMMIT;
+
+-- Step 4: Select data
+SELECT * FROM customer;
+
+-- Step 5: Query nested table contents
+SELECT cust_id, COLUMN_VALUE AS phone
+FROM customer, TABLE(phones);
+
+-- Step 6: Update nested table (add a phone number for John)
+UPDATE customer
+SET phones = phones MULTISET UNION phone_list('999-9999')
+WHERE cust_id = 1;
+
+-- Step 7: Delete a phone number from nested table
+UPDATE customer
+SET phones = phones MULTISET EXCEPT phone_list('222-2222')
+WHERE cust_id = 1;
+
+-- Step 8: Display updated nested table
+SELECT cust_id, COLUMN_VALUE AS phone
+FROM customer, TABLE(phones);</code></pre>
+                    <button class="copy-btn">Copy</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const sidebarLinks = document.querySelectorAll('.sidebar a');
+        const programContents = document.querySelectorAll('.program-content');
+
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+
+                sidebarLinks.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+
+                const targetId = link.getAttribute('href').substring(1);
+
+                programContents.forEach(content => {
+                    if (content.id === targetId) {
+                        content.classList.add('active');
+                    } else {
+                        content.classList.remove('active');
+                    }
+                });
+            });
+        });
+
+        const copyButtons = document.querySelectorAll('.copy-btn');
+        copyButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const pre = button.previousElementSibling;
+                const code = pre.querySelector('code').textContent;
+                navigator.clipboard.writeText(code).then(() => {
+                    button.textContent = 'Copied!';
+                    setTimeout(() => {
+                        button.textContent = 'Copy';
+                    }, 2000);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

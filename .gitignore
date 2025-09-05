@@ -1,0 +1,8 @@
+# Ignore public folders in all subdirectories
+**/public/
+
+# Ignore all .txt files
+*.txt
+
+# Ignore all .pdf files
+*.pdf

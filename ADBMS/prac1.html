@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Practical 1 - Conditional Statements</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Inconsolata&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-bg: #1a1a1a;
+            --secondary-bg: #2c2c2c;
+            --accent-color: #00aaff;
+            --text-color: #e0e0e0;
+            --header-height: 60px;
+        }
+        body {
+            background-color: var(--primary-bg);
+            color: var(--text-color);
+            font-family: 'Roboto', sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+        .header {
+            background-color: var(--secondary-bg);
+            padding: 0 40px;
+            height: var(--header-height);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #444;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 24px;
+            color: var(--accent-color);
+        }
+        .header a {
+            color: var(--text-color);
+            text-decoration: none;
+            font-weight: 300;
+            transition: color 0.3s ease;
+        }
+        .header a:hover {
+            color: var(--accent-color);
+        }
+        .main-container {
+            display: flex;
+            height: calc(100vh - var(--header-height));
+        }
+        .sidebar {
+            background-color: var(--secondary-bg);
+            width: 250px;
+            padding: 20px;
+            border-right: 1px solid #444;
+            overflow-y: auto;
+        }
+        .sidebar h2 {
+            color: var(--accent-color);
+            font-size: 18px;
+            margin-top: 0;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .sidebar li a {
+            color: var(--text-color);
+            text-decoration: none;
+            display: block;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-weight: 300;
+            transition: background-color 0.3s ease;
+        }
+        .sidebar li a:hover, .sidebar li a.active {
+            background-color: var(--primary-bg);
+        }
+        .content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+        .program-content {
+            display: none;
+        }
+        .program-content.active {
+            display: block;
+        }
+        .code-block {
+            position: relative;
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            border: 1px solid #444;
+        }
+        pre {
+            margin: 0;
+            font-family: 'Inconsolata', monospace;
+            font-size: 16px;
+            color: #d4d4d4;
+            white-space: pre-wrap;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #444;
+            color: var(--text-color);
+            transition: background-color 0.3s ease;
+        }
+        .copy-btn:hover {
+            background-color: #555;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1><a href="adbms.html">ADBMS Practicals</a> / Practical 1</h1>
+    </header>
+
+    <div class="main-container">
+        <aside class="sidebar">
+            <h2>Programs</h2>
+            <ul>
+                <li><a href="#program1" class="active">Program 1: IF...THEN...ELSE</a></li>
+                <li><a href="#program2">Program 2: IF...ELSIF...ELSE</a></li>
+                <li><a href="#program3">Program 3: Nested IF...ELSE</a></li>
+                <li><a href="#program4">Program 4: Simple CASE Statement</a></li>
+                <li><a href="#program5">Program 5: Searched CASE Statement</a></li>
+                <li><a href="#program6">Program 6: Nested CASE Statement</a></li>
+            </ul>
+        </aside>
+
+        <main class="content">
+            <div id="program1" class="program-content active">
+                <h2>Program 1: IF...THEN...ELSE</h2>
+                <h3>Question:</h3>
+                <p>Write a PL/SQL block to check whether a number is even or odd using IF...THEN...ELSE.</p>
+                <div class="code-block">
+                    <pre><code>DECLARE
+    num NUMBER := 7;
+BEGIN
+    IF MOD(num, 2) = 0 THEN
+        DBMS_OUTPUT.PUT_LINE(num || ' is Even');
+    ELSE
+        DBMS_OUTPUT.PUT_LINE(num || ' is Odd');
+    END IF;
+END;
+/</code></pre>
+                    <button class="copy-btn">Copy</button>
+                </div>
+            </div>
+
+            <div id="program2" class="program-content">
+                <h2>Program 2: IF...ELSIF...ELSE</h2>
+                <h3>Question:</h3>
+                <p>Write a PL/SQL block to check if a number is positive, negative, or zero.</p>
+                <div class="code-block">
+                    <pre><code>DECLARE
+    num NUMBER := -15;
+BEGIN
+    IF num > 0 THEN
+        DBMS_OUTPUT.PUT_LINE('Positive Number');
+    ELSIF num < 0 THEN
+        DBMS_OUTPUT.PUT_LINE('Negative Number');
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Zero');
+    END IF;
+END;
+/</code></pre>
+                    <button class="copy-btn">Copy</button>
+                </div>
+            </div>
+
+            <div id="program3" class="program-content">
+                <h2>Program 3: Nested IF...ELSE</h2>
+                <h3>Question:</h3>
+                <p>Write a PL/SQL block to check if a student has passed and also assign a grade.</p>
+                <div class="code-block">
+                    <pre><code>DECLARE
+    marks NUMBER := 85;
+BEGIN
+    IF marks >= 40 THEN
+        IF marks >= 75 THEN
+            DBMS_OUTPUT.PUT_LINE('Passed with Distinction');
+        ELSIF marks >= 60 THEN
+            DBMS_OUTPUT.PUT_LINE('Passed with First Class');
+        ELSE
+            DBMS_OUTPUT.PUT_LINE('Passed');
+        END IF;
+    ELSE
+        DBMS_OUTPUT.PUT_LINE('Failed');
+    END IF;
+END;
+/</code></pre>
+                    <button class="copy-btn">Copy</button>
+                </div>
+            </div>
+
+            <div id="program4" class="program-content">
+                <h2>Program 4: Simple CASE Statement</h2>
+                <h3>Question:</h3>
+                <p>Write a PL/SQL block to display day name based on a number (1 to 3).</p>
+                <div class="code-block">
+                    <pre><code>DECLARE
+    day_num NUMBER := 2;
+BEGIN
+    CASE day_num
+        WHEN 1 THEN DBMS_OUTPUT.PUT_LINE('Monday');
+        WHEN 2 THEN DBMS_OUTPUT.PUT_LINE('Tuesday');
+        WHEN 3 THEN DBMS_OUTPUT.PUT_LINE('Wednesday');
+        ELSE DBMS_OUTPUT.PUT_LINE('Invalid Day');
+    END CASE;
+END;
+/</code></pre>
+                    <button class="copy-btn">Copy</button>
+                </div>
+            </div>
+
+            <div id="program5" class="program-content">
+                <h2>Program 5: Searched CASE Statement</h2>
+                <h3>Question:</h3>
+                <p>Write a PL/SQL block to assign grade based on marks using searched CASE.</p>
+                <div class="code-block">
+                    <pre><code>DECLARE
+    marks NUMBER := 72;
+BEGIN
+    CASE
+        WHEN marks >= 75 THEN DBMS_OUTPUT.PUT_LINE('Distinction');
+        WHEN marks >= 60 THEN DBMS_OUTPUT.PUT_LINE('First Class');
+        WHEN marks >= 40 THEN DBMS_OUTPUT.PUT_LINE('Pass');
+        ELSE DBMS_OUTPUT.PUT_LINE('Fail');
+    END CASE;
+END;
+/</code></pre>
+                    <button class="copy-btn">Copy</button>
+                </div>
+            </div>
+
+            <div id="program6" class="program-content">
+                <h2>Program 6: Nested CASE Statement</h2>
+                <h3>Question:</h3>
+                <p>Write a PL/SQL block to assign grade and print result status using nested CASE.</p>
+                <div class="code-block">
+                    <pre><code>DECLARE
+    marks NUMBER := 88;
+    result VARCHAR2(20);
+BEGIN
+    result := CASE
+        WHEN marks >= 40 THEN
+            CASE
+                WHEN marks >= 75 THEN 'Distinction'
+                WHEN marks >= 60 THEN 'First Class'
+                ELSE 'Pass'
+            END;
+        ELSE
+            'Fail'
+    END;
+    DBMS_OUTPUT.PUT_LINE('Result: ' || result);
+END;
+/</code></pre>
+                    <button class="copy-btn">Copy</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const sidebarLinks = document.querySelectorAll('.sidebar a');
+        const programContents = document.querySelectorAll('.program-content');
+
+        sidebarLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+
+                sidebarLinks.forEach(l => l.classList.remove('active'));
+                link.classList.add('active');
+
+                const targetId = link.getAttribute('href').substring(1);
+
+                programContents.forEach(content => {
+                    if (content.id === targetId) {
+                        content.classList.add('active');
+                    } else {
+                        content.classList.remove('active');
+                    }
+                });
+            });
+        });
+
+        const copyButtons = document.querySelectorAll('.copy-btn');
+        copyButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const pre = button.previousElementSibling;
+                const code = pre.querySelector('code').textContent;
+                navigator.clipboard.writeText(code).then(() => {
+                    button.textContent = 'Copied!';
+                    setTimeout(() => {
+                        button.textContent = 'Copy';
+                    }, 2000);
+                });
+            });
+        });
+    </script>
+</body>
+</html>
