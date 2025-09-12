@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Method Overloading & Overriding - JAVA Practical</title>
+    <link rel="stylesheet" href="../global.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Inconsolata&display=swap" rel="stylesheet">
+    <style>
+        .main-container {
+            display: flex;
+            height: calc(100vh - var(--header-height));
+        }
+        .content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+        .code-block {
+            position: relative;
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            border: 1px solid #444;
+        }
+        pre {
+            margin: 0;
+            font-family: 'Inconsolata', monospace;
+            font-size: 16px;
+            color: #d4d4d4;
+            white-space: pre-wrap;
+        }
+        .copy-btn, .download-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #444;
+            color: var(--text-color);
+            transition: background-color 0.3s ease;
+            margin-left: 5px;
+        }
+        .copy-btn:hover, .download-btn:hover {
+            background-color: #555;
+        }
+        .download-btn {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        .download-btn:hover {
+            background-color: #0088cc;
+        }
+        .button-group {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1><a href="java.html">JAVA Practicals</a> / Method Overloading & Overriding</h1>
+    </header>
+
+    <div class="main-container">
+        <main class="content">
+            <h2>Method Overloading & Overriding Demo</h2>
+            <p>Demonstrates method overloading and overriding with Calculator classes</p>
+            
+            <div class="code-block">
+                <div class="button-group">
+                    <button class="download-btn" onclick="downloadJavaFile()">Download</button>
+                    <button class="copy-btn">Copy</button>
+                </div>
+                <pre><code>// Parent class
+class Calculator {
+    // Method Overloading (same name, different parameters)
+    int add(int a, int b) {
+        return a + b;
+    }
+
+    int add(int a, int b, int c) {
+        return a + b + c;
+    }
+
+    // Method to be overridden
+    void show() {
+        System.out.println("Calculator class");
+    }
+}
+
+// Child class
+class AdvancedCalculator extends Calculator {
+    // Method Overriding (same name, same parameters, different class)
+    @Override
+    void show() {
+        System.out.println("AdvancedCalculator class");
+    }
+}
+
+public class MethodDemo {
+    public static void main(String[] args) {
+        Calculator c = new Calculator();
+        System.out.println("Sum of 2 numbers: " + c.add(5, 10));       // Overloaded method
+        System.out.println("Sum of 3 numbers: " + c.add(2, 3, 4));     // Overloaded method
+        c.show();  // Parent version
+
+        AdvancedCalculator ac = new AdvancedCalculator();
+        ac.show(); // Overridden version
+    }
+}</code></pre>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const copyButtons = document.querySelectorAll('.copy-btn');
+        copyButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const codeBlock = button.closest('.code-block');
+                const code = codeBlock.querySelector('code').textContent;
+                navigator.clipboard.writeText(code).then(() => {
+                    button.textContent = 'Copied!';
+                    setTimeout(() => {
+                        button.textContent = 'Copy';
+                    }, 2000);
+                });
+            });
+        });
+
+        function downloadJavaFile() {
+            const code = document.querySelector('code').textContent;
+            const blob = new Blob([code], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'MethodDemo.java';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>

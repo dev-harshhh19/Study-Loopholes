@@ -4,45 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OS Practical 3 - Scheduling Algorithms</title>
+    <link rel="stylesheet" href="../global.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Inconsolata&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary-bg: #1a1a1a;
-            --secondary-bg: #2c2c2c;
-            --accent-color: #00aaff;
-            --text-color: #e0e0e0;
-            --header-height: 60px;
-        }
-        body {
-            background-color: var(--primary-bg);
-            color: var(--text-color);
-            font-family: 'Roboto', sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        .header {
-            background-color: var(--secondary-bg);
-            padding: 0 40px;
-            height: var(--header-height);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid #444;
-        }
-        .header h1 {
-            margin: 0;
-            font-size: 24px;
-            color: var(--accent-color);
-        }
-        .header a {
-            color: var(--text-color);
-            text-decoration: none;
-            font-weight: 300;
-            transition: color 0.3s ease;
-        }
-        .header a:hover {
-            color: var(--accent-color);
-        }
         .main-container {
             display: flex;
             height: calc(100vh - var(--header-height));
@@ -117,9 +81,12 @@
         .copy-btn:hover {
             background-color: #555;
         }
-    </style>
-    <style>
+        
         /* Responsive styles for sidebar toggle */
+        .sidebar-toggle-btn {
+            display: none;
+        }
+        
         @media (max-width: 768px) {
             .sidebar {
                 position: fixed;
@@ -140,7 +107,7 @@
             }
             .content {
                 padding: 20px;
-                margin-top: var(--header-height);
+                width: 100%;
             }
             .sidebar-toggle-btn {
                 display: block;
@@ -157,351 +124,7 @@
                 padding: 5px 10px;
             }
         }
-        @media (min-width: 769px) {
-            .sidebar-toggle-btn {
-                display: none;
-            }
-        }
     </style>
-</head>
-<body>
-    <header class="header">
-        <button class="sidebar-toggle-btn" aria-label="Toggle sidebar">☰</button>
-        <h1><a href="OS.html">OS Practicals</a> / Practical 3</h1>
-    </header>
-
-    <div class="main-container">
-        <aside class="sidebar">
-            <h2>Algorithms</h2>
-            <ul>
-                <li><a href="#fcfs" class="active">FCFS</a></li>
-                <li><a href="#sjf">SJF</a></li>
-                <li><a href="#srtf">SRTF</a></li>
-                <li><a href="#rr">Round Robin</a></li>
-            </ul>
-        </aside>
-
-        <main class="content">
-            <div id="fcfs" class="program-content active">
-                <h2>First Come First Serve (FCFS)</h2>
-                <div class="code-block">
-                    <pre><code>print('First come first serve scheduling')
-n=int(input("enter number of process:"))
-d=dict()
-for i in range(n):
-    key="p"+str(i+1)
-    a=int(input("enter arrival time of process"+str(i+1)+":"))
-    b=int(input("enter burst time of process"+str(i+1)+":"))
-    l=[]
-    l.append(a)
-    l.append(b)
-    d[key]=l
-d=sorted(d.items(),key=lambda items:items[1][0])
-ET=[]
-for i in range(len(d)):
-    #first process
-    if(i==0):
-        ET.append(d[i][1][1])
-    #get prevET+newBT
-    else:
-        ET.append(ET[i-1]+d[i][1][1])
-TAT=[]
-for i in range(len(d)):
-    TAT.append(ET[i]-d[i][1][0])
-    WT=[]
-for i in range(len(d)):
-    WT.append(TAT[i]-d[i][1][1])
-avg_WT=0
-for i in WT:
-    avg_WT+=i
-avg_WT=(avg_WT/n)
-print("Process | Arrival | Burst | Exit | Turnaround | Wait |")
-for i in range(n):
-    print(f"  {d[i][0]}    |   {d[i][1][0]}    |  {d[i][1][1]}   |  {ET[i]}  |     {TAT[i]}     |  {WT[i]}  |")
-print("\nAverage Waiting Time:",avg_WT)</code></pre>
-                    <button class="copy-btn">Copy</button>
-                </div>
-            </div>
-
-            <div id="sjf" class="program-content">
-                <h2>Shortest Job First (SJF)</h2>
-                <div class="code-block">
-                    <pre><code>class Process:
-    def __init__(self,pid,arrival,burst):
-        self.pid=pid              #process id
-        self.arrival=arrival      #arrival time
-        self.burst=burst          #burst time (time to execute)
-        self.completion=0         #completion time (to be calculated)
-        self.turnaround=0         #turnaround time (to be calculated)
-        self.waiting=0            #waiting time (to be calculated)
-
-#function to perform sjf (non-preemptive)
-def sjf(processes):
-    time=0             #start from time 0
-    completed=0        #count of completed process
-    grant=[]           #Grant chart by visualise execution order
-
-    #step 1: sort the process by arrival time
-    processes.sort(key=lambda p: p.arrival)
-
-    #step 2: loop to schedule processes
-    while completed < len(processes):
-        #find the processes that arrived are not yet completed
-        ready=[p for p in processes if p.arrival<=time and p.completion==0]
-
-        if not ready:
-            time+=1      #if no process is ready , move time forward
-            continue
-
-        #step 3: select the process with the shortest burst
-        current=min(ready,key=lambda p:p.burst)
-        grant.append(f"P{current.pid} ({time})")
-        time+=current.burst
-
-        #step 4: update process details after execution
-        current.completion=time
-        current.turnaround=current.completion-current.arrival
-        current.waiting=current.turnaround-current.burst
-        completed+=1   #mark process as completed
-
-    #step 5: display the results in tabular format
-    print("\nProcess Arrival Burst Completion Turnaround Waiting")
-    total_turnaround=0
-    total_waiting=0
-    for p in processes:
-        print(f"P{p.pid}          {p.arrival}          {p.burst}         {p.completion}         {p.turnaround}       {p.waiting}")
-        total_turnaround+=p.turnaround
-        total_waiting+=p.waiting
-
-    #step 6: calculate and display average waiting and turnaround time
-    avg_turnaround=total_turnaround/len(processes)
-    avg_waiting=total_waiting/len(processes)
-    print(f"\nAverage Turnaround Time : {avg_turnaround}")
-    print(f"Average Waiting Time : {avg_waiting}")
-
-    #step 7: display the grant chart (execution order)
-    print("\nGrant Chart :")
-    print(" -> ".join(grant))
-
-#main function to take input and run the scheduling
-if __name__=="__main__":
-    n=int(input("Enter number of processes:"))
-    processes=[]
-    #input data for each process
-    for i in range(n):
-        arrival=int(input("Enter the arrival time of process "+str(i+1)+":"))
-        burst=int(input("Enter the burst time of process "+str(i+1)+":"))
-        processes.append(Process(i+1,arrival,burst))
-    sjf(processes)</code></pre>
-                    <button class="copy-btn">Copy</button>
-                </div>
-            </div>
-
-            <div id="srtf" class="program-content">
-                <h2>Shortest Remaining Time First (SRTF)</h2>
-                <div class="code-block">
-                    <pre><code>class Process:
-    def __init__(self, pid, arrival, burst):
-        self.pid = pid
-        self.arrival = arrival
-        self.burst = burst
-        self.remaining = burst
-        self.completion = 0
-        self.turnaround = 0
-        self.waiting = 0
-
-def srtf(processes):
-    time = 0
-    completed = 0
-    grant = []
-
-    while completed < len(processes):
-        # ready queue
-        ready = [p for p in processes if p.arrival <= time and p.remaining > 0]
-
-        if not ready:
-            time += 1
-            continue
-
-        # select process with shortest remaining time
-        current = min(ready, key=lambda p: p.remaining)
-        grant.append(f"P{current.pid} ({time})")
-
-        current.remaining -= 1
-        time += 1
-
-        if current.remaining == 0:
-            completed += 1
-            current.completion = time
-            current.turnaround = current.completion - current.arrival
-            current.waiting = current.turnaround - current.burst
-
-    # Output table
-    print("\nProcess Arrival Burst Completion Turnaround Waiting")
-    for p in processes:
-        print(f"P{p.pid:<8} {p.arrival:<7} {p.burst:<6} {p.completion:<10} {p.turnaround:<10} {p.waiting}")
-
-    avg_turnaround = sum(p.turnaround for p in processes) / len(processes)
-    avg_waiting = sum(p.waiting for p in processes) / len(processes)
-
-    print("\nAvg Turnaround Time:", avg_turnaround)
-    print("Avg Waiting Time:", avg_waiting)
-
-    print("\nGrant Chart:", " -> ".join(grant))
-
-if __name__ == "__main__":
-    n = int(input("Enter number of processes: "))
-    processes = []
-
-    for i in range(n):
-        arrival = int(input("Enter arrival time for process " + str(i+1) + ": "))
-        burst = int(input("Enter burst time for process " + str(i+1) + ": "))
-        processes.append(Process(i+1, arrival, burst))
-
-    # Run SRTF scheduling
-    srtf(processes)</code></pre>
-                    <button class="copy-btn">Copy</button>
-                </div>
-            </div>
-
-            <div id="rr" class="program-content">
-                <h2>Round Robin (RR)</h2>
-                <div class="code-block">
-                    <pre><code>from collections import deque
-
-print("ROUND ROBIN SCHEDULING")
-
-n = int(input("Enter number of processes: "))
-d = {}
-
-for i in range(n):
-    key = "P" + str(i + 1)
-    a = int(input(f"Enter arrival time for process {i+1}:"))
-    b = int(input(f"Enter burst time for process {i+1}:"))
-    d[key] = [a, b]  # [Arrival Time, Burst Time]
-
-quantum = int(input("Enter Time Quantum: "))
-
-# Sort processes by arrival time
-d = dict(sorted(d.items(), key=lambda item: item[1][0]))
-
-arrival = {}
-burst = {}
-remaining = {}
-completed = {}
-completion_time = {}
-turnaround_time = {}
-waiting_time = {}
-
-for k, v in d.items():
-    arrival[k] = v[0]
-    burst[k] = v[1]
-    remaining[k] = v[1]
-    completed[k] = False
-
-time = list(arrival.values())[0]  # start from earliest arrival
-queue = deque()
-
-# Enqueue first arriving processes
-for k in d:
-    if arrival[k] <= time:
-        queue.append(k)
-
-visited = set(queue)
-
-while queue:
-    process = queue.popleft()
-
-    if remaining[process] > quantum:
-        time += quantum
-        remaining[process] -= quantum
-    else:
-        time += remaining[process]
-        remaining[process] = 0
-        completed[process] = True
-        completion_time[process] = time
-
-    # Add new processes that have arrived by now
-    for k in d:
-        if arrival[k] <= time and not completed[k] and k not in visited:
-            queue.append(k)
-            visited.add(k)
-
-    # If current process is not done, add it back
-    if not completed[process]:
-        queue.append(process)
-
-# Calculate Turnaround Time and Waiting Time
-for k in d:
-    turnaround_time[k] = completion_time[k] - arrival[k]
-    waiting_time[k] = turnaround_time[k] - burst[k]
-
-# Calculate averages
-avg_tat = sum(turnaround_time.values()) / n
-avg_wt = sum(waiting_time.values()) / n
-
-# Print Output
-print("\nProcess  Arrival  Burst  Completion  Turnaround  Waiting")
-for k in d:
-    print(f"{k:<8} {arrival[k]:<8} {burst[k]:<6} {completion_time[k]:<11} {turnaround_time[k]:<10} {waiting_time[k]}")
-
-print("\nAvg Turnaround Time:", avg_tat)
-print("Avg Waiting Time:", avg_wt)</code></pre>
-                    <button class="copy-btn">Copy</button>
-                </div>
-            </div>
-        </main>
-    </div>
-
-    <script>
-        const sidebarLinks = document.querySelectorAll('.sidebar a');
-        const programContents = document.querySelectorAll('.program-content');
-        const sidebarToggleBtn = document.querySelector('.sidebar-toggle-btn');
-        const sidebar = document.querySelector('.sidebar');
-
-        sidebarLinks.forEach(link => {
-            link.addEventListener('click', (e) => {
-                e.preventDefault();
-
-                sidebarLinks.forEach(l => l.classList.remove('active'));
-                link.classList.add('active');
-
-                const targetId = link.getAttribute('href').substring(1);
-
-                programContents.forEach(content => {
-                    if (content.id === targetId) {
-                        content.classList.add('active');
-                    } else {
-                        content.classList.remove('active');
-                    }
-                });
-
-                // Close sidebar on link click (for mobile)
-                if (window.innerWidth <= 768) {
-                    sidebar.classList.remove('active');
-                }
-            });
-        });
-
-        sidebarToggleBtn.addEventListener('click', () => {
-            sidebar.classList.toggle('active');
-        });
-
-        const copyButtons = document.querySelectorAll('.copy-btn');
-        copyButtons.forEach(button => {
-            button.addEventListener('click', () => {
-                const pre = button.previousElementSibling;
-                const code = pre.querySelector('code').textContent;
-                navigator.clipboard.writeText(code).then(() => {
-                    button.textContent = 'Copied!';
-                    setTimeout(() => {
-                        button.textContent = 'Copy';
-                    }, 2000);
-                });
-            });
-        });
-    </script>
-    <link rel="stylesheet" href="../global.css" />
 </head>
 <body>
     <header class="header">
@@ -693,11 +316,10 @@ if __name__ == "__main__":
     processes = []
 
     for i in range(n):
-        arrival = int(input("Enter arrival time for process " + str(i+1) + ": "))
-        burst = int(input("Enter burst time for process " + str(i+1) + ": "))
+        arrival = int(input(f"Enter arrival time for process {i+1}: "))
+        burst = int(input(f"Enter burst time for process {i+1}: "))
         processes.append(Process(i+1, arrival, burst))
 
-    # Run SRTF scheduling
     srtf(processes)</code></pre>
                     <button class="copy-btn">Copy</button>
                 </div>
@@ -708,84 +330,86 @@ if __name__ == "__main__":
                 <div class="code-block">
                     <pre><code>from collections import deque
 
-print("ROUND ROBIN SCHEDULING")
+class Process:
+    def __init__(self, pid, arrival, burst):
+        self.pid = pid
+        self.arrival = arrival
+        self.burst = burst
+        self.remaining = burst
+        self.completion = 0
+        self.turnaround = 0
+        self.waiting = 0
 
-n = int(input("Enter number of processes: "))
-d = {}
+def round_robin(processes, time_quantum):
+    time = 0
+    completed = 0
+    ready_queue = deque()
+    grant = []
+    
+    # Sort processes by arrival time
+    processes.sort(key=lambda p: p.arrival)
+    
+    # Add first process to ready queue
+    i = 0
+    if i < len(processes) and processes[i].arrival <= time:
+        ready_queue.append(processes[i])
+        i += 1
+    
+    while completed < len(processes):
+        if not ready_queue:
+            time += 1
+            # Check if any process arrives at current time
+            while i < len(processes) and processes[i].arrival <= time:
+                ready_queue.append(processes[i])
+                i += 1
+            continue
+        
+        current = ready_queue.popleft()
+        grant.append(f"P{current.pid} ({time})")
+        
+        # Execute for time quantum or remaining time
+        execution_time = min(time_quantum, current.remaining)
+        current.remaining -= execution_time
+        time += execution_time
+        
+        # Add newly arrived processes to ready queue
+        while i < len(processes) and processes[i].arrival <= time:
+            ready_queue.append(processes[i])
+            i += 1
+        
+        # Check if process is completed
+        if current.remaining == 0:
+            completed += 1
+            current.completion = time
+            current.turnaround = current.completion - current.arrival
+            current.waiting = current.turnaround - current.burst
+        else:
+            # Add back to ready queue if not completed
+            ready_queue.append(current)
+    
+    # Display results
+    print("\nProcess Arrival Burst Completion Turnaround Waiting")
+    for p in processes:
+        print(f"P{p.pid:<8} {p.arrival:<7} {p.burst:<6} {p.completion:<10} {p.turnaround:<10} {p.waiting}")
+    
+    avg_turnaround = sum(p.turnaround for p in processes) / len(processes)
+    avg_waiting = sum(p.waiting for p in processes) / len(processes)
+    
+    print(f"\nAvg Turnaround Time: {avg_turnaround}")
+    print(f"Avg Waiting Time: {avg_waiting}")
+    print(f"\nGrant Chart: {' -> '.join(grant)}")
 
-for i in range(n):
-    key = "P" + str(i + 1)
-    a = int(input(f"Enter arrival time for process {i+1}:"))
-    b = int(input(f"Enter burst time for process {i+1}:"))
-    d[key] = [a, b]  # [Arrival Time, Burst Time]
-
-quantum = int(input("Enter Time Quantum: "))
-
-# Sort processes by arrival time
-d = dict(sorted(d.items(), key=lambda item: item[1][0]))
-
-arrival = {}
-burst = {}
-remaining = {}
-completed = {}
-completion_time = {}
-turnaround_time = {}
-waiting_time = {}
-
-for k, v in d.items():
-    arrival[k] = v[0]
-    burst[k] = v[1]
-    remaining[k] = v[1]
-    completed[k] = False
-
-time = list(arrival.values())[0]  # start from earliest arrival
-queue = deque()
-
-# Enqueue first arriving processes
-for k in d:
-    if arrival[k] <= time:
-        queue.append(k)
-
-visited = set(queue)
-
-while queue:
-    process = queue.popleft()
-
-    if remaining[process] > quantum:
-        time += quantum
-        remaining[process] -= quantum
-    else:
-        time += remaining[process]
-        remaining[process] = 0
-        completed[process] = True
-        completion_time[process] = time
-
-    # Add new processes that have arrived by now
-    for k in d:
-        if arrival[k] <= time and not completed[k] and k not in visited:
-            queue.append(k)
-            visited.add(k)
-
-    # If current process is not done, add it back
-    if not completed[process]:
-        queue.append(process)
-
-# Calculate Turnaround Time and Waiting Time
-for k in d:
-    turnaround_time[k] = completion_time[k] - arrival[k]
-    waiting_time[k] = turnaround_time[k] - burst[k]
-
-# Calculate averages
-avg_tat = sum(turnaround_time.values()) / n
-avg_wt = sum(waiting_time.values()) / n
-
-# Print Output
-print("\nProcess  Arrival  Burst  Completion  Turnaround  Waiting")
-for k in d:
-    print(f"{k:<8} {arrival[k]:<8} {burst[k]:<6} {completion_time[k]:<11} {turnaround_time[k]:<10} {waiting_time[k]}")
-
-print("\nAvg Turnaround Time:", avg_tat)
-print("Avg Waiting Time:", avg_wt)</code></pre>
+if __name__ == "__main__":
+    n = int(input("Enter number of processes: "))
+    quantum = int(input("Enter time quantum: "))
+    processes = []
+    
+    for i in range(n):
+        arrival = int(input(f"Enter arrival time for process {i+1}: "))
+        burst = int(input(f"Enter burst time for process {i+1}: "))
+        processes.append(Process(i+1, arrival, burst))
+    
+    round_robin(processes, quantum)</code></pre>
                     <button class="copy-btn">Copy</button>
                 </div>
             </div>
@@ -793,10 +417,10 @@ print("Avg Waiting Time:", avg_wt)</code></pre>
     </div>
 
     <script>
+        const sidebar = document.querySelector('.sidebar');
+        const sidebarToggleBtn = document.querySelector('.sidebar-toggle-btn');
         const sidebarLinks = document.querySelectorAll('.sidebar a');
         const programContents = document.querySelectorAll('.program-content');
-        const sidebarToggleBtn = document.querySelector('.sidebar-toggle-btn');
-        const sidebar = document.querySelector('.sidebar');
 
         sidebarLinks.forEach(link => {
             link.addEventListener('click', (e) => {

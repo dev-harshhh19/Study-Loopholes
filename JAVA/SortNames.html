@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Name Sorting - JAVA Practical</title>
+    <link rel="stylesheet" href="../global.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Inconsolata&display=swap" rel="stylesheet">
+    <style>
+        .main-container {
+            display: flex;
+            height: calc(100vh - var(--header-height));
+        }
+        .content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+        .code-block {
+            position: relative;
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            border: 1px solid #444;
+        }
+        pre {
+            margin: 0;
+            font-family: 'Inconsolata', monospace;
+            font-size: 16px;
+            color: #d4d4d4;
+            white-space: pre-wrap;
+        }
+        .copy-btn, .download-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #444;
+            color: var(--text-color);
+            transition: background-color 0.3s ease;
+            margin-left: 5px;
+        }
+        .copy-btn:hover, .download-btn:hover {
+            background-color: #555;
+        }
+        .download-btn {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        .download-btn:hover {
+            background-color: #0088cc;
+        }
+        .button-group {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1><a href="java.html">JAVA Practicals</a> / Name Sorting</h1>
+    </header>
+
+    <div class="main-container">
+        <main class="content">
+            <h2>Name Sorting</h2>
+            <p>String array sorting and manipulation techniques</p>
+            
+            <div class="code-block">
+                <div class="button-group">
+                    <button class="download-btn" onclick="downloadJavaFile()">Download</button>
+                    <button class="copy-btn">Copy</button>
+                </div>
+                <pre><code>import java.util.Scanner;
+import java.util.Arrays;
+
+/**
+ * This program accepts n strings from the user and sorts them in ascending
+ * (alphabetical) order.
+ */
+public class SortNames {
+    public static void main(String[] args) {
+        Scanner sc = new Scanner(System.in);
+
+        // Input number of names
+        System.out.print("Enter number of names: ");
+        int n = sc.nextInt();
+        sc.nextLine(); // consume newline
+
+        String[] names = new String[n];
+
+        // Input names
+        System.out.println("Enter names:");
+        for (int i = 0; i < n; i++) {
+            names[i] = sc.nextLine();
+        }
+
+        // Sort names
+        Arrays.sort(names);
+
+        // Print sorted names
+        System.out.println("\nSorted names:");
+        for (String name : names) {
+            System.out.println(name);
+        }
+
+        sc.close();
+    }
+}</code></pre>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const copyButtons = document.querySelectorAll('.copy-btn');
+        copyButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const codeBlock = button.closest('.code-block');
+                const code = codeBlock.querySelector('code').textContent;
+                navigator.clipboard.writeText(code).then(() => {
+                    button.textContent = 'Copied!';
+                    setTimeout(() => {
+                        button.textContent = 'Copy';
+                    }, 2000);
+                });
+            });
+        });
+
+        function downloadJavaFile() {
+            const code = document.querySelector('code').textContent;
+            const blob = new Blob([code], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'SortNames.java';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>

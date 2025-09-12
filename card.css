@@ -1,0 +1,283 @@
+/* card.css - Practical Cards Styles for Study Loopholes */
+
+/* Card Base Styles */
+.card {
+    background-color: var(--secondary-bg);
+    border-radius: 10px;
+    padding: 25px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-decoration: none;
+    color: var(--text-color);
+    display: block;
+    width: 100%;
+    min-width: 250px;
+    text-align: center;
+    border: 1px solid transparent;
+}
+
+/* Card Hover Effects */
+.card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+    text-decoration: none;
+    color: var(--text-color);
+}
+
+/* Card Focus States for Accessibility */
+.card:focus {
+    outline: 2px solid var(--accent-color);
+    outline-offset: 2px;
+}
+
+/* Card Typography */
+.card h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    color: var(--accent-color);
+    font-size: 20px;
+    font-weight: 400;
+    transition: color 0.3s ease;
+}
+
+.card p {
+    font-weight: 300;
+    line-height: 1.6;
+    margin-bottom: 0;
+    font-size: 0.95rem;
+    opacity: 0.9;
+}
+
+/* Light Mode Card Styles */
+body.light-mode .card {
+    background-color: rgba(255, 255, 255, 0.9);
+    color: var(--light-text-color);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+body.light-mode .card:hover {
+    color: var(--light-text-color);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+body.light-mode .card h2 {
+    color: var(--accent-color);
+}
+
+/* Card Sizes */
+.card.small {
+    width: 250px;
+    padding: 20px;
+}
+
+.card.large {
+    width: 350px;
+    padding: 30px;
+}
+
+/* Card Variations */
+.card.featured {
+    border: 2px solid var(--accent-color);
+    box-shadow: 0 5px 15px rgba(0, 170, 255, 0.2);
+}
+
+.card.featured:hover {
+    box-shadow: 0 10px 25px rgba(0, 170, 255, 0.3);
+}
+
+/* Practical Cards Specific Styles */
+.card.practical {
+    background: linear-gradient(135deg, var(--secondary-bg) 0%, rgba(44, 44, 44, 0.8) 100%);
+    position: relative;
+    overflow: hidden;
+}
+
+.card.practical::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent-color), #0088cc);
+    transition: height 0.3s ease;
+}
+
+.card.practical:hover::before {
+    height: 5px;
+}
+
+/* Subject Specific Card Colors */
+.card.adbms {
+    border-left: 4px solid #ff6b6b;
+}
+
+.card.adbms h2 {
+    color: #ff6b6b;
+}
+
+.card.os {
+    border-left: 4px solid #4ecdc4;
+}
+
+.card.os h2 {
+    color: #4ecdc4;
+}
+
+.card.java {
+    border-left: 4px solid #45b7d1;
+}
+
+.card.java h2 {
+    color: #45b7d1;
+}
+
+.card.construction {
+    border-left: 4px solid #f39c12;
+}
+
+.card.construction h2 {
+    color: #f39c12;
+}
+
+/* Card Icons (if needed) */
+.card .icon {
+    font-size: 2rem;
+    margin-bottom: 15px;
+    display: block;
+    opacity: 0.8;
+}
+
+/* Card Status Indicators */
+.card .status {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.card .status.completed {
+    background-color: #27ae60;
+    color: white;
+}
+
+.card .status.in-progress {
+    background-color: #f39c12;
+    color: white;
+}
+
+.card .status.maintenance {
+    background-color: #e74c3c;
+    color: white;
+}
+
+/* Card File Tags */
+.card-files {
+    margin-top: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.file-tag {
+    background-color: rgba(0, 170, 255, 0.1);
+    color: var(--accent-color);
+    padding: 3px 8px;
+    border-radius: 12px;
+    font-size: 0.7rem;
+    font-weight: 500;
+    border: 1px solid rgba(0, 170, 255, 0.3);
+    font-family: 'Courier New', monospace;
+}
+
+body.light-mode .file-tag {
+    background-color: rgba(0, 170, 255, 0.15);
+    border-color: rgba(0, 170, 255, 0.4);
+}
+
+/* Card Loading State */
+.card.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.card.loading::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+}
+
+/* Grid Responsive Behavior for Cards */
+@media (max-width: 900px) {
+    .card {
+        min-width: 220px;
+    }
+    
+    .card.small,
+    .card.large {
+        min-width: 220px;
+    }
+}
+
+@media (max-width: 600px) {
+    .card {
+        width: 100%;
+        min-width: 280px;
+        max-width: 100%;
+        margin: 0 auto;
+    }
+    
+    .card.small,
+    .card.large {
+        width: 100%;
+        min-width: 280px;
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 480px) {
+    .card {
+        padding: 20px 15px;
+        width: 100%;
+        max-width: 300px;
+    }
+    
+    .card h2 {
+        font-size: 18px;
+    }
+    
+    .card p {
+        font-size: 0.9rem;
+    }
+}
+
+/* Animation for Card Entrance */
+@keyframes cardFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card.animate-in {
+    animation: cardFadeIn 0.5s ease forwards;
+}
+
+/* Staggered Animation for Multiple Cards */
+.card:nth-child(1) { animation-delay: 0.1s; }
+.card:nth-child(2) { animation-delay: 0.2s; }
+.card:nth-child(3) { animation-delay: 0.3s; }
+.card:nth-child(4) { animation-delay: 0.4s; }
+.card:nth-child(5) { animation-delay: 0.5s; }
+.card:nth-child(6) { animation-delay: 0.6s; }
+.card:nth-child(7) { animation-delay: 0.7s; }
+.card:nth-child(8) { animation-delay: 0.8s; }

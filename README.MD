@@ -1,7 +1,5 @@
 # Study Loopholes
 
-**Study Loopholes** is an open-source, modular resource hub for students and self-learners focused on core Computer Science and IT subjects. This repository organizes notes, code snippets, and conceptual guides across multiple domains including Algorithms, DBMS, Operating Systems, and Web Development.
-
 ## Table of Contents
 
 - [Features](#features)
@@ -23,7 +21,6 @@
 - **ADBMS** – Advanced Database Management Systems
 - **JAVA** – Core Java programming concepts
 - **OS** – Operating Systems
-- **IoT** – Internet of Things fundamentals
 - **Construction** – Software Construction concepts *(maintenance page)*
 
 ## Getting Started

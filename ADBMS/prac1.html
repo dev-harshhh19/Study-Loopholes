@@ -1,48 +1,13 @@
 <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Practical 1 - Conditional Statements</title>
+    <link rel="stylesheet" href="../global.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Inconsolata&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary-bg: #1a1a1a;
-            --secondary-bg: #2c2c2c;
-            --accent-color: #00aaff;
-            --text-color: #e0e0e0;
-            --header-height: 60px;
-        }
-        body {
-            background-color: var(--primary-bg);
-            color: var(--text-color);
-            font-family: 'Roboto', sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        .header {
-            background-color: var(--secondary-bg);
-            padding: 0 40px;
-            height: var(--header-height);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border-bottom: 1px solid #444;
-        }
-        .header h1 {
-            margin: 0;
-            font-size: 24px;
-            color: var(--accent-color);
-        }
-        .header a {
-            color: var(--text-color);
-            text-decoration: none;
-            font-weight: 300;
-            transition: color 0.3s ease;
-        }
-        .header a:hover {
-            color: var(--accent-color);
-        }
         .main-container {
             display: flex;
             height: calc(100vh - var(--header-height));
@@ -117,10 +82,54 @@
         .copy-btn:hover {
             background-color: #555;
         }
+        
+        /* Mobile responsiveness */
+        .sidebar-toggle-btn {
+            display: none;
+        }
+        
+        @media (max-width: 768px) {
+            .sidebar {
+                position: fixed;
+                left: -100%;
+                top: var(--header-height);
+                width: 250px;
+                height: calc(100vh - var(--header-height));
+                background-color: var(--secondary-bg);
+                transition: left 0.3s ease;
+                z-index: 1000;
+                border-right: 1px solid #444;
+            }
+            .sidebar.active {
+                left: 0;
+            }
+            .main-container {
+                flex-direction: column;
+            }
+            .content {
+                padding: 20px;
+                width: 100%;
+            }
+            .sidebar-toggle-btn {
+                display: block;
+                position: fixed;
+                top: 10px;
+                left: 10px;
+                background-color: var(--secondary-bg);
+                border: none;
+                color: var(--accent-color);
+                font-size: 24px;
+                cursor: pointer;
+                z-index: 1100;
+                border-radius: 5px;
+                padding: 5px 10px;
+            }
+        }
     </style>
 </head>
 <body>
     <header class="header">
+        <button class="sidebar-toggle-btn" aria-label="Toggle sidebar">☰</button>
         <h1><a href="adbms.html">ADBMS Practicals</a> / Practical 1</h1>
     </header>
 
@@ -272,6 +281,8 @@ END;
     </div>
 
     <script>
+        const sidebar = document.querySelector('.sidebar');
+        const sidebarToggleBtn = document.querySelector('.sidebar-toggle-btn');
         const sidebarLinks = document.querySelectorAll('.sidebar a');
         const programContents = document.querySelectorAll('.program-content');
 
@@ -291,7 +302,16 @@ END;
                         content.classList.remove('active');
                     }
                 });
+                
+                // Close sidebar on link click (for mobile)
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('active');
+                }
             });
+        });
+        
+        sidebarToggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('active');
         });
 
         const copyButtons = document.querySelectorAll('.copy-btn');
