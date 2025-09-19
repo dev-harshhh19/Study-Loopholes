@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LED Matrix Display - IoT Practical</title>
+    <link rel="stylesheet" href="../global.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Inconsolata&display=swap" rel="stylesheet">
+    <style>
+        .main-container {
+            display: flex;
+            height: calc(100vh - var(--header-height));
+        }
+        .content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+        .code-block {
+            position: relative;
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            border: 1px solid #444;
+        }
+        pre {
+            margin: 0;
+            font-family: 'Inconsolata', monospace;
+            font-size: 16px;
+            color: #d4d4d4;
+            white-space: pre-wrap;
+        }
+        .copy-btn, .download-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #444;
+            color: var(--text-color);
+            transition: background-color 0.3s ease;
+            margin-left: 5px;
+        }
+        .copy-btn:hover, .download-btn:hover {
+            background-color: #555;
+        }
+        .download-btn {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        .download-btn:hover {
+            background-color: #0088cc;
+        }
+        .button-group {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1><a href="IoT.html">IoT Practicals</a> / LED Matrix Display</h1>
+    </header>
+
+    <div class="main-container">
+        <main class="content">
+            <h2>8x8 LED Matrix Display - Pattern Control</h2>
+            <p><strong>Objective:</strong> Control an 8x8 LED matrix to display custom patterns using the LedControl library.</p>
+            <p>This project demonstrates advanced display control, binary pattern creation, and multiplexed LED driving techniques for visual IoT applications.</p>
+            
+            <div style="text-align: center; margin: 20px 0;">
+                <button id="toggleDiagramBtn" style="padding: 8px 16px; border: none; border-radius: 5px; background-color: var(--accent-color); color: white; cursor: pointer; margin-bottom: 10px; transition: background-color 0.3s ease;">Show Circuit Diagram</button>
+                <div id="circuitDiagram" style="display: none;">
+                    <img src="../assets/images/iot/matrixLED.png" alt="LED Matrix Circuit Diagram" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                </div>
+            </div>
+            
+            <h3>Required Components:</h3>
+            <ul>
+                <li>Arduino Uno/Nano</li>
+                <li>8x8 LED Matrix with MAX7219 driver</li>
+                <li>Jumper wires</li>
+                <li>Breadboard (optional)</li>
+                <li>External Power Supply (recommended for multiple matrices)</li>
+            </ul>
+            
+            <h3>Letter 'D' Pattern:</h3>
+            <pre style="font-family: monospace; font-size: 16px; line-height: 1.2; background-color: #000; color: #00ff00; padding: 10px; border-radius: 5px; display: inline-block;">01111100<br>01000010<br>01000010<br>01000010<br>01000010<br>01000010<br>01111100<br>00000000</pre>
+            <p><em>Binary representation of the letter 'D' displayed on the matrix</em></p>
+            
+            <div class="code-block">
+                <div class="button-group">
+                    <button class="download-btn" onclick="downloadArduinoFile()">Download</button>
+                    <button class="copy-btn">Copy</button>
+                </div>
+                <pre><code>#include < LedControl.h>
+
+#define NBR_MTX 1
+LedControl lc = LedControl(12, 11, 10, NBR_MTX);
+
+void setup() {
+  for (int i = 0; i < NBR_MTX; i++) {
+    lc.shutdown(i, false);
+    lc.setIntensity(i, 8);
+    lc.clearDisplay(i);
+    delay(500);
+  }
+}
+
+void loop() {
+  byte D_pattern[8] = {
+    0b01111100,
+    0b01000010,
+    0b01000010,
+    0b01000010,
+    0b01000010,
+    0b01000010,
+    0b01111100,
+    0b00000000
+  };
+
+  for (int row = 0; row < 8; row++) {
+    for (int col = 0; col < 8; col++) {
+      lc.setLed(0, row, col, bitRead(D_pattern[row], 7 - col));
+    }
+  }
+
+  delay(1000);
+  lc.clearDisplay(0);
+  delay(1000);
+}</code></pre>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <h3>How it works:</h3>
+                <ul>
+                    <li><strong>LedControl Library:</strong> Manages MAX7219 LED driver chip for matrix control.</li>
+                    <li><strong>Pin Configuration:</strong> DIN→12, CLK→11, CS→10 for SPI communication.</li>
+                    <li><strong>shutdown(false):</strong> Activates the display (removes power-saving mode).</li>
+                    <li><strong>setIntensity(8):</strong> Sets brightness level (0-15, where 8 is medium).</li>
+                    <li><strong>Binary Patterns:</strong> Each byte represents one row of 8 LEDs.</li>
+                    <li><strong>bitRead():</strong> Extracts individual bits to control each LED.</li>
+                    <li><strong>Animation Loop:</strong> Display pattern for 1 second, clear for 1 second, repeat.</li>
+                </ul>
+                
+                <h3>Circuit Connection:</h3>
+                <ul>
+                    <li>VCC → 5V (Arduino or external power)</li>
+                    <li>GND → Ground</li>
+                    <li>DIN → Arduino Pin 12 (Data In)</li>
+                    <li>CS → Arduino Pin 10 (Chip Select)</li>
+                    <li>CLK → Arduino Pin 11 (Clock)</li>
+                </ul>
+
+                <h3>Pattern Creation Tips:</h3>
+                <ul>
+                    <li>Each byte (0b01111100) represents one row of 8 LEDs</li>
+                    <li>1 = LED ON, 0 = LED OFF</li>
+                    <li>Create custom patterns by modifying the binary values</li>
+                    <li>Use online LED matrix pattern generators for complex designs</li>
+                </ul>
+
+                <h3>Applications:</h3>
+                <ul>
+                    <li>Digital clocks and timers</li>
+                    <li>Text scrolling displays</li>
+                    <li>Game status indicators</li>
+                    <li>Weather station displays</li>
+                    <li>Interactive art installations</li>
+                </ul>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const copyButtons = document.querySelectorAll('.copy-btn');
+        copyButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const codeBlock = button.closest('.code-block');
+                const code = codeBlock.querySelector('code').textContent;
+                navigator.clipboard.writeText(code).then(() => {
+                    button.textContent = 'Copied!';
+                    setTimeout(() => {
+                        button.textContent = 'Copy';
+                    }, 2000);
+                });
+            });
+        });
+
+        function downloadArduinoFile() {
+            const code = document.querySelector('code').textContent;
+            const blob = new Blob([code], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'LEDMatrix.ino';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Circuit diagram toggle functionality
+        const toggleBtn = document.getElementById('toggleDiagramBtn');
+        const diagram = document.getElementById('circuitDiagram');
+        
+        toggleBtn.addEventListener('click', () => {
+            if (diagram.style.display === 'none') {
+                diagram.style.display = 'block';
+                toggleBtn.textContent = 'Hide Circuit Diagram';
+            } else {
+                diagram.style.display = 'none';
+                toggleBtn.textContent = 'Show Circuit Diagram';
+            }
+        });
+    </script>
+</body>
+</html>

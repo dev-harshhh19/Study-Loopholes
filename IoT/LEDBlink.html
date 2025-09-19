@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LED Blink - IoT Practical</title>
+    <link rel="stylesheet" href="../global.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Inconsolata&display=swap" rel="stylesheet">
+    <style>
+        .main-container {
+            display: flex;
+            height: calc(100vh - var(--header-height));
+        }
+        .content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+        .code-block {
+            position: relative;
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            border: 1px solid #444;
+        }
+        pre {
+            margin: 0;
+            font-family: 'Inconsolata', monospace;
+            font-size: 16px;
+            color: #d4d4d4;
+            white-space: pre-wrap;
+        }
+        .copy-btn, .download-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #444;
+            color: var(--text-color);
+            transition: background-color 0.3s ease;
+            margin-left: 5px;
+        }
+        .copy-btn:hover, .download-btn:hover {
+            background-color: #555;
+        }
+        .download-btn {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        .download-btn:hover {
+            background-color: #0088cc;
+        }
+        .button-group {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1><a href="IoT.html">IoT Practicals</a> / LED Blink</h1>
+    </header>
+
+    <div class="main-container">
+        <main class="content">
+            <h2>LED Blink - Basic Arduino Programming</h2>
+            <p><strong>Objective:</strong> Create a simple circuit that blinks an LED on and off repeatedly using Arduino.</p>
+            <p>This is the classic "Hello World" program for Arduino. It demonstrates basic digital output control and timing functions.</p>
+            
+            <div style="text-align: center; margin: 20px 0;">
+                <button id="toggleDiagramBtn" style="padding: 8px 16px; border: none; border-radius: 5px; background-color: var(--accent-color); color: white; cursor: pointer; margin-bottom: 10px; transition: background-color 0.3s ease;">Show Circuit Diagram</button>
+                <div id="circuitDiagram" style="display: none;">
+                    <img src="../assets/images/iot/LEDBlink.png" alt="LED Blink Circuit Diagram" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                </div>
+            </div>
+            
+            <h3>Required Components:</h3>
+            <ul>
+                <li>Arduino Uno/Nano</li>
+                <li>LED</li>
+                <li>220Ω Resistor</li>
+                <li>Breadboard</li>
+                <li>Jumper wires</li>
+            </ul>
+            
+            <div class="code-block">
+                <div class="button-group">
+                    <button class="download-btn" onclick="downloadArduinoFile()">Download</button>
+                    <button class="copy-btn">Copy</button>
+                </div>
+                <pre><code>void setup () {
+  pinMode (13, OUTPUT);
+}
+
+void loop () {
+  digitalWrite (13, HIGH);
+  delay(1000);
+  digitalWrite (13, LOW);
+  delay (1000);
+}</code></pre>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <h3>How it works:</h3>
+                <ul>
+                    <li><strong>setup():</strong> Runs once when Arduino starts. Sets pin 13 as output.</li>
+                    <li><strong>loop():</strong> Runs continuously after setup().</li>
+                    <li><strong>digitalWrite(13, HIGH):</strong> Turns LED on by sending voltage to pin 13.</li>
+                    <li><strong>delay(1000):</strong> Waits for 1000 milliseconds (1 second).</li>
+                    <li><strong>digitalWrite(13, LOW):</strong> Turns LED off.</li>
+                </ul>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const copyButtons = document.querySelectorAll('.copy-btn');
+        copyButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const codeBlock = button.closest('.code-block');
+                const code = codeBlock.querySelector('code').textContent;
+                navigator.clipboard.writeText(code).then(() => {
+                    button.textContent = 'Copied!';
+                    setTimeout(() => {
+                        button.textContent = 'Copy';
+                    }, 2000);
+                });
+            });
+        });
+
+        function downloadArduinoFile() {
+            const code = document.querySelector('code').textContent;
+            const blob = new Blob([code], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'LEDBlink.ino';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Circuit diagram toggle functionality
+        const toggleBtn = document.getElementById('toggleDiagramBtn');
+        const diagram = document.getElementById('circuitDiagram');
+        
+        toggleBtn.addEventListener('click', () => {
+            if (diagram.style.display === 'none') {
+                diagram.style.display = 'block';
+                toggleBtn.textContent = 'Hide Circuit Diagram';
+            } else {
+                diagram.style.display = 'none';
+                toggleBtn.textContent = 'Show Circuit Diagram';
+            }
+        });
+    </script>
+</body>
+</html>

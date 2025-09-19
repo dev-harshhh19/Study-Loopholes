@@ -139,6 +139,14 @@ body.light-mode .card h2 {
     color: #f39c12;
 }
 
+.card.iot {
+    border-left: 4px solid #9b59b6;
+}
+
+.card.iot h2 {
+    color: #9b59b6;
+}
+
 /* Card Icons (if needed) */
 .card .icon {
     font-size: 2rem;

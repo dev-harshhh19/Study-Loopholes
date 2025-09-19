@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stepper Motor Control - IoT Practical</title>
+    <link rel="stylesheet" href="../global.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Inconsolata&display=swap" rel="stylesheet">
+    <style>
+        .main-container {
+            display: flex;
+            height: calc(100vh - var(--header-height));
+        }
+        .content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+        .code-block {
+            position: relative;
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            border: 1px solid #444;
+        }
+        pre {
+            margin: 0;
+            font-family: 'Inconsolata', monospace;
+            font-size: 16px;
+            color: #d4d4d4;
+            white-space: pre-wrap;
+        }
+        .copy-btn, .download-btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #444;
+            color: var(--text-color);
+            transition: background-color 0.3s ease;
+            margin-left: 5px;
+        }
+        .copy-btn:hover, .download-btn:hover {
+            background-color: #555;
+        }
+        .download-btn {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        .download-btn:hover {
+            background-color: #0088cc;
+        }
+        .button-group {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1><a href="IoT.html">IoT Practicals</a> / Stepper Motor Control</h1>
+    </header>
+
+    <div class="main-container">
+        <main class="content">
+            <h2>Stepper Motor Control - Precise Rotation Control</h2>
+            <p><strong>Objective:</strong> Control a stepper motor to rotate in both clockwise and counter-clockwise directions with precise steps.</p>
+            <p>This project demonstrates motor control using the Stepper library for applications requiring precise positioning and movement control.</p>
+            
+            <div style="text-align: center; margin: 20px 0;">
+                <button id="toggleDiagramBtn" style="padding: 8px 16px; border: none; border-radius: 5px; background-color: var(--accent-color); color: white; cursor: pointer; margin-bottom: 10px; transition: background-color 0.3s ease;">Show Circuit Diagram</button>
+                <div id="circuitDiagram" style="display: none;">
+                    <img src="../assets/images/iot/Steppermotor.png" alt="Stepper Motor Circuit Diagram" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+                </div>
+            </div>
+            
+            <h3>Required Components:</h3>
+            <ul>
+                <li>Arduino Uno/Nano</li>
+                <li>28BYJ-48 Stepper Motor or similar</li>
+                <li>ULN2003 Motor Driver Board</li>
+                <li>External Power Supply (5V recommended)</li>
+                <li>Jumper wires</li>
+                <li>Breadboard (optional)</li>
+            </ul>
+            
+            <div class="code-block">
+                <div class="button-group">
+                    <button class="download-btn" onclick="downloadArduinoFile()">Download</button>
+                    <button class="copy-btn">Copy</button>
+                </div>
+                <pre><code>#include<Stepper.h>
+const int spr=4;
+Stepper steper (spr, 8, 9, 10,11) ;
+
+void setup () {
+  steper.setSpeed (10);
+  Serial.begin (9600);
+
+}
+
+void loop () {
+  steper.step (40) ;
+  delay (1) ;
+  steper.step(-40);
+  delay (1) ;
+}</code></pre>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <h3>How it works:</h3>
+                <ul>
+                    <li><strong>Stepper Library:</strong> Arduino's built-in library for controlling stepper motors.</li>
+                    <li><strong>SPR (Steps Per Revolution):</strong> Set to 4 for this motor configuration.</li>
+                    <li><strong>Pin Configuration:</strong> Uses pins 8, 9, 10, 11 for motor control signals.</li>
+                    <li><strong>setSpeed(10):</strong> Sets motor speed to 10 RPM for smooth operation.</li>
+                    <li><strong>step(40):</strong> Rotates motor 40 steps clockwise.</li>
+                    <li><strong>step(-40):</strong> Rotates motor 40 steps counter-clockwise.</li>
+                    <li><strong>Continuous Loop:</strong> Creates oscillating back-and-forth movement.</li>
+                </ul>
+                
+                <h3>Circuit Connection (ULN2003 Driver):</h3>
+                <ul>
+                    <li>IN1 → Arduino Pin 8</li>
+                    <li>IN2 → Arduino Pin 9</li>
+                    <li>IN3 → Arduino Pin 10</li>
+                    <li>IN4 → Arduino Pin 11</li>
+                    <li>VCC → 5V Power Supply</li>
+                    <li>GND → Ground (Common with Arduino)</li>
+                    <li>Motor pins to stepper motor connector</li>
+                </ul>
+
+                <h3>Applications:</h3>
+                <ul>
+                    <li>Camera pan/tilt systems</li>
+                    <li>3D printer axis control</li>
+                    <li>Robotic arm joints</li>
+                    <li>Automated blinds/curtains</li>
+                    <li>CNC machine positioning</li>
+                </ul>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        const copyButtons = document.querySelectorAll('.copy-btn');
+        copyButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const codeBlock = button.closest('.code-block');
+                const code = codeBlock.querySelector('code').textContent;
+                navigator.clipboard.writeText(code).then(() => {
+                    button.textContent = 'Copied!';
+                    setTimeout(() => {
+                        button.textContent = 'Copy';
+                    }, 2000);
+                });
+            });
+        });
+
+        function downloadArduinoFile() {
+            const code = document.querySelector('code').textContent;
+            const blob = new Blob([code], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'steppermoter.ino';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+
+        // Circuit diagram toggle functionality
+        const toggleBtn = document.getElementById('toggleDiagramBtn');
+        const diagram = document.getElementById('circuitDiagram');
+        
+        toggleBtn.addEventListener('click', () => {
+            if (diagram.style.display === 'none') {
+                diagram.style.display = 'block';
+                toggleBtn.textContent = 'Hide Circuit Diagram';
+            } else {
+                diagram.style.display = 'none';
+                toggleBtn.textContent = 'Show Circuit Diagram';
+            }
+        });
+    </script>
+</body>
+</html>
