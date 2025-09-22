@@ -1,0 +1,723 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Disk Scheduling Algorithms - OS Practical</title>
+    <link rel="stylesheet" href="../global.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&family=Inconsolata&display=swap" rel="stylesheet">
+    <style>
+        .main-container {
+            display: flex;
+            height: calc(100vh - var(--header-height));
+        }
+        .content {
+            flex: 1;
+            padding: 40px;
+            overflow-y: auto;
+        }
+        .description {
+            margin-bottom: 30px;
+            padding: 20px;
+            background-color: var(--card-background);
+            border-radius: 8px;
+            border-left: 4px solid var(--accent-color);
+        }
+        .algorithm-section {
+            margin: 40px 0;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+        }
+        .algorithm-title {
+            color: var(--accent-color);
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 10px;
+        }
+        .code-block {
+            position: relative;
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 5px;
+            margin-top: 20px;
+            border: 1px solid #444;
+        }
+        pre {
+            margin: 0;
+            font-family: 'Inconsolata', monospace;
+            font-size: 14px;
+            color: #d4d4d4;
+            white-space: pre-wrap;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            padding: 8px 12px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #444;
+            color: var(--text-color);
+            transition: background-color 0.3s ease;
+        }
+        .copy-btn:hover {
+            background-color: #555;
+        }
+        .download-btn {
+            margin-top: 15px;
+            padding: 10px 20px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s ease;
+        }
+        .download-btn:hover {
+            background-color: #0056b3;
+        }
+        .algorithm-description {
+            margin-bottom: 15px;
+            padding: 15px;
+            background-color: rgba(0, 123, 255, 0.1);
+            border-left: 3px solid var(--accent-color);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1><a href="OS.html">OS Practicals</a> / Disk Scheduling Algorithms</h1>
+    </header>
+
+    <div class="main-container">
+        <main class="content">
+            <div class="description">
+                <h2>Disk Scheduling Algorithms</h2>
+                <p>
+                    Disk scheduling algorithms are used by operating systems to determine the order in which 
+                    disk I/O requests should be processed. These algorithms aim to minimize the total seek time 
+                    and improve overall system performance by optimizing disk arm movement.
+                </p>
+                <p>
+                    <strong>This practical covers six fundamental disk scheduling algorithms:</strong>
+                </p>
+                <ul>
+                    <li><strong>FCFS (First Come First Served):</strong> Processes requests in arrival order</li>
+                    <li><strong>SSTF (Shortest Seek Time First):</strong> Selects the closest request to current head position</li>
+                    <li><strong>SCAN:</strong> Moves head in one direction until end, then reverses direction</li>
+                    <li><strong>C-SCAN:</strong> Circular SCAN - jumps to opposite end after reaching boundary</li>
+                    <li><strong>LOOK:</strong> Like SCAN but reverses when no more requests in current direction</li>
+                    <li><strong>C-LOOK:</strong> Circular LOOK - jumps to opposite end after serving all requests in one direction</li>
+                </ul>
+            </div>
+
+            <!-- FCFS Algorithm -->
+            <div class="algorithm-section">
+                <h2 class="algorithm-title">1. FCFS (First Come First Served) Disk Scheduling</h2>
+                <div class="algorithm-description">
+                    <strong>FCFS Algorithm:</strong> The simplest disk scheduling algorithm that processes requests in the 
+                    order they arrive. No reordering is done, which can lead to high seek times but ensures fairness.
+                </div>
+                <div class="code-block">
+                    <pre><code>def fcfs_disk_scheduling(requests, initial_position):
+    total_seek_count = 0  # Total number of tracks the disk arm moves
+    seek_sequence = []  # Sequence of tracks the disk arm moves to
+
+    current_position = initial_position
+    seek_sequence.append(current_position)
+
+    # Process each request in the order they arrive
+    for request in requests:
+        seek_count = abs(current_position - request)
+        total_seek_count += seek_count
+        current_position = request
+        seek_sequence.append(current_position)
+
+    return total_seek_count, seek_sequence
+
+# Example usage
+if __name__ == "__main__":
+    requests = list(map(int, input("Enter disk requests (space-separated): ").split()))
+    initial_position = int(input("Enter initial position of the disk arm: "))
+
+    total_seek_count, seek_sequence = fcfs_disk_scheduling(requests, initial_position)
+
+    print(f"Total seek count: {total_seek_count}")
+    print(f"Seek sequence: {seek_sequence}")</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <button class="download-btn" onclick="downloadFCFS()">Download FCFS Algorithm</button>
+            </div>
+
+            <!-- SSTF Algorithm -->
+            <div class="algorithm-section">
+                <h2 class="algorithm-title">2. SSTF (Shortest Seek Time First) Disk Scheduling</h2>
+                <div class="algorithm-description">
+                    <strong>SSTF Algorithm:</strong> Selects the request with minimum seek time from the current head position. 
+                    This reduces average response time but may cause starvation of requests far from the head.
+                </div>
+                <div class="code-block">
+                    <pre><code>def sstf_disk_scheduling(requests, initial_position):
+    total_seek_count = 0  # Total number of tracks the disk arm moves
+    seek_sequence = []  # Sequence of tracks the disk arm moves to
+
+    current_position = initial_position
+    seek_sequence.append(current_position)
+
+    # Continue until all requests are processed
+    while requests:
+        # Find the closest request to the current position
+        closest_request = min(requests, key=lambda x: abs(x - current_position))
+        seek_count = abs(current_position - closest_request)
+        total_seek_count += seek_count
+        current_position = closest_request
+        requests.remove(closest_request)
+        seek_sequence.append(current_position)
+
+    return total_seek_count, seek_sequence
+
+# Example usage
+if __name__ == "__main__":
+    requests = list(map(int, input("Enter disk requests (space-separated): ").split()))
+    initial_position = int(input("Enter initial position of the disk arm: "))
+
+    total_seek_count, seek_sequence = sstf_disk_scheduling(requests, initial_position)
+
+    print(f"Total seek count: {total_seek_count}")
+    print(f"Seek sequence: {seek_sequence}")</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <button class="download-btn" onclick="downloadSSTF()">Download SSTF Algorithm</button>
+            </div>
+
+            <!-- SCAN Algorithm -->
+            <div class="algorithm-section">
+                <h2 class="algorithm-title">3. SCAN Disk Scheduling</h2>
+                <div class="algorithm-description">
+                    <strong>SCAN Algorithm:</strong> Also known as "Elevator Algorithm". The disk arm moves in one direction 
+                    until it reaches the end, then reverses direction. Provides better performance than FCFS and avoids starvation.
+                </div>
+                <div class="code-block">
+                    <pre><code>def scan_disk_scheduling(requests, initial_position, disk_size, direction="right"):
+    seek_sequence = []
+    total_seek_count = 0
+
+    left = [r for r in requests if r < initial_position]
+    right = [r for r in requests if r > initial_position]
+
+    left.sort()
+    right.sort()
+
+    # Add boundaries (0 and last track) depending on direction
+    if direction == "left":
+        left.insert(0, 0)           # go to 0 at the end
+    elif direction == "right":
+        right.append(disk_size - 1) # go to last track at the end
+
+    # Start sequence with initial head
+    seek_sequence.append(initial_position)
+
+    if direction == "left":
+        # First go left, then right
+        for r in reversed(left):
+            seek_sequence.append(r)
+        for r in right:
+            seek_sequence.append(r)
+    elif direction == "right":
+        # First go right, then left
+        for r in right:
+            seek_sequence.append(r)
+        for r in reversed(left):
+            seek_sequence.append(r)
+
+    # Calculate total head movement
+    for i in range(1, len(seek_sequence)):
+        total_seek_count += abs(seek_sequence[i] - seek_sequence[i - 1])
+
+    return total_seek_count, seek_sequence
+
+# Example usage
+if __name__ == "__main__":
+    requests = list(map(int, input("Enter disk requests (space-separated): ").split()))
+    initial_position = int(input("Enter initial position of the disk arm: "))
+    disk_size = int(input("Enter the total number of tracks in the disk: "))
+
+    total_seek_count, seek_sequence = scan_disk_scheduling(requests, initial_position, disk_size, direction="left")
+
+    print(f"Total seek count: {total_seek_count}")
+    print(f"Seek sequence: {seek_sequence}")</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <button class="download-btn" onclick="downloadSCAN()">Download SCAN Algorithm</button>
+            </div>
+
+            <!-- C-SCAN Algorithm -->
+            <div class="algorithm-section">
+                <h2 class="algorithm-title">4. C-SCAN (Circular SCAN) Disk Scheduling</h2>
+                <div class="algorithm-description">
+                    <strong>C-SCAN Algorithm:</strong> Circular version of SCAN. Head moves in one direction, and when it reaches 
+                    the end, it immediately jumps to the other end and continues in the same direction. Provides uniform wait time.
+                </div>
+                <div class="code-block">
+                    <pre><code>def cscan_disk_scheduling(requests, head, disk_size, direction="right"):
+    # Separate requests into left and right of head
+    left = [r for r in requests if r < head]
+    right = [r for r in requests if r > head]
+
+    left.sort()
+    right.sort()
+
+    seek_sequence = [head]
+    total_movement = 0
+
+    if direction == "right":
+        # Service right side first
+        for r in right:
+            seek_sequence.append(r)
+        # Go to end of disk
+        seek_sequence.append(disk_size - 1)
+        # Jump to start of disk
+        seek_sequence.append(0)
+        # Then service left side
+        for r in left:
+            seek_sequence.append(r)
+
+    else:  # direction == "left"
+        # Service left side first
+        for r in reversed(left):
+            seek_sequence.append(r)
+        # Go to start of disk
+        seek_sequence.append(0)
+        # Jump to end of disk
+        seek_sequence.append(disk_size - 1)
+        # Then service right side
+        for r in reversed(right):
+            seek_sequence.append(r)
+
+    # Calculate total head movement step by step
+    for i in range(1, len(seek_sequence)):
+        total_movement += abs(seek_sequence[i] - seek_sequence[i - 1])
+
+    return total_movement, seek_sequence
+
+# Example usage
+if __name__ == "__main__":
+    requests = list(map(int, input("Enter disk requests (space-separated): ").split()))
+    initial_position = int(input("Enter initial position of the disk arm: "))
+    disk_size = int(input("Enter the total number of tracks in the disk: "))
+
+    total_seek_count, seek_sequence = cscan_disk_scheduling(
+        requests, initial_position, disk_size, direction="right"
+    )
+
+    print(f"Total seek count: {total_seek_count}")
+    print(f"Seek sequence: {seek_sequence}")</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <button class="download-btn" onclick="downloadCSCAN()">Download C-SCAN Algorithm</button>
+            </div>
+
+            <!-- LOOK Algorithm -->
+            <div class="algorithm-section">
+                <h2 class="algorithm-title">5. LOOK Disk Scheduling</h2>
+                <div class="algorithm-description">
+                    <strong>LOOK Algorithm:</strong> Similar to SCAN but the head only goes as far as the last request in 
+                    each direction, then reverses. More efficient than SCAN as it doesn't always go to the disk boundaries.
+                </div>
+                <div class="code-block">
+                    <pre><code>def look_disk_scheduling(requests, head, direction="left"):
+    seek_sequence = []
+    seek_count = 0
+
+    left = [r for r in requests if r < head]
+    right = [r for r in requests if r > head]
+
+    left.sort()
+    right.sort()
+
+    # Move left first
+    if direction == "left":
+        for r in reversed(left):
+            seek_sequence.append(r)
+        for r in right:
+            seek_sequence.append(r)
+    else:  # Move right first
+        for r in right:
+            seek_sequence.append(r)
+        for r in reversed(left):
+            seek_sequence.append(r)
+
+    # Calculate total seek count
+    current = head
+    for r in seek_sequence:
+        seek_count += abs(current - r)
+        current = r
+
+    return seek_count, [head] + seek_sequence
+
+# Example usage
+if __name__ == "__main__":
+    requests = list(map(int, input("Enter disk requests (space-separated): ").split()))
+    head = int(input("Enter initial head position: "))
+    direction = input("Enter initial direction (left/right): ").lower()
+
+    total_seek_count, seek_sequence = look_disk_scheduling(requests, head, direction)
+
+    print(f"Total seek count: {total_seek_count}")
+    print(f"Seek sequence: {seek_sequence}")</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <button class="download-btn" onclick="downloadLOOK()">Download LOOK Algorithm</button>
+            </div>
+
+            <!-- C-LOOK Algorithm -->
+            <div class="algorithm-section">
+                <h2 class="algorithm-title">6. C-LOOK (Circular LOOK) Disk Scheduling</h2>
+                <div class="algorithm-description">
+                    <strong>C-LOOK Algorithm:</strong> Circular version of LOOK. Head moves in one direction until no more 
+                    requests, then jumps to the far end and continues in the same direction. Combines efficiency of LOOK with uniformity of C-SCAN.
+                </div>
+                <div class="code-block">
+                    <pre><code>def clook_disk_scheduling(requests, head, direction="left"):
+    seek_sequence = []
+    seek_count = 0
+
+    left = [r for r in requests if r < head]
+    right = [r for r in requests if r > head]
+
+    left.sort()
+    right.sort()
+
+    if direction == "left":
+        # Go left first, then jump to rightmost
+        for r in reversed(left):
+            seek_sequence.append(r)
+        for r in reversed(right):
+            seek_sequence.append(r)
+    else:  # direction == "right"
+        # Go right first, then jump to leftmost
+        for r in right:
+            seek_sequence.append(r)
+        for r in left:
+            seek_sequence.append(r)
+
+    # Calculate total seek count
+    current = head
+    for r in seek_sequence:
+        seek_count += abs(current - r)
+        current = r
+
+    return seek_count, [head] + seek_sequence
+
+# Example usage
+if __name__ == "__main__":
+    requests = list(map(int, input("Enter disk requests (space-separated): ").split()))
+    head = int(input("Enter initial head position: "))
+    direction = input("Enter initial direction (left/right): ").lower()
+
+    total_seek_count, seek_sequence = clook_disk_scheduling(requests, head, direction)
+
+    print(f"Total seek count: {total_seek_count}")
+    print(f"Seek sequence: {seek_sequence}")</code></pre>
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                </div>
+                <button class="download-btn" onclick="downloadCLOOK()">Download C-LOOK Algorithm</button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        function copyCode(button) {
+            const pre = button.previousElementSibling;
+            const code = pre.querySelector('code').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                button.textContent = 'Copied!';
+                setTimeout(() => {
+                    button.textContent = 'Copy';
+                }, 2000);
+            });
+        }
+
+        function downloadFCFS() {
+            const code = `def fcfs_disk_scheduling(requests, initial_position):
+    total_seek_count = 0  # Total number of tracks the disk arm moves
+    seek_sequence = []  # Sequence of tracks the disk arm moves to
+
+    current_position = initial_position
+    seek_sequence.append(current_position)
+
+    # Process each request in the order they arrive
+    for request in requests:
+        seek_count = abs(current_position - request)
+        total_seek_count += seek_count
+        current_position = request
+        seek_sequence.append(current_position)
+
+    return total_seek_count, seek_sequence
+
+# Example usage
+if __name__ == "__main__":
+    requests = list(map(int, input("Enter disk requests (space-separated): ").split()))
+    initial_position = int(input("Enter initial position of the disk arm: "))
+
+    total_seek_count, seek_sequence = fcfs_disk_scheduling(requests, initial_position)
+
+    print(f"Total seek count: {total_seek_count}")
+    print(f"Seek sequence: {seek_sequence}")`;
+            
+            downloadFile(code, 'fcfs_disk_scheduling.py');
+        }
+
+        function downloadSSTF() {
+            const code = `def sstf_disk_scheduling(requests, initial_position):
+    total_seek_count = 0  # Total number of tracks the disk arm moves
+    seek_sequence = []  # Sequence of tracks the disk arm moves to
+
+    current_position = initial_position
+    seek_sequence.append(current_position)
+
+    # Continue until all requests are processed
+    while requests:
+        # Find the closest request to the current position
+        closest_request = min(requests, key=lambda x: abs(x - current_position))
+        seek_count = abs(current_position - closest_request)
+        total_seek_count += seek_count
+        current_position = closest_request
+        requests.remove(closest_request)
+        seek_sequence.append(current_position)
+
+    return total_seek_count, seek_sequence
+
+# Example usage
+if __name__ == "__main__":
+    requests = list(map(int, input("Enter disk requests (space-separated): ").split()))
+    initial_position = int(input("Enter initial position of the disk arm: "))
+
+    total_seek_count, seek_sequence = sstf_disk_scheduling(requests, initial_position)
+
+    print(f"Total seek count: {total_seek_count}")
+    print(f"Seek sequence: {seek_sequence}")`;
+            
+            downloadFile(code, 'sstf_disk_scheduling.py');
+        }
+
+        function downloadSCAN() {
+            const code = `def scan_disk_scheduling(requests, initial_position, disk_size, direction="right"):
+    seek_sequence = []
+    total_seek_count = 0
+
+    left = [r for r in requests if r < initial_position]
+    right = [r for r in requests if r > initial_position]
+
+    left.sort()
+    right.sort()
+
+    # Add boundaries (0 and last track) depending on direction
+    if direction == "left":
+        left.insert(0, 0)           # go to 0 at the end
+    elif direction == "right":
+        right.append(disk_size - 1) # go to last track at the end
+
+    # Start sequence with initial head
+    seek_sequence.append(initial_position)
+
+    if direction == "left":
+        # First go left, then right
+        for r in reversed(left):
+            seek_sequence.append(r)
+        for r in right:
+            seek_sequence.append(r)
+    elif direction == "right":
+        # First go right, then left
+        for r in right:
+            seek_sequence.append(r)
+        for r in reversed(left):
+            seek_sequence.append(r)
+
+    # Calculate total head movement
+    for i in range(1, len(seek_sequence)):
+        total_seek_count += abs(seek_sequence[i] - seek_sequence[i - 1])
+
+    return total_seek_count, seek_sequence
+
+# Example usage
+if __name__ == "__main__":
+    requests = list(map(int, input("Enter disk requests (space-separated): ").split()))
+    initial_position = int(input("Enter initial position of the disk arm: "))
+    disk_size = int(input("Enter the total number of tracks in the disk: "))
+
+    total_seek_count, seek_sequence = scan_disk_scheduling(requests, initial_position, disk_size, direction="left")
+
+    print(f"Total seek count: {total_seek_count}")
+    print(f"Seek sequence: {seek_sequence}")`;
+            
+            downloadFile(code, 'scan_disk_scheduling.py');
+        }
+
+        function downloadCSCAN() {
+            const code = `def cscan_disk_scheduling(requests, head, disk_size, direction="right"):
+    # Separate requests into left and right of head
+    left = [r for r in requests if r < head]
+    right = [r for r in requests if r > head]
+
+    left.sort()
+    right.sort()
+
+    seek_sequence = [head]
+    total_movement = 0
+
+    if direction == "right":
+        # Service right side first
+        for r in right:
+            seek_sequence.append(r)
+        # Go to end of disk
+        seek_sequence.append(disk_size - 1)
+        # Jump to start of disk
+        seek_sequence.append(0)
+        # Then service left side
+        for r in left:
+            seek_sequence.append(r)
+
+    else:  # direction == "left"
+        # Service left side first
+        for r in reversed(left):
+            seek_sequence.append(r)
+        # Go to start of disk
+        seek_sequence.append(0)
+        # Jump to end of disk
+        seek_sequence.append(disk_size - 1)
+        # Then service right side
+        for r in reversed(right):
+            seek_sequence.append(r)
+
+    # Calculate total head movement step by step
+    for i in range(1, len(seek_sequence)):
+        total_movement += abs(seek_sequence[i] - seek_sequence[i - 1])
+
+    return total_movement, seek_sequence
+
+# Example usage
+if __name__ == "__main__":
+    requests = list(map(int, input("Enter disk requests (space-separated): ").split()))
+    initial_position = int(input("Enter initial position of the disk arm: "))
+    disk_size = int(input("Enter the total number of tracks in the disk: "))
+
+    total_seek_count, seek_sequence = cscan_disk_scheduling(
+        requests, initial_position, disk_size, direction="right"
+    )
+
+    print(f"Total seek count: {total_seek_count}")
+    print(f"Seek sequence: {seek_sequence}")`;
+            
+            downloadFile(code, 'cscan_disk_scheduling.py');
+        }
+
+        function downloadLOOK() {
+            const code = `def look_disk_scheduling(requests, head, direction="left"):
+    seek_sequence = []
+    seek_count = 0
+
+    left = [r for r in requests if r < head]
+    right = [r for r in requests if r > head]
+
+    left.sort()
+    right.sort()
+
+    # Move left first
+    if direction == "left":
+        for r in reversed(left):
+            seek_sequence.append(r)
+        for r in right:
+            seek_sequence.append(r)
+    else:  # Move right first
+        for r in right:
+            seek_sequence.append(r)
+        for r in reversed(left):
+            seek_sequence.append(r)
+
+    # Calculate total seek count
+    current = head
+    for r in seek_sequence:
+        seek_count += abs(current - r)
+        current = r
+
+    return seek_count, [head] + seek_sequence
+
+# Example usage
+if __name__ == "__main__":
+    requests = list(map(int, input("Enter disk requests (space-separated): ").split()))
+    head = int(input("Enter initial head position: "))
+    direction = input("Enter initial direction (left/right): ").lower()
+
+    total_seek_count, seek_sequence = look_disk_scheduling(requests, head, direction)
+
+    print(f"Total seek count: {total_seek_count}")
+    print(f"Seek sequence: {seek_sequence}")`;
+            
+            downloadFile(code, 'look_disk_scheduling.py');
+        }
+
+        function downloadCLOOK() {
+            const code = `def clook_disk_scheduling(requests, head, direction="left"):
+    seek_sequence = []
+    seek_count = 0
+
+    left = [r for r in requests if r < head]
+    right = [r for r in requests if r > head]
+
+    left.sort()
+    right.sort()
+
+    if direction == "left":
+        # Go left first, then jump to rightmost
+        for r in reversed(left):
+            seek_sequence.append(r)
+        for r in reversed(right):
+            seek_sequence.append(r)
+    else:  # direction == "right"
+        # Go right first, then jump to leftmost
+        for r in right:
+            seek_sequence.append(r)
+        for r in left:
+            seek_sequence.append(r)
+
+    # Calculate total seek count
+    current = head
+    for r in seek_sequence:
+        seek_count += abs(current - r)
+        current = r
+
+    return seek_count, [head] + seek_sequence
+
+# Example usage
+if __name__ == "__main__":
+    requests = list(map(int, input("Enter disk requests (space-separated): ").split()))
+    head = int(input("Enter initial head position: "))
+    direction = input("Enter initial direction (left/right): ").lower()
+
+    total_seek_count, seek_sequence = clook_disk_scheduling(requests, head, direction)
+
+    print(f"Total seek count: {total_seek_count}")
+    print(f"Seek sequence: {seek_sequence}")`;
+            
+            downloadFile(code, 'clook_disk_scheduling.py');
+        }
+
+        function downloadFile(content, filename) {
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
