@@ -70,7 +70,8 @@
             <p>This project demonstrates analog input reading and conditional logic for creating responsive IoT systems.</p>
             
             <div style="text-align: center; margin: 20px 0;">
-                <button id="toggleDiagramBtn" style="padding: 8px 16px; border: none; border-radius: 5px; background-color: var(--accent-color); color: white; cursor: pointer; margin-bottom: 10px; transition: background-color 0.3s ease;">Show Circuit Diagram</button>
+                <button id="toggleDiagramBtn" style="padding: 8px 16px; border: none; border-radius: 5px; background-color: var(--accent-color); color: white; cursor: pointer; margin-bottom: 10px; margin-right: 10px; transition: background-color 0.3s ease;">Show Circuit Diagram</button>
+                <button id="downloadCircuitBtn" style="padding: 8px 16px; border: none; border-radius: 5px; background-color: #27ae60; color: white; cursor: pointer; margin-bottom: 10px; transition: background-color 0.3s ease;" onclick="downloadCircuitFile()">Download Circuit (.pdsprj)</button>
                 <div id="circuitDiagram" style="display: none;">
                     <img src="../assets/images/iot/LDR.png" alt="LDR Sensor Circuit Diagram" style="max-width: 100%; height: auto; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
                 </div>
@@ -165,6 +166,15 @@ void loop() {
             a.click();
             document.body.removeChild(a);
             window.URL.revokeObjectURL(url);
+        }
+
+        function downloadCircuitFile() {
+            const a = document.createElement('a');
+            a.href = './circuits/ldr.pdsprj';
+            a.download = 'LDR_Circuit.pdsprj';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
         }
 
         // Circuit diagram toggle functionality
