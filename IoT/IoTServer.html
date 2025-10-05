@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoT Server Communication - IoT Practical</title>
+    <link rel="stylesheet" href="../global.css">
+    <link rel="stylesheet" href="../card.css">
+    <style>
+        .document-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 40px;
+            background: #1a1a1a;
+            border: 2px solid #444;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            font-family: 'Times New Roman', serif;
+            line-height: 1.6;
+            color: #e0e0e0;
+        }
+        .document-title {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            text-decoration: underline;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+            color: #ffffff;
+        }
+        .section-title {
+            font-weight: bold;
+            text-decoration: underline;
+            margin-top: 25px;
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: #ffffff;
+        }
+        .content-text {
+            text-align: justify;
+            margin-bottom: 15px;
+            font-size: 12px;
+            color: #e0e0e0;
+        }
+        .bullet-list {
+            margin-left: 20px;
+            margin-bottom: 15px;
+            color: #e0e0e0;
+        }
+        .bullet-list li {
+            margin-bottom: 8px;
+            font-size: 12px;
+            color: #e0e0e0;
+        }
+        .numbered-list {
+            margin-left: 20px;
+            margin-bottom: 15px;
+            color: #e0e0e0;
+        }
+        .numbered-list li {
+            margin-bottom: 10px;
+            font-size: 12px;
+            color: #e0e0e0;
+        }
+        .sub-list {
+            margin-left: 20px;
+            margin-top: 5px;
+            color: #e0e0e0;
+        }
+        .sub-list li {
+            margin-bottom: 5px;
+            color: #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <a href="../index.html" class="back-button">← Back</a>
+        <h1><a href="IoT.html">IoT Practicals</a> / IoT Server Communication</h1>
+    </header>
+
+    <div class="document-container">
+        <div class="document-title">PRACTICAL 8</div>
+        
+        <div class="section-title">AIM:</div>
+        <div class="content-text">Interface any sensor with a microcontroller and send its value over the internet to a server using a suitable protocol.</div>
+
+        <div class="section-title">BACKGROUND THEORY:</div>
+        <div class="content-text">The Internet of Things (IoT) connects devices like sensors and microcontrollers to the internet, allowing them to collect and transmit data. In this practical, a sensor measures a physical parameter, and the microcontroller sends the data to a server or cloud platform for monitoring. Protocols like HTTP, MQTT, and CoAP are used. This demonstrates the key IoT concepts of data acquisition, wireless transmission, and remote monitoring.</div>
+
+        <div class="section-title">Virtual Components (in Proteus):</div>
+        <ul class="bullet-list">
+            <li><strong>Microcontroller (Arduino/ESP32):</strong><br>
+                Reads sensor data, processes it, and sends it to the server.</li>
+            <li><strong>Sensor (e.g., Temperature, Light, Humidity Sensor):</strong><br>
+                Converts a physical quantity into an electrical signal for the microcontroller.</li>
+            <li><strong>Communication Module (Wi-Fi/Ethernet/Bluetooth):</strong><br>
+                Connects the microcontroller to the internet for data transmission.</li>
+            <li><strong>Server/Cloud Platform:</strong><br>
+                Receives, stores, and manages the sensor data; optionally displays it on dashboards (e.g., ThingSpeak, Blynk).</li>
+            <li><strong>Power Supply:</strong><br>
+                Provides necessary voltage to operate the microcontroller and sensor.</li>
+        </ul>
+
+        <div class="section-title">Software Tools:</div>
+        <ul class="bullet-list">
+            <li><strong>Proteus Design Suite:</strong> Used to design and simulate the circuit.</li>
+            <li><strong>Arduino IDE:</strong> Used to write, compile, and generate the .hex file, which is loaded into the virtual Arduino.</li>
+        </ul>
+
+        <div class="section-title">Steps to Implement:</div>
+        <ol class="numbered-list">
+            <li><strong>Place the Components:</strong> Set up the microcontroller (Arduino/ESP32), the chosen sensor (e.g., temperature, light, or humidity), and the communication module (Wi-Fi/Ethernet) on your workbench or in the Proteus simulation.</li>
+            <li><strong>Connect the Sensor:</strong>
+                <ul class="sub-list">
+                    <li>Connect the sensor's output pin to the microcontroller's analog or digital input pin.</li>
+                    <li>Provide proper power and ground connections to both the sensor and microcontroller.</li>
+                </ul>
+            </li>
+            <li><strong>Set Up Internet Connectivity:</strong>
+                <ul class="sub-list">
+                    <li>For Wi-Fi modules (e.g., ESP8266/ESP32), connect to a Wi-Fi network using the appropriate SSID and password.</li>
+                    <li>For Ethernet, connect the microcontroller to a router or network switch.</li>
+                </ul>
+            </li>
+            <li><strong>Write the Microcontroller Program:</strong>
+                <ul class="sub-list">
+                    <li>Use Arduino IDE (or compatible IDE) to write code to read sensor data.</li>
+                    <li>Convert raw sensor readings to meaningful units (e.g., °C for temperature, % for humidity).</li>
+                </ul>
+            </li>
+            <li><strong>Implement Communication Protocol:</strong>
+                <ul class="sub-list">
+                    <li>Choose a suitable protocol (HTTP for web-based servers, MQTT for lightweight messaging, or CoAP for constrained devices).</li>
+                    <li>Program the microcontroller to send the processed sensor data to the server/cloud platform.</li>
+                </ul>
+            </li>
+            <li><strong>Configure the Server/Cloud Platform:</strong>
+                <ul class="sub-list">
+                    <li>Set up the server or IoT cloud platform (e.g., ThingSpeak, Blynk, or custom web server) to receive data.</li>
+                    <li>Create channels or endpoints to store and visualize incoming sensor data.</li>
+                </ul>
+            </li>
+            <li><strong>Send and Verify Data:</strong>
+                <ul class="sub-list">
+                    <li>Upload the program to the microcontroller.</li>
+                    <li>Run the system and ensure the sensor readings are transmitted correctly to the server in real time.</li>
+                </ul>
+            </li>
+            <li><strong>Monitor and Test:</strong>
+                <ul class="sub-list">
+                    <li>Observe the server/dashboard to verify the data updates correctly as sensor conditions change.</li>
+                    <li>Adjust or calibrate the sensor if needed to ensure accurate readings.</li>
+                </ul>
+            </li>
+        </ol>
+    </div>
+</body>
+</html>
