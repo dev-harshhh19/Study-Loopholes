@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Practical 1: Basic C# & ASP.NET - Study Loopholes</title>
+  <link rel="stylesheet" href="../global.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap"
+    rel="stylesheet">
+</head>
+
+<body class="subject-page">
+  <div class="blob-bg"></div>
+  <header class="header">
+    <a href="index.html" class="back-button">← Back to Index</a>
+    <h1>Practical 1: Basic C# & ASP.NET</h1>
+  </header>
+  <main class="container">
+    <article class="content-container">
+      <section id="aim">
+        <h2>Aim</h2>
+        <p><strong>Part A:</strong> Write a console application that obtains four int values from the user and displays
+          the product.</p>
+        <p><strong>Part B:</strong> Create applications to demonstrate: Fibonacci, Prime Check, Vowel Check, foreach
+          with Arrays, Reverse & Sum of Digits.</p>
+      </section>
+
+      <section id="code-section">
+        <h2>Source Code</h2>
+
+        <div class="tabs-container">
+          <button class="tab-btn active" data-target="part-a">Part A (Product)</button>
+          <button class="tab-btn" data-target="part-b">Part B (Operations)</button>
+        </div>
+
+        <!-- Part A - Console App -->
+        <div id="part-a" class="tab-content active">
+
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">Program.cs</div>
+              <span class="code-lang">csharp</span>
+              <button class="copy-btn">📋 Copy code</button>
+            </div>
+            <div class="terminal-body">
+              <pre><code>using System;
+
+namespace ProductOfFour
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Enter four integers:");
+            
+            Console.Write("Number 1: ");
+            int n1 = Convert.ToInt32(Console.ReadLine());
+            
+            Console.Write("Number 2: ");
+            int n2 = Convert.ToInt32(Console.ReadLine());
+            
+            Console.Write("Number 3: ");
+            int n3 = Convert.ToInt32(Console.ReadLine());
+            
+            Console.Write("Number 4: ");
+            int n4 = Convert.ToInt32(Console.ReadLine());
+            
+            long product = (long)n1 * n2 * n3 * n4;
+            
+            Console.WriteLine("\nProduct: " + product);
+            Console.ReadKey();
+        }
+    }
+}</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- Part B - Multiple Operations -->
+        <div id="part-b" class="tab-content">
+
+          <!-- Fibonacci -->
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">Fibonacci.cs</div>
+              <span class="code-lang">csharp</span>
+              <button class="copy-btn">📋 Copy code</button>
+            </div>
+            <div class="terminal-body">
+              <pre><code>using System;
+
+class Fibonacci
+{
+    static void Main()
+    {
+        Console.Write("Enter number of terms: ");
+        int n = Convert.ToInt32(Console.ReadLine());
+        
+        int a = 0, b = 1, c;
+        Console.Write("Fibonacci Series: " + a + " " + b);
+        
+        for (int i = 2; i < n; i++)
+        {
+            c = a + b;
+            Console.Write(" " + c);
+            a = b;
+            b = c;
+        }
+        Console.ReadKey();
+    }
+}</code></pre>
+            </div>
+          </div>
+
+          <!-- Prime Check -->
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">PrimeCheck.cs</div>
+              <span class="code-lang">csharp</span>
+              <button class="copy-btn">📋 Copy code</button>
+            </div>
+            <div class="terminal-body">
+              <pre><code>using System;
+
+class PrimeCheck
+{
+    static void Main()
+    {
+        Console.Write("Enter a number: ");
+        int n = Convert.ToInt32(Console.ReadLine());
+        
+        bool isPrime = n > 1;
+        
+        for (int i = 2; i <= Math.Sqrt(n); i++)
+        {
+            if (n % i == 0)
+            {
+                isPrime = false;
+                break;
+            }
+        }
+        
+        if (isPrime)
+            Console.WriteLine(n + " is a Prime number.");
+        else
+            Console.WriteLine(n + " is NOT a Prime number.");
+        
+        Console.ReadKey();
+    }
+}</code></pre>
+            </div>
+          </div>
+
+          <!-- Vowel Check -->
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">VowelCheck.cs</div>
+              <span class="code-lang">csharp</span>
+              <button class="copy-btn">📋 Copy code</button>
+            </div>
+            <div class="terminal-body">
+              <pre><code>using System;
+
+class VowelCheck
+{
+    static void Main()
+    {
+        Console.Write("Enter a character: ");
+        char c = Console.ReadLine().ToLower()[0];
+        
+        if ("aeiou".Contains(c))
+            Console.WriteLine(c + " is a Vowel.");
+        else
+            Console.WriteLine(c + " is a Consonant.");
+        
+        Console.ReadKey();
+    }
+}</code></pre>
+            </div>
+          </div>
+
+          <!-- Foreach with Array -->
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">ForeachArray.cs</div>
+              <span class="code-lang">csharp</span>
+              <button class="copy-btn">📋 Copy code</button>
+            </div>
+            <div class="terminal-body">
+              <pre><code>using System;
+
+class ForeachArray
+{
+    static void Main()
+    {
+        string[] technologies = { "ASP.NET", "C#", "SQL Server", "HTML5", "CSS3" };
+        
+        Console.WriteLine("Technologies Array:");
+        
+        foreach (string tech in technologies)
+        {
+            Console.WriteLine(" - " + tech);
+        }
+        
+        Console.ReadKey();
+    }
+}</code></pre>
+            </div>
+          </div>
+
+          <!-- Reverse & Sum of Digits -->
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">ReverseSum.cs</div>
+              <span class="code-lang">csharp</span>
+              <button class="copy-btn">📋 Copy code</button>
+            </div>
+            <div class="terminal-body">
+              <pre><code>using System;
+
+class ReverseSum
+{
+    static void Main()
+    {
+        Console.Write("Enter a number: ");
+        int n = Convert.ToInt32(Console.ReadLine());
+        
+        int original = n;
+        int reverse = 0;
+        int sum = 0;
+        
+        while (n > 0)
+        {
+            int digit = n % 10;
+            reverse = reverse * 10 + digit;
+            sum += digit;
+            n /= 10;
+        }
+        
+        Console.WriteLine("Original: " + original);
+        Console.WriteLine("Reversed: " + reverse);
+        Console.WriteLine("Sum of Digits: " + sum);
+        
+        Console.ReadKey();
+    }
+}</code></pre>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+    </article>
+  </main>
+  <footer class="footer">
+    <p>© 2026 Study Loopholes</p>
+  </footer>
+  <script src="../global.js"></script>
+</body>
+
+</html>
