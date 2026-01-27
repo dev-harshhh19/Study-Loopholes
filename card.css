@@ -1,14 +1,11 @@
 /* card.css - Practical Cards Styles for Study Loopholes */
 
 /* Card Base Styles */
-/* Card Base Styles */
 .card {
-  background: rgba(27, 38, 59, 0.7);
-  /* prussian-blue */
+  background: var(--bg-card);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(224, 225, 221, 0.1);
-  /* alabaster-grey */
+  border: 1px solid rgba(21, 86, 116, 0.2);
   border-radius: 16px;
   padding: 2rem;
   text-decoration: none;
@@ -21,15 +18,15 @@
   align-items: center;
   text-align: center;
   height: 100%;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
 }
 
 /* Card Hover Effects */
 .card:hover {
   transform: translateY(-8px);
-  background: rgba(27, 38, 59, 0.95);
-  box-shadow: 0 20px 40px -5px rgba(13, 27, 42, 0.5);
-  /* ink-black shadow */
-  border-color: var(--dusty-denim);
+  background: var(--bg-card);
+  box-shadow: 0 20px 40px -5px rgba(21, 86, 116, 0.25);
+  border-color: var(--color-secondary);
 }
 
 .card:hover .card-icon {
@@ -64,60 +61,60 @@
 }
 
 /* Custom Gradients/Glows based on Subjects */
-/* ASP.NET - Purple/Violet */
+/* ASP.NET - Primary Blue */
 .card.aspnet::before {
-  background: radial-gradient(circle at top right, rgba(168, 85, 247, 0.2), transparent 70%);
+  background: radial-gradient(circle at top right, rgba(21, 86, 116, 0.3), transparent 70%);
 }
 
 .card.aspnet:hover {
-  border-color: #a855f7;
-  box-shadow: 0 20px 40px -5px rgba(168, 85, 247, 0.25);
+  border-color: var(--color-primary);
+  box-shadow: 0 20px 40px -5px rgba(21, 86, 116, 0.3);
 }
 
 .card.aspnet .card-icon {
-  text-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+  filter: drop-shadow(0 0 15px rgba(21, 86, 116, 0.5));
 }
 
-/* JAVA ADV - Orange/Red */
+/* JAVA ADV - Secondary Teal */
 .card.java-adv::before {
-  background: radial-gradient(circle at top right, rgba(249, 115, 22, 0.2), transparent 70%);
+  background: radial-gradient(circle at top right, rgba(96, 190, 179, 0.3), transparent 70%);
 }
 
 .card.java-adv:hover {
-  border-color: #f97316;
-  box-shadow: 0 20px 40px -5px rgba(249, 115, 22, 0.25);
+  border-color: var(--color-secondary);
+  box-shadow: 0 20px 40px -5px rgba(96, 190, 179, 0.3);
 }
 
 .card.java-adv .card-icon {
-  text-shadow: 0 0 20px rgba(249, 115, 22, 0.5);
+  filter: drop-shadow(0 0 15px rgba(96, 190, 179, 0.5));
 }
 
-/* MMC - Emerald/Green */
+/* MMC - Accent Mint Green */
 .card.mmc::before {
-  background: radial-gradient(circle at top right, rgba(16, 185, 129, 0.2), transparent 70%);
+  background: radial-gradient(circle at top right, rgba(121, 248, 187, 0.3), transparent 70%);
 }
 
 .card.mmc:hover {
-  border-color: #10b981;
-  box-shadow: 0 20px 40px -5px rgba(16, 185, 129, 0.25);
+  border-color: var(--color-accent);
+  box-shadow: 0 20px 40px -5px rgba(121, 248, 187, 0.3);
 }
 
 .card.mmc .card-icon {
-  text-shadow: 0 0 20px rgba(16, 185, 129, 0.5);
+  filter: drop-shadow(0 0 15px rgba(121, 248, 187, 0.5));
 }
 
-/* Internet Technology - Blue/Cyan */
+/* Internet Technology - Cyan */
 .card.internet-tech::before {
-  background: radial-gradient(circle at top right, rgba(6, 182, 212, 0.2), transparent 70%);
+  background: radial-gradient(circle at top right, rgba(6, 182, 212, 0.3), transparent 70%);
 }
 
 .card.internet-tech:hover {
   border-color: #06b6d4;
-  box-shadow: 0 20px 40px -5px rgba(6, 182, 212, 0.25);
+  box-shadow: 0 20px 40px -5px rgba(6, 182, 212, 0.3);
 }
 
 .card.internet-tech .card-icon {
-  text-shadow: 0 0 20px rgba(6, 182, 212, 0.5);
+  filter: drop-shadow(0 0 15px rgba(6, 182, 212, 0.5));
 }
 
 /* Pseudo-element for gradient background */
