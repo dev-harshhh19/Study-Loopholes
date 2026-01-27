@@ -1,66 +1,28 @@
 /* global.css - Global UI Design Styles for Study Loopholes */
 
-/* CSS Variables for Light/Dark Mode Theming */
+/* CSS Variables for Professional Theming */
 :root {
-  /* New Color Palette */
-  --color-text: #030c11;
-  --color-background: #f3f6f8;
-  --color-primary: #155674;
-  --color-secondary: #60beb3;
-  --color-accent: #79f8bb;
+  /* User Provided Palette */
+  --ink-black: #0d1b2aff;
+  --prussian-blue: #1b263bff;
+  --dusk-blue: #415a77ff;
+  --dusty-denim: #778da9ff;
+  --alabaster-grey: #e0e1ddff;
 
-  /* Semantic Mappings - Light Mode Default */
-  --bg-dark: var(--color-background);
-  --bg-card: #ffffff;
-  --text-primary: var(--color-text);
-  --text-secondary: #5a6a72;
-  --accent-primary: var(--color-primary);
-  --accent-secondary: var(--color-secondary);
-  --accent-glow: rgba(121, 248, 187, 0.4);
+  /* Semantic Mappings */
+  --bg-dark: var(--ink-black);
+  --bg-card: var(--prussian-blue);
+  --text-primary: var(--alabaster-grey);
+  --text-secondary: var(--dusty-denim);
+  --accent-primary: var(--dusty-denim);
+  --accent-secondary: var(--dusk-blue);
+  --accent-glow: rgba(119, 141, 169, 0.4);
+  /* Based on dusty-denim */
 
   --font-heading: 'Outfit', sans-serif;
   --font-body: 'Plus Jakarta Sans', sans-serif;
+
   --transition-speed: 0.3s;
-}
-
-/* Dark Mode */
-@media (prefers-color-scheme: dark) {
-  :root {
-    --color-text: #f3f6f8;
-    --color-background: #030c11;
-
-    --bg-dark: var(--color-background);
-    --bg-card: #0a1a24;
-    --text-primary: var(--color-text);
-    --text-secondary: #a0b0b8;
-    --accent-primary: var(--color-primary);
-    --accent-secondary: var(--color-secondary);
-  }
-}
-
-/* Manual Dark Mode Toggle */
-[data-theme="dark"] {
-  --color-text: #f3f6f8;
-  --color-background: #030c11;
-
-  --bg-dark: var(--color-background);
-  --bg-card: #0a1a24;
-  --text-primary: var(--color-text);
-  --text-secondary: #a0b0b8;
-  --accent-primary: var(--color-primary);
-  --accent-secondary: var(--color-secondary);
-}
-
-[data-theme="light"] {
-  --color-text: #030c11;
-  --color-background: #f3f6f8;
-
-  --bg-dark: var(--color-background);
-  --bg-card: #ffffff;
-  --text-primary: var(--color-text);
-  --text-secondary: #5a6a72;
-  --accent-primary: var(--color-primary);
-  --accent-secondary: var(--color-secondary);
 }
 
 /* Base Styles */
@@ -87,20 +49,32 @@ body {
   position: relative;
 }
 
-/* Grid Background Pattern */
+/* Background Blob Effect */
 .blob-bg {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle at center, rgba(65, 90, 119, 0.15) 0%, rgba(13, 27, 42, 0) 50%);
+  /* Using dusk-blue rgb approx */
   z-index: -1;
   pointer-events: none;
-  background-color: var(--bg-dark);
-  background-image:
-    linear-gradient(to right, rgba(75, 85, 99, 0.4) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(75, 85, 99, 0.4) 1px, transparent 1px);
-  background-size: 40px 40px;
+  animation: pulse 10s ease-in-out infinite;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.5;
+  }
+
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
 }
 
 /* Typography */
