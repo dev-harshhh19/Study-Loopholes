@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Practical 4: LAN with Switch - Internet Technology</title>
+  <title>Practical 9: Static IP (3 Routers, 3 PCs) - Internet Technology</title>
   <link rel="stylesheet" href="../global.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -169,68 +169,63 @@
   <div class="blob-bg"></div>
   <header class="header">
     <a href="index.html" class="back-button">← Back to Index</a>
-    <h1>Practical 4: LAN with Switch</h1>
+    <h1>Practical 9: Static IP (3 Routers, 3 PCs)</h1>
   </header>
   <main class="container">
     <article class="content-container">
       <section id="aim">
         <h2>Aim</h2>
-        <p>Configure network connection using switch in Cisco Packet Tracer.</p>
+        <p>Simulate static IP configuration using 3 routers and 3 PCs in Cisco Packet Tracer.</p>
       </section>
 
       <section id="background">
         <h2>Background Information</h2>
-        <p>This practical demonstrates the basic concept of a Local Area Network (LAN) using a switch in Cisco Packet
-          Tracer (CPT). Multiple end devices are connected through a switch and configured with IP addresses belonging
-          to the same network. The switch forwards frames based on MAC addresses. Connectivity is verified using the
-          <code>ping</code> command, which sends ICMP packets between devices. The simulation mode in CPT visually
-          displays packet transmission, helping learners understand switching, addressing, and basic network
-          troubleshooting concepts.
-        </p>
+        <p>This practical demonstrates static IP addressing and routing in a multi-router network. Each router connects
+          to one PC in a separate network. Serial connections are used between routers to enable inter-network
+          communication. Static routes are configured so that all PCs can communicate with each other across different
+          networks.</p>
       </section>
 
       <section id="procedure">
         <h2>Procedure</h2>
         <ol>
           <li>
-            <h3>Place end devices and switch</h3>
-            <p>Select PC from the End Devices menu and place it on the workspace.</p>
-            <p>Select another PC and place it on the workspace.</p>
-            <p>Select a Switch (2960) from the Network Devices menu and place it on the workspace.</p>
+            <h3>Place Network Devices</h3>
+            <p>Place 3 PCs and 3 Routers (2911 recommended) on the workspace.</p>
+          </li>
+          <li>
+            <h3>Add Serial Modules</h3>
+            <p>Turn OFF the routers and add <strong>HWIC-2T</strong> modules to each to enable serial ports.</p>
           </li>
           <li>
             <h3>Connect the Devices</h3>
-            <p>Use Copper Straight-Through cable.</p>
-            <p>Connect PC0 (FastEthernet0) to Switch (FastEthernet0/1).</p>
-            <p>Connect PC1 (FastEthernet0) to Switch (FastEthernet0/2).</p>
+            <div class="highlight-box">
+              <strong>PC to Router:</strong> Copper Cross-Over cable.<br>
+              <strong>Router to Router:</strong> Serial DCE cable.
+            </div>
           </li>
           <li>
             <h3>Configure IP Addresses</h3>
-            <div class="highlight-box">
-              <strong>PC0 Configuration:</strong><br>
-              Desktop → IP Configuration<br>
-              IP Address: <code>192.168.1.1</code><br>
-              Subnet Mask: <code>255.255.255.0</code> (auto-filled)
-            </div>
-            <div class="highlight-box">
-              <strong>PC1 Configuration:</strong><br>
-              Desktop → IP Configuration<br>
-              IP Address: <code>192.168.1.2</code><br>
-              Subnet Mask: <code>255.255.255.0</code> (auto-filled)
-            </div>
+            <p>Assign IPs to PCs and Router interfaces (Gig0/0 and Serial) as specified in the network plan.</p>
+          </li>
+          <li>
+            <h3>Configure Static Routing</h3>
+            <pre><code># Router0
+ip route 192.168.2.0 255.255.255.0 10.0.0.2
+ip route 192.168.3.0 255.255.255.0 10.0.0.2
+
+# Router1
+ip route 192.168.1.0 255.255.255.0 10.0.0.1
+ip route 192.168.3.0 255.255.255.0 10.0.0.6
+
+# Router2
+ip route 192.168.1.0 255.255.255.0 10.0.0.5
+ip route 192.168.2.0 255.255.255.0 10.0.0.5</code></pre>
           </li>
           <li>
             <h3>Verify Connectivity</h3>
-            <p><strong>On PC0:</strong> Desktop → Command Prompt</p>
-            <pre><code>ping 192.168.1.2</code></pre>
-            <p><strong>On PC1:</strong> Desktop → Command Prompt</p>
-            <pre><code>ping 192.168.1.1</code></pre>
-          </li>
-          <li>
-            <h3>Simulation Mode (Optional)</h3>
-            <p>Switch to Simulation Mode in Packet Tracer.</p>
-            <p>Run <code>ping</code> from PC0 to PC1.</p>
-            <p>Observe ICMP packets moving from PC0 → Switch → PC1.</p>
+            <p>Ping between PCs in different networks (e.g., PC0 to PC2). Successful replies confirm the routing setup.
+            </p>
           </li>
         </ol>
       </section>
@@ -238,8 +233,8 @@
       <section id="resources">
         <h2>Resources</h2>
         <p>Download the Cisco Packet Tracer file for this practical:</p>
-        <a href="assets/SwitchConfig.pkt" class="download-button" download>
-          📥 Download SwitchConfig.pkt
+        <a href="assets/Static_IP_Config.pkt" class="download-button" download>
+          📥 Download Static_IP_Config.pkt
         </a>
       </section>
     </article>

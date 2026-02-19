@@ -59,3 +59,6 @@ yarn.lock
 *.backup
 
 **/codes/
+
+# Ignore all .pdf files
+*.pdf

@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Practical 4: LAN with Switch - Internet Technology</title>
+  <title>Practical 8: Telnet & FTP - Internet Technology</title>
   <link rel="stylesheet" href="../global.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -169,68 +169,63 @@
   <div class="blob-bg"></div>
   <header class="header">
     <a href="index.html" class="back-button">← Back to Index</a>
-    <h1>Practical 4: LAN with Switch</h1>
+    <h1>Practical 8: Telnet & FTP</h1>
   </header>
   <main class="container">
     <article class="content-container">
       <section id="aim">
         <h2>Aim</h2>
-        <p>Configure network connection using switch in Cisco Packet Tracer.</p>
+        <p>Configure Telnet and FTP protocols in Cisco Packet Tracer.</p>
       </section>
 
       <section id="background">
         <h2>Background Information</h2>
-        <p>This practical demonstrates the basic concept of a Local Area Network (LAN) using a switch in Cisco Packet
-          Tracer (CPT). Multiple end devices are connected through a switch and configured with IP addresses belonging
-          to the same network. The switch forwards frames based on MAC addresses. Connectivity is verified using the
-          <code>ping</code> command, which sends ICMP packets between devices. The simulation mode in CPT visually
-          displays packet transmission, helping learners understand switching, addressing, and basic network
-          troubleshooting concepts.
-        </p>
+        <p>This practical demonstrates remote access and file transfer services using Telnet and FTP. Telnet allows
+          remote login access to a router, while FTP (File Transfer Protocol) allows file sharing between a client PC
+          and a server. In this setup, the router is configured for Telnet access, and a server device is configured to
+          provide FTP service.</p>
       </section>
 
       <section id="procedure">
         <h2>Procedure</h2>
         <ol>
           <li>
-            <h3>Place end devices and switch</h3>
-            <p>Select PC from the End Devices menu and place it on the workspace.</p>
-            <p>Select another PC and place it on the workspace.</p>
-            <p>Select a Switch (2960) from the Network Devices menu and place it on the workspace.</p>
+            <h3>Place Network Devices</h3>
+            <p>Place 2 PCs, 1 Switch (2960), 1 Router (2911 or 1941), and 1 Server on the workspace.</p>
           </li>
           <li>
             <h3>Connect the Devices</h3>
-            <p>Use Copper Straight-Through cable.</p>
-            <p>Connect PC0 (FastEthernet0) to Switch (FastEthernet0/1).</p>
-            <p>Connect PC1 (FastEthernet0) to Switch (FastEthernet0/2).</p>
+            <p>Use Copper Straight-Through cables to connect all devices to the switch.</p>
           </li>
           <li>
             <h3>Configure IP Addresses</h3>
             <div class="highlight-box">
-              <strong>PC0 Configuration:</strong><br>
-              Desktop → IP Configuration<br>
-              IP Address: <code>192.168.1.1</code><br>
-              Subnet Mask: <code>255.255.255.0</code> (auto-filled)
-            </div>
-            <div class="highlight-box">
-              <strong>PC1 Configuration:</strong><br>
-              Desktop → IP Configuration<br>
-              IP Address: <code>192.168.1.2</code><br>
-              Subnet Mask: <code>255.255.255.0</code> (auto-filled)
+              <strong>Router (Gig0/0):</strong> 192.168.20.1<br>
+              <strong>PC0:</strong> 192.168.20.2<br>
+              <strong>PC1:</strong> 192.168.20.3<br>
+              <strong>Server:</strong> 192.168.20.10
             </div>
           </li>
           <li>
-            <h3>Verify Connectivity</h3>
-            <p><strong>On PC0:</strong> Desktop → Command Prompt</p>
-            <pre><code>ping 192.168.1.2</code></pre>
-            <p><strong>On PC1:</strong> Desktop → Command Prompt</p>
-            <pre><code>ping 192.168.1.1</code></pre>
+            <h3>Configure Telnet on Router</h3>
+            <pre><code>enable
+configure terminal
+username admin password admin123
+line vty 0 4
+login local
+transport input telnet
+exit</code></pre>
           </li>
           <li>
-            <h3>Simulation Mode (Optional)</h3>
-            <p>Switch to Simulation Mode in Packet Tracer.</p>
-            <p>Run <code>ping</code> from PC0 to PC1.</p>
-            <p>Observe ICMP packets moving from PC0 → Switch → PC1.</p>
+            <h3>Configure FTP on Server</h3>
+            <p>1. Click Server → Services → FTP.</p>
+            <p>2. Turn FTP service <strong>ON</strong>.</p>
+            <p>3. Add user: Username <code>ftpuser</code>, Password <code>ftp123</code>.</p>
+          </li>
+          <li>
+            <h3>Verify Connections</h3>
+            <p><strong>Telnet:</strong> From PC0 Command Prompt: <code>telnet 192.168.20.1</code>.</p>
+            <p><strong>FTP:</strong> From PC1 Command Prompt: <code>ftp 192.168.20.10</code>.</p>
           </li>
         </ol>
       </section>
@@ -238,8 +233,8 @@
       <section id="resources">
         <h2>Resources</h2>
         <p>Download the Cisco Packet Tracer file for this practical:</p>
-        <a href="assets/SwitchConfig.pkt" class="download-button" download>
-          📥 Download SwitchConfig.pkt
+        <a href="assets/TAILNET_and_FTP.pkt" class="download-button" download>
+          📥 Download TAILNET_and_FTP.pkt
         </a>
       </section>
     </article>

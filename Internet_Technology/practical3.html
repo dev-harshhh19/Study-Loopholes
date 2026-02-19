@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Practical 4: LAN with Switch - Internet Technology</title>
+  <title>Practical 3: Repeater Simulation - Internet Technology</title>
   <link rel="stylesheet" href="../global.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -169,23 +169,20 @@
   <div class="blob-bg"></div>
   <header class="header">
     <a href="index.html" class="back-button">← Back to Index</a>
-    <h1>Practical 4: LAN with Switch</h1>
+    <h1>Practical 3: Repeater Simulation</h1>
   </header>
   <main class="container">
     <article class="content-container">
       <section id="aim">
         <h2>Aim</h2>
-        <p>Configure network connection using switch in Cisco Packet Tracer.</p>
+        <p>Simulate the process of repeater in Cisco Packet Tracer.</p>
       </section>
 
       <section id="background">
         <h2>Background Information</h2>
-        <p>This practical demonstrates the basic concept of a Local Area Network (LAN) using a switch in Cisco Packet
-          Tracer (CPT). Multiple end devices are connected through a switch and configured with IP addresses belonging
-          to the same network. The switch forwards frames based on MAC addresses. Connectivity is verified using the
-          <code>ping</code> command, which sends ICMP packets between devices. The simulation mode in CPT visually
-          displays packet transmission, helping learners understand switching, addressing, and basic network
-          troubleshooting concepts.
+        <p>A repeater is a physical layer (OSI Layer 1) device used to extend network distance. It receives a weak or
+          distorted signal, regenerates it, and forwards it to all connected ports. In Cisco Packet Tracer, a
+          <strong>Hub-PT</strong> is used to simulate a repeater since a hub is essentially a multi-port repeater.
         </p>
       </section>
 
@@ -193,16 +190,16 @@
         <h2>Procedure</h2>
         <ol>
           <li>
-            <h3>Place end devices and switch</h3>
-            <p>Select PC from the End Devices menu and place it on the workspace.</p>
-            <p>Select another PC and place it on the workspace.</p>
-            <p>Select a Switch (2960) from the Network Devices menu and place it on the workspace.</p>
+            <h3>Place End Devices and Hub</h3>
+            <p>Open Cisco Packet Tracer.</p>
+            <p>From End Devices, place <strong>PC0</strong> and <strong>PC1</strong> on the workspace.</p>
+            <p>From Network Devices → Hubs, place a <strong>Hub-PT</strong> (Repeater).</p>
           </li>
           <li>
             <h3>Connect the Devices</h3>
-            <p>Use Copper Straight-Through cable.</p>
-            <p>Connect PC0 (FastEthernet0) to Switch (FastEthernet0/1).</p>
-            <p>Connect PC1 (FastEthernet0) to Switch (FastEthernet0/2).</p>
+            <p>Select Copper Straight-Through cable.</p>
+            <p>Connect PC0 (FastEthernet0) to Hub (Port 0).</p>
+            <p>Connect PC1 (FastEthernet0) to Hub (Port 1).</p>
           </li>
           <li>
             <h3>Configure IP Addresses</h3>
@@ -210,27 +207,27 @@
               <strong>PC0 Configuration:</strong><br>
               Desktop → IP Configuration<br>
               IP Address: <code>192.168.1.1</code><br>
-              Subnet Mask: <code>255.255.255.0</code> (auto-filled)
+              Subnet Mask: <code>255.255.255.0</code>
             </div>
             <div class="highlight-box">
               <strong>PC1 Configuration:</strong><br>
               Desktop → IP Configuration<br>
               IP Address: <code>192.168.1.2</code><br>
-              Subnet Mask: <code>255.255.255.0</code> (auto-filled)
+              Subnet Mask: <code>255.255.255.0</code>
             </div>
           </li>
           <li>
-            <h3>Verify Connectivity</h3>
-            <p><strong>On PC0:</strong> Desktop → Command Prompt</p>
+            <h3>Verify Communication</h3>
+            <p>On PC0 → Command Prompt, type:</p>
             <pre><code>ping 192.168.1.2</code></pre>
-            <p><strong>On PC1:</strong> Desktop → Command Prompt</p>
-            <pre><code>ping 192.168.1.1</code></pre>
+            <p>Observe successful replies.</p>
+            <p>Repeat ping from PC1 to PC0.</p>
           </li>
           <li>
-            <h3>Simulation Mode (Optional)</h3>
-            <p>Switch to Simulation Mode in Packet Tracer.</p>
-            <p>Run <code>ping</code> from PC0 to PC1.</p>
-            <p>Observe ICMP packets moving from PC0 → Switch → PC1.</p>
+            <h3>Simulation Mode</h3>
+            <p>Switch to Simulation Mode.</p>
+            <p>Send a ping from PC0 to PC1.</p>
+            <p>Observe that the signal is broadcast to all hub ports, demonstrating repeater behavior.</p>
           </li>
         </ol>
       </section>
@@ -238,8 +235,8 @@
       <section id="resources">
         <h2>Resources</h2>
         <p>Download the Cisco Packet Tracer file for this practical:</p>
-        <a href="assets/SwitchConfig.pkt" class="download-button" download>
-          📥 Download SwitchConfig.pkt
+        <a href="assets/simRepeater.pkt" class="download-button" download>
+          📥 Download simRepeater.pkt
         </a>
       </section>
     </article>

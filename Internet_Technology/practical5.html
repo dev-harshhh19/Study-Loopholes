@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Practical 5: Hub as Repeater - Internet Technology</title>
+  <title>Practical 5: Hub Configuration - Internet Technology</title>
   <link rel="stylesheet" href="../global.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -169,21 +169,22 @@
   <div class="blob-bg"></div>
   <header class="header">
     <a href="index.html" class="back-button">← Back to Index</a>
-    <h1>Practical 5: Hub as Repeater</h1>
+    <h1>Practical 5: Hub Configuration</h1>
   </header>
   <main class="container">
     <article class="content-container">
       <section id="aim">
         <h2>Aim</h2>
-        <p>Configure network connection using Hub cisco packet tracer</p>
+        <p>Configure network connection using a hub in Cisco Packet Tracer.</p>
       </section>
 
       <section id="background">
         <h2>Background Information</h2>
-        <p>A repeater is a physical layer (OSI Layer 1) device used to extend network distance. It receives a weak or
-          distorted signal, regenerates it, and forwards it to all connected ports. In Cisco Packet Tracer, a
-          <strong>Hub-PT</strong> is used to simulate a repeater since a hub is essentially a multi-port repeater.
-        </p>
+        <p>This practical demonstrates the basic concept of a Local Area Network (LAN) using a hub in Cisco Packet
+          Tracer. Multiple end devices are connected through a hub and configured with IP addresses belonging to the
+          same network. A hub operates at the physical layer and broadcasts incoming data to all connected devices.
+          Connectivity is verified using the <code>ping</code> command, and simulation mode helps visualize data
+          transmission and understand the difference between hub-based and switch-based networks.</p>
       </section>
 
       <section id="procedure">
@@ -191,9 +192,9 @@
         <ol>
           <li>
             <h3>Place End Devices and Hub</h3>
-            <p>Open Cisco Packet Tracer.</p>
-            <p>From End Devices, place <strong>PC0</strong> and <strong>PC1</strong> on the workspace.</p>
-            <p>From Network Devices → Hubs, place a <strong>Hub-PT</strong> (Repeater).</p>
+            <p>Select PC from the End Devices menu and place it on the workspace.</p>
+            <p>Select another PC and place it on the workspace.</p>
+            <p>Select <strong>Hub-PT</strong> from the Network Devices menu and place it on the workspace.</p>
           </li>
           <li>
             <h3>Connect the Devices</h3>
@@ -206,28 +207,29 @@
             <div class="highlight-box">
               <strong>PC0 Configuration:</strong><br>
               Desktop → IP Configuration<br>
-              IP Address: <code>192.168.1.1</code><br>
+              IP Address: <code>192.168.10.1</code><br>
               Subnet Mask: <code>255.255.255.0</code>
             </div>
             <div class="highlight-box">
               <strong>PC1 Configuration:</strong><br>
               Desktop → IP Configuration<br>
-              IP Address: <code>192.168.1.2</code><br>
+              IP Address: <code>192.168.10.2</code><br>
               Subnet Mask: <code>255.255.255.0</code>
             </div>
           </li>
           <li>
-            <h3>Verify Communication</h3>
-            <p>On PC0 → Command Prompt, type:</p>
-            <pre><code>ping 192.168.1.2</code></pre>
-            <p>Observe successful replies.</p>
-            <p>Repeat ping from PC1 to PC0.</p>
+            <h3>Verify Connectivity</h3>
+            <p>On PC0 → Desktop → Command Prompt, type:</p>
+            <pre><code>ping 192.168.10.2</code></pre>
+            <p>On PC1 → Desktop → Command Prompt, type:</p>
+            <pre><code>ping 192.168.10.1</code></pre>
+            <p>Successful replies confirm proper network connectivity.</p>
           </li>
           <li>
             <h3>Simulation Mode</h3>
-            <p>Switch to Simulation Mode.</p>
-            <p>Send a ping from PC0 to PC1.</p>
-            <p>Observe that the signal is broadcast to all hub ports, demonstrating repeater behavior.</p>
+            <p>Switch to Simulation Mode in Cisco Packet Tracer.</p>
+            <p>Run the <code>ping</code> command from PC0 to PC1.</p>
+            <p>Observe ICMP packets traveling from PC0 → Hub → PC1 (and broadcast to other ports if any).</p>
           </li>
         </ol>
       </section>
@@ -235,8 +237,8 @@
       <section id="resources">
         <h2>Resources</h2>
         <p>Download the Cisco Packet Tracer file for this practical:</p>
-        <a href="assets/simRepeater.pkt" class="download-button" download>
-          📥 Download simRepeater.pkt
+        <a href="assets/SimHub.pkt" class="download-button" download>
+          📥 Download SimHub.pkt
         </a>
       </section>
     </article>
