@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Under Construction - Study Loopholes</title>
+  <link rel="stylesheet" href="../global.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    .unavailable-container {
+      text-align: center;
+      max-width: 600px;
+      padding: 4rem 2rem;
+      background: rgba(27, 38, 59, 0.6);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(224, 225, 221, 0.08);
+      border-radius: 24px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    .icon-box {
+      font-size: 5rem;
+      margin-bottom: 2rem;
+      display: inline-block;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
+    }
+
+    h2 {
+      font-size: 2.5rem;
+      margin-bottom: 1.5rem;
+      color: var(--text-primary);
+    }
+
+    p {
+      font-size: 1.2rem;
+      color: var(--text-secondary);
+      margin-bottom: 2.5rem;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      margin-bottom: 3rem;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .progress-fill {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 45%;
+      background: linear-gradient(90deg, var(--accent-secondary), var(--accent-primary));
+      border-radius: 10px;
+      animation: progress-load 2s ease-out forwards;
+    }
+
+    @keyframes progress-load {
+      from { width: 0; }
+      to { width: 45%; }
+    }
+  </style>
+</head>
+
+<body class="subject-page">
+  <div class="blob-bg"></div>
+  <header class="header">
+    <a href="../index.html" class="back-button">← Home</a>
+    <h1>Study Loopholes</h1>
+  </header>
+  <main class="container">
+    <div class="unavailable-container">
+      <div class="icon-box">🚧</div>
+      <h2>Coming Soon!</h2>
+      <p>We are currently working hard to bring you high-quality notes and resources for this subject. Stay tuned!</p>
+      
+      <div class="progress-bar">
+        <div class="progress-fill"></div>
+      </div>
+
+      <a href="../index.html" class="tab-btn active" style="text-decoration: none; display: inline-block;">Return Home</a>
+    </div>
+  </main>
+  <footer class="footer">
+    <p>© 2026 Study Loopholes</p>
+  </footer>
+  <script src="../global.js"></script>
+</body>
+
+</html>
