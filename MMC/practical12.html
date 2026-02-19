@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Practical 12: Mobile Video Clip Editing - MMC</title>
+  <link rel="stylesheet" href="/global.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    .content-container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: rgba(27, 38, 59, 0.6);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(224, 225, 221, 0.08);
+      border-radius: 24px;
+      padding: 4rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    section {
+      margin-bottom: 4rem;
+      position: relative;
+    }
+
+    h2 {
+      font-size: 2rem;
+      color: var(--text-primary);
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    h2::before {
+      content: '';
+      display: block;
+      width: 8px;
+      height: 32px;
+      background: var(--accent-secondary);
+      border-radius: 4px;
+    }
+
+    h3 {
+      color: var(--accent-primary);
+      margin-bottom: 1rem;
+      font-size: 1.4rem;
+      font-weight: 600;
+    }
+
+    p,
+    li {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      line-height: 1.8;
+      margin-bottom: 1.2rem;
+    }
+
+    /* Procedure Steps Styling */
+    ol {
+      list-style: none;
+      padding: 0;
+      counter-reset: procedure-step;
+    }
+
+    ol li {
+      position: relative;
+      padding-left: 3rem;
+      margin-bottom: 3rem;
+    }
+
+    ol li::before {
+      counter-increment: procedure-step;
+      content: counter(procedure-step);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 2.5rem;
+      height: 2.5rem;
+      background: linear-gradient(135deg, var(--accent-secondary), var(--dusk-blue));
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.2rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    ol li::after {
+      content: '';
+      position: absolute;
+      left: 1.2rem;
+      top: 3rem;
+      bottom: -2rem;
+      width: 2px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    ol li:last-child::after {
+      display: none;
+    }
+
+    .highlight-box {
+      background: linear-gradient(to right, rgba(65, 90, 119, 0.1), transparent);
+      border-left: 4px solid var(--accent-primary);
+      padding: 1.5rem;
+      border-radius: 0 12px 12px 0;
+      margin: 2rem 0;
+    }
+
+    .highlight-box strong {
+      color: var(--text-primary);
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+
+<body class="subject-page">
+  <div class="blob-bg"></div>
+  <header class="header">
+    <a href="/MMC/" class="back-button">← Back to Index</a>
+    <h1>Practical 12: Mobile Video Clip Editing</h1>
+  </header>
+  <main class="container">
+    <article class="content-container">
+      <section id="aim">
+        <h2>Aim</h2>
+        <p>To shoot a short video clip using a mobile phone and edit it by adding transitions, titles, and background
+          audio.</p>
+      </section>
+
+      <section id="background">
+        <h2>Background Information</h2>
+        <p>Modern mobile video editing apps like <strong>VN Editor</strong>, <strong>CapCut</strong>, or
+          <strong>LumaFusion</strong>
+          allow users to perform complex editing tasks on their smartphones. Video editing includes sequencing clips,
+          adding transitions to smooth movements between clips, and overlaying titles and background music for a
+          professional finish.
+        </p>
+      </section>
+
+      <section id="procedure">
+        <h2>Procedure</h2>
+        <ol>
+          <li>
+            <h3>Shooting the Video</h3>
+            <p>Use your mobile phone to shoot a 1-minute video clip in <strong>Landscape (16:9)</strong> or
+              <strong>Portrait (9:16)</strong>
+              at 1080p resolution. Ensure good lighting and stable hand movements.
+            </p>
+          </li>
+          <li>
+            <h3>Importing & Sequencing</h3>
+            <p>Open the video editing app and import the recorded clip. Trim unnecessary parts from the beginning or end
+              using the <strong>Split/Trim</strong> tool.</p>
+          </li>
+          <li>
+            <h3>Adding Transitions</h3>
+            <p>If using multiple clips, click the <strong>'+'</strong> icon between them and select a transition like
+              'Dissolve', 'Zoom', or 'Slide'. This ensures the video flows naturally.</p>
+          </li>
+          <li>
+            <h3>Inserting Titles & Text</h3>
+            <div class="highlight-box">
+              <strong>Intro Title:</strong> Add a text overlay at the beginning with your project title.<br>
+              <strong>Subtitles:</strong> Add lower-thirds or captions where necessary to explain parts of the video.
+            </div>
+          </li>
+          <li>
+            <h3>Background Audio Overlay</h3>
+            <p>Go to the Audio track → Music. Choose a royalty-free background track. Ensure the background volume is
+              lower than the original narration (around <strong>10-15%</strong>).</p>
+          </li>
+          <li>
+            <h3>Exporting the Project</h3>
+            <p>Export the final video at 1080p, 30 FPS. Check the final output for any audio-visual synchronization
+              issues.</p>
+          </li>
+        </ol>
+      </section>
+    </article>
+  </main>
+  <footer class="footer">
+    <p>© 2026 Study Loopholes</p>
+  </footer>
+  <script src="/global.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Practical 1: Multimedia Hardware & Tools - MMC</title>
+  <link rel="stylesheet" href="/global.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    .content-container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: rgba(27, 38, 59, 0.6);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(224, 225, 221, 0.08);
+      border-radius: 24px;
+      padding: 4rem;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    section {
+      margin-bottom: 4rem;
+      position: relative;
+    }
+
+    h2 {
+      font-size: 2rem;
+      color: var(--text-primary);
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    h2::before {
+      content: '';
+      display: block;
+      width: 8px;
+      height: 32px;
+      background: var(--accent-secondary);
+      border-radius: 4px;
+    }
+
+    h3 {
+      color: var(--accent-primary);
+      margin-bottom: 1rem;
+      font-size: 1.4rem;
+      font-weight: 600;
+    }
+
+    p,
+    li {
+      color: var(--text-secondary);
+      font-size: 1.1rem;
+      line-height: 1.8;
+      margin-bottom: 1.2rem;
+    }
+
+    /* Procedure Steps Styling */
+    ol {
+      list-style: none;
+      padding: 0;
+      counter-reset: procedure-step;
+    }
+
+    ol li {
+      position: relative;
+      padding-left: 3rem;
+      margin-bottom: 3rem;
+    }
+
+    ol li::before {
+      counter-increment: procedure-step;
+      content: counter(procedure-step);
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 2.5rem;
+      height: 2.5rem;
+      background: linear-gradient(135deg, var(--accent-secondary), var(--dusk-blue));
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 1.2rem;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    ol li::after {
+      content: '';
+      position: absolute;
+      left: 1.2rem;
+      top: 3rem;
+      bottom: -2rem;
+      width: 2px;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    ol li:last-child::after {
+      display: none;
+    }
+
+    .highlight-box {
+      background: linear-gradient(to right, rgba(65, 90, 119, 0.1), transparent);
+      border-left: 4px solid var(--accent-primary);
+      padding: 1.5rem;
+      border-radius: 0 12px 12px 0;
+      margin: 2rem 0;
+    }
+
+    .highlight-box strong {
+      color: var(--text-primary);
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+  </style>
+</head>
+
+<body class="subject-page">
+  <div class="blob-bg"></div>
+  <header class="header">
+    <a href="/MMC/" class="back-button">← Back to Index</a>
+    <h1>Practical 1: Multimedia Hardware & Tools</h1>
+  </header>
+  <main class="container">
+    <article class="content-container">
+      <section id="aim">
+        <h2>Aim</h2>
+        <p>To study the multimedia hardware system and basic software tools.</p>
+      </section>
+
+      <section id="background">
+        <h2>Background Information</h2>
+        <p>A multimedia system is capable of processing, storing, and presenting various types of media such as text,
+          graphics, audio, and video. Hardware components like high-speed CPUs, sufficient RAM, dedicated graphics
+          cards, and input/output devices (microphones, speakers, scanners) are essential. Software tools include
+          authoring tools, image editors (Photoshop), audio editors (Audacity), and video editors (Premiere Pro) that
+          enable the creation and manipulation of multimedia content.</p>
+      </section>
+
+      <section id="procedure">
+        <h2>Study Details</h2>
+        <ol>
+          <li>
+            <h3>Input Devices</h3>
+            <p>Study various devices used to capture media: Digital Cameras, Scanners, Microphones, MIDI keyboards, and
+              Graphic Tablets.</p>
+          </li>
+          <li>
+            <h3>Output Devices</h3>
+            <p>Identify devices used for presentation: High-resolution Monitors, Data Projectors, Speakers, and
+              Printers.</p>
+          </li>
+          <li>
+            <h3>Storage & Processing</h3>
+            <p>Understand the role of RAM, SSDs/HDDs, and Multi-core Processors in handling large multimedia files and
+              rendering tasks.</p>
+          </li>
+          <li>
+            <h3>Software Categories</h3>
+            <div class="highlight-box">
+              <strong>Graphic Tools:</strong> Adobe Photoshop, CorelDRAW, GIMP.<br>
+              <strong>Audio Tools:</strong> Audacity, Adobe Audition, FL Studio.<br>
+              <strong>Video Tools:</strong> Adobe Premiere Pro, Final Cut Pro, DaVinci Resolve.<br>
+              <strong>Authoring Tools:</strong> Adobe Animate, Director, ToolBook.
+            </div>
+          </li>
+        </ol>
+      </section>
+    </article>
+  </main>
+  <footer class="footer">
+    <p>© 2026 Study Loopholes</p>
+  </footer>
+  <script src="/global.js"></script>
+</body>
+
+</html>
