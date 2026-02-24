@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Practical 5: Navigation &amp; Master Page - Study Loopholes</title>
+  <link rel="stylesheet" href="../global.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap"
+    rel="stylesheet">
+</head>
+
+<body class="subject-page">
+  <div class="blob-bg"></div>
+  <header class="header">
+    <a href="index.html" class="back-button">← Back to Index</a>
+    <h1>Practical 5: Navigation &amp; Master Page</h1>
+  </header>
+  <main class="container">
+    <article class="content-container">
+
+      <!-- AIM -->
+      <section id="aim">
+        <h2>Aim</h2>
+        <p><strong>Part A:</strong> Create a Web Form to demonstrate the use of Website Navigation Controls
+          (SiteMapPath, TreeView, Menu).</p>
+        <p><strong>Part B:</strong> Create a Web Application to demonstrate the use of a Master Page with Styles and
+          Themes.</p>
+      </section>
+
+      <!-- THEORY -->
+      <section id="theory">
+        <h2>Background Theory</h2>
+
+        <div class="tabs-container">
+          <button class="tab-btn active" data-target="theory-a5">Part A Theory</button>
+          <button class="tab-btn" data-target="theory-b5">Part B Theory</button>
+        </div>
+
+        <div id="theory-a5" class="tab-content active">
+          <h3>ASP.NET Navigation Controls</h3>
+          <p>
+            Navigation controls in ASP.NET help users move between pages of a website in a structured and intuitive way.
+            They improve usability by providing clear page hierarchy and easy access to different sections.
+          </p>
+          <h4>Navigation Controls Overview</h4>
+          <table class="theory-table">
+            <thead>
+              <tr>
+                <th>Control</th>
+                <th>Tag</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>SiteMapPath</td>
+                <td><code>&lt;asp:SiteMapPath&gt;</code></td>
+                <td>Displays breadcrumb navigation (Home &gt; Products &gt; Electronics) based on
+                  <code>Web.sitemap</code></td>
+              </tr>
+              <tr>
+                <td>TreeView</td>
+                <td><code>&lt;asp:TreeView&gt;</code></td>
+                <td>Shows expandable hierarchical tree of nodes</td>
+              </tr>
+              <tr>
+                <td>Menu</td>
+                <td><code>&lt;asp:Menu&gt;</code></td>
+                <td>Horizontal or vertical navigation menu with optional sub-menus</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>SiteMapPath — How It Works</h4>
+          <ul>
+            <li>Reads the <code>Web.sitemap</code> XML file to know the page hierarchy</li>
+            <li>Automatically shows breadcrumb like: <code>Home &gt; Products &gt; Electronics</code></li>
+            <li>The current page is shown as the last non-clickable item</li>
+            <li>No code-behind needed — it is purely declarative</li>
+          </ul>
+          <h4>TreeView — How It Works</h4>
+          <ul>
+            <li>Nodes are defined statically in ASPX or bound from a data source</li>
+            <li>Clicking a node triggers <code>SelectedNodeChanged</code> event</li>
+            <li><code>TreeView1.SelectedNode.Value</code> gives the selected node's value</li>
+          </ul>
+          <h4>Menu — How It Works</h4>
+          <ul>
+            <li>Menu items are defined using <code>&lt;asp:MenuItem&gt;</code></li>
+            <li>Sub-items appear as dropdowns on hover</li>
+            <li><code>Orientation="Horizontal"</code> or <code>"Vertical"</code> controls layout</li>
+          </ul>
+        </div>
+
+        <div id="theory-b5" class="tab-content">
+          <h3>ASP.NET Master Pages</h3>
+          <p>
+            A <strong>Master Page</strong> defines a common layout (header, navigation, footer) that is shared across
+            multiple pages of an application. Content pages "plug in" their unique content through
+            <code>ContentPlaceHolder</code> regions.
+          </p>
+          <h4>Key Concepts</h4>
+          <table class="theory-table">
+            <thead>
+              <tr>
+                <th>Concept</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Master Page (<code>.master</code>)</td>
+                <td>Contains the shared layout: header, nav, footer + <code>ContentPlaceHolder</code></td>
+              </tr>
+              <tr>
+                <td>ContentPlaceHolder</td>
+                <td>A region in the master page where each content page injects its unique content</td>
+              </tr>
+              <tr>
+                <td>Content Page (<code>.aspx</code>)</td>
+                <td>Links to the master page via <code>MasterPageFile="~/Site1.master"</code></td>
+              </tr>
+              <tr>
+                <td><code>&lt;asp:Content&gt;</code></td>
+                <td>Tag in the content page that maps to a specific <code>ContentPlaceHolderID</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Benefits of Master Pages</h4>
+          <ul>
+            <li>Write layout HTML <strong>once</strong>, reuse across all pages</li>
+            <li>Changing header/footer in one file updates all pages</li>
+            <li>Enforces consistent branding and style across the site</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- SOURCE CODE -->
+      <section id="code-section">
+        <h2>Source Code</h2>
+
+        <div class="tabs-container">
+          <button class="tab-btn active" data-target="nav-sitemap">SiteMapPath</button>
+          <button class="tab-btn" data-target="nav-treeview">TreeView</button>
+          <button class="tab-btn" data-target="nav-menu">Menu</button>
+          <button class="tab-btn" data-target="part-b5">Part B (Master Page)</button>
+        </div>
+
+        <!-- SiteMapPath -->
+        <div id="nav-sitemap" class="tab-content active">
+
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">Web.sitemap</div>
+              <span class="code-lang">xml</span>
+              <button class="copy-btn">📋 Copy code</button>
+            </div>
+            <div class="terminal-body">
+              <pre><code>&lt;?xml version="1.0" encoding="utf-8" ?&gt;
+&lt;siteMap xmlns="http://schemas.microsoft.com/AspNet/SiteMap-File-1.0"&gt;
+  &lt;!-- Root node: Products page --&gt;
+  &lt;siteMapNode title="Products" url="~/Products.aspx"&gt;
+    &lt;!-- Child node: Electronics page (inside Products) --&gt;
+    &lt;siteMapNode title="Electronics" url="~/Electronics.aspx" /&gt;
+  &lt;/siteMapNode&gt;
+&lt;/siteMap&gt;</code></pre>
+            </div>
+          </div>
+
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">Electronics.aspx</div>
+              <span class="code-lang">aspx</span>
+              <button class="copy-btn">📋 Copy code</button>
+            </div>
+            <div class="terminal-body">
+              <pre><code>&lt;%@ Page Language="C#" AutoEventWireup="true"
+CodeBehind="Electronics.aspx.cs"
+Inherits="Prac5.Electronics" %&gt;
+
+&lt;!DOCTYPE html&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
+&lt;head runat="server"&gt;
+    &lt;title&gt;Electronics&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;form id="form1" runat="server"&gt;
+
+    &lt;!-- SiteMapPath automatically shows: Products &gt; Electronics --&gt;
+    &lt;asp:SiteMapPath ID="SiteMapPath1" runat="server" /&gt;
+
+    &lt;h2&gt;Electronics Section&lt;/h2&gt;
+    &lt;p&gt;Welcome to the Electronics page!&lt;/p&gt;
+
+&lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+            </div>
+          </div>
+
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">Output</div>
+              <span class="code-lang">output</span>
+            </div>
+            <div class="terminal-body">
+              <pre><code>Breadcrumb shown on Electronics.aspx:
+  Products &gt; Electronics    ← "Products" is clickable, "Electronics" is current page</code></pre>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- TreeView -->
+        <div id="nav-treeview" class="tab-content">
+
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">WebForm1.aspx</div>
+              <span class="code-lang">aspx</span>
+              <button class="copy-btn">📋 Copy code</button>
+            </div>
+            <div class="terminal-body">
+              <pre><code>&lt;%@ Page Language="C#" AutoEventWireup="true"
+CodeBehind="WebForm1.aspx.cs"
+Inherits="Prac5.WebForm1" %&gt;
+
+&lt;!DOCTYPE html&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
+&lt;head runat="server"&gt;
+    &lt;title&gt;TreeView Example&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;form id="form1" runat="server"&gt;
+
+    &lt;h3&gt;Simple TreeView Example&lt;/h3&gt;
+
+    &lt;!-- OnSelectedNodeChanged fires when user clicks a node --&gt;
+    &lt;asp:TreeView
+        ID="TreeView1"
+        runat="server"
+        OnSelectedNodeChanged="TreeView1_SelectedNodeChanged"&gt;
+
+        &lt;Nodes&gt;
+            &lt;asp:TreeNode Text="Root Node" Value="Root"&gt;
+                &lt;asp:TreeNode Text="Child Node 1" Value="Child1" /&gt;
+                &lt;asp:TreeNode Text="Child Node 2" Value="Child2" /&gt;
+                &lt;asp:TreeNode Text="Child Node 3" Value="Child3" /&gt;
+            &lt;/asp:TreeNode&gt;
+        &lt;/Nodes&gt;
+
+    &lt;/asp:TreeView&gt;
+
+&lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+            </div>
+          </div>
+
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">WebForm1.aspx.cs</div>
+              <span class="code-lang">csharp</span>
+              <button class="copy-btn">📋 Copy code</button>
+            </div>
+            <div class="terminal-body">
+              <pre><code>using System;
+
+namespace Prac5
+{
+    public partial class WebForm1 : System.Web.UI.Page
+    {
+        // Fires when user clicks a TreeView node
+        protected void TreeView1_SelectedNodeChanged(object sender, EventArgs e)
+        {
+            // SelectedNode.Value gives the Value attribute of the clicked node
+            string selectedNodeValue = TreeView1.SelectedNode.Value;
+            Response.Write("You selected: " + selectedNodeValue);
+        }
+    }
+}</code></pre>
+            </div>
+          </div>
+
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">Output</div>
+              <span class="code-lang">output</span>
+            </div>
+            <div class="terminal-body">
+              <pre><code>User clicks "Child Node 2":
+  You selected: Child2</code></pre>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Menu -->
+        <div id="nav-menu" class="tab-content">
+
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">Menu.aspx</div>
+              <span class="code-lang">aspx</span>
+              <button class="copy-btn">📋 Copy code</button>
+            </div>
+            <div class="terminal-body">
+              <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
+&lt;head runat="server"&gt;
+    &lt;title&gt;Menu Control Example&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;form runat="server"&gt;
+
+    &lt;h3&gt;Simple ASP.NET Menu Example&lt;/h3&gt;
+
+    &lt;!-- Orientation="Horizontal" makes it a top navigation bar --&gt;
+    &lt;asp:Menu
+        ID="Menu1"
+        runat="server"
+        Orientation="Horizontal"&gt;
+
+        &lt;Items&gt;
+            &lt;asp:MenuItem Text="Home" Value="Home" /&gt;
+
+            &lt;!-- Products has sub-menu items (shown on hover) --&gt;
+            &lt;asp:MenuItem Text="Products" Value="Products"&gt;
+                &lt;asp:MenuItem Text="Mobiles" Value="Mobiles" /&gt;
+                &lt;asp:MenuItem Text="Laptops" Value="Laptops" /&gt;
+                &lt;asp:MenuItem Text="Accessories" Value="Accessories" /&gt;
+            &lt;/asp:MenuItem&gt;
+
+            &lt;asp:MenuItem Text="About Us" Value="About" /&gt;
+            &lt;asp:MenuItem Text="Contact" Value="Contact" /&gt;
+        &lt;/Items&gt;
+
+    &lt;/asp:Menu&gt;
+
+&lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+            </div>
+          </div>
+
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">Output</div>
+              <span class="code-lang">output</span>
+            </div>
+            <div class="terminal-body">
+              <pre><code>Horizontal navigation bar:
+  [ Home ]  [ Products ▼ ]  [ About Us ]  [ Contact ]
+                  |
+            [ Mobiles    ]
+            [ Laptops    ]
+            [ Accessories]   ← dropdown on hover</code></pre>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Part B: Master Page -->
+        <div id="part-b5" class="tab-content">
+
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">Site1.master</div>
+              <span class="code-lang">aspx</span>
+              <button class="copy-btn">📋 Copy code</button>
+            </div>
+            <div class="terminal-body">
+              <pre><code>&lt;%@ Master Language="C#" AutoEventWireup="true"
+CodeBehind="Site1.master.cs"
+Inherits="Prac5.Site1" %&gt;
+
+&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head runat="server"&gt;
+    &lt;meta charset="UTF-8" /&gt;
+    &lt;title&gt;Master Page Example&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+
+&lt;header&gt;
+    &lt;h1&gt;Welcome to My Website&lt;/h1&gt;
+    &lt;nav&gt;
+        &lt;ul&gt;
+            &lt;li&gt;&lt;a href="Home.aspx"&gt;Home&lt;/a&gt;&lt;/li&gt;
+            &lt;li&gt;&lt;a href="About.aspx"&gt;About&lt;/a&gt;&lt;/li&gt;
+        &lt;/ul&gt;
+    &lt;/nav&gt;
+&lt;/header&gt;
+
+&lt;div class="content"&gt;
+    &lt;!-- ContentPlaceHolder: each content page fills this area with its own HTML --&gt;
+    &lt;asp:ContentPlaceHolder ID="MainContent" runat="server" /&gt;
+&lt;/div&gt;
+
+&lt;footer&gt;
+    &lt;p&gt;&amp;copy; 2026 My Website&lt;/p&gt;
+&lt;/footer&gt;
+
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+            </div>
+          </div>
+
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">Home.aspx (Content Page)</div>
+              <span class="code-lang">aspx</span>
+              <button class="copy-btn">📋 Copy code</button>
+            </div>
+            <div class="terminal-body">
+              <pre><code>&lt;!-- MasterPageFile links this content page to the master layout --&gt;
+&lt;%@ Page Language="C#" MasterPageFile="~/Site1.master"
+AutoEventWireup="true"
+CodeBehind="Home.aspx.cs"
+Inherits="Prac5.Home" %&gt;
+
+&lt;!-- asp:Content maps to the ContentPlaceHolder in the master page --&gt;
+&lt;asp:Content
+    ID="Content1"
+    ContentPlaceHolderID="MainContent"
+    runat="server"&gt;
+
+    &lt;h2&gt;Home Page&lt;/h2&gt;
+    &lt;p&gt;Welcome to the homepage of our website.&lt;/p&gt;
+
+&lt;/asp:Content&gt;</code></pre>
+            </div>
+          </div>
+
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">About.aspx (Content Page)</div>
+              <span class="code-lang">aspx</span>
+              <button class="copy-btn">📋 Copy code</button>
+            </div>
+            <div class="terminal-body">
+              <pre><code>&lt;%@ Page Language="C#" MasterPageFile="~/Site1.master"
+AutoEventWireup="true"
+CodeBehind="About.aspx.cs"
+Inherits="Prac5.About" %&gt;
+
+&lt;asp:Content
+    ID="Content1"
+    ContentPlaceHolderID="MainContent"
+    runat="server"&gt;
+
+    &lt;h2&gt;About Page&lt;/h2&gt;
+    &lt;p&gt;Welcome to the about page of our website.&lt;/p&gt;
+
+&lt;/asp:Content&gt;</code></pre>
+            </div>
+          </div>
+
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">Output</div>
+              <span class="code-lang">output</span>
+            </div>
+            <div class="terminal-body">
+              <pre><code>Both Home.aspx and About.aspx render with shared layout:
+  ┌─────────────────────────────────┐
+  │  Welcome to My Website          │  ← from Master Page
+  │  [ Home ] [ About ]             │  ← from Master Page nav
+  ├─────────────────────────────────┤
+  │  Home Page                      │  ← unique content from Home.aspx
+  │  Welcome to the homepage...     │
+  ├─────────────────────────────────┤
+  │  © 2026 My Website              │  ← from Master Page footer
+  └─────────────────────────────────┘</code></pre>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+    </article>
+  </main>
+  <footer class="footer">
+    <p>© 2026 Study Loopholes</p>
+  </footer>
+  <script src="../global.js"></script>
+</body>
+
+</html>

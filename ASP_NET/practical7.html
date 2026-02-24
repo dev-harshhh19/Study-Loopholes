@@ -1,0 +1,560 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Practical 7: Data Binding - Study Loopholes</title>
+  <link rel="stylesheet" href="../global.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap"
+    rel="stylesheet">
+</head>
+
+<body class="subject-page">
+  <div class="blob-bg"></div>
+  <header class="header">
+    <a href="index.html" class="back-button">← Back to Index</a>
+    <h1>Practical 7: DetailsView &amp; FormView</h1>
+  </header>
+  <main class="container">
+    <article class="content-container">
+
+      <!-- AIM -->
+      <section id="aim">
+        <h2>Aim</h2>
+        <p><strong>Part A:</strong> Data Binding using <code>DetailsView</code> Control — display and edit one record at
+          a time with navigation.</p>
+        <p><strong>Part B:</strong> Data Binding using <code>FormView</code> Control — display records one at a time
+          using custom templates.</p>
+      </section>
+
+      <!-- THEORY -->
+      <section id="theory">
+        <h2>Background Theory</h2>
+
+        <div class="tabs-container">
+          <button class="tab-btn active" data-target="theory-a7">Part A Theory</button>
+          <button class="tab-btn" data-target="theory-b7">Part B Theory</button>
+        </div>
+
+        <div id="theory-a7" class="tab-content active">
+          <h3>DetailsView Control</h3>
+          <p>
+            The <strong>DetailsView</strong> control displays <strong>one database record at a time</strong> in a
+            table-like layout with one field per row. It supports built-in <strong>Edit</strong>,
+            <strong>Delete</strong>, and <strong>Insert</strong> modes.
+          </p>
+          <h4>Key Features</h4>
+          <table class="theory-table">
+            <thead>
+              <tr>
+                <th>Feature</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>AutoGenerateRows="False"</code></td>
+                <td>Manually define which fields to show using <code>&lt;BoundField&gt;</code></td>
+              </tr>
+              <tr>
+                <td><code>DataKeyNames="StudentID"</code></td>
+                <td>Specifies the primary key field for updates/deletes</td>
+              </tr>
+              <tr>
+                <td><code>DefaultMode="ReadOnly"</code></td>
+                <td>Starts in read-only mode; Edit button switches to edit mode</td>
+              </tr>
+              <tr>
+                <td><code>ShowEditButton="True"</code></td>
+                <td>Adds an Edit/Update/Cancel button row automatically</td>
+              </tr>
+              <tr>
+                <td><code>OnItemUpdating</code></td>
+                <td>Event fired when user submits an update</td>
+              </tr>
+              <tr>
+                <td><code>OnModeChanging</code></td>
+                <td>Event fired when switching between ReadOnly and Edit modes</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Navigation Pattern</h4>
+          <p>Since DetailsView shows one record, navigation is done manually using <strong>Previous/Next
+              buttons</strong> that query the database for adjacent IDs:</p>
+          <ul>
+            <li>A <code>HiddenField</code> stores the current StudentID across postbacks</li>
+            <li><code>btnNext_Click</code> queries
+              <code>SELECT TOP 1 ... WHERE StudentID &gt; @ID ORDER BY StudentID ASC</code></li>
+            <li><code>btnPrev_Click</code> queries
+              <code>SELECT TOP 1 ... WHERE StudentID &lt; @ID ORDER BY StudentID DESC</code></li>
+          </ul>
+        </div>
+
+        <div id="theory-b7" class="tab-content">
+          <h3>FormView Control</h3>
+          <p>
+            The <strong>FormView</strong> control is similar to DetailsView but gives you <strong>full control over the
+              layout</strong> using HTML templates instead of auto-generated rows. It also shows one record at a time.
+          </p>
+          <h4>FormView vs DetailsView</h4>
+          <table class="theory-table">
+            <thead>
+              <tr>
+                <th>Feature</th>
+                <th>DetailsView</th>
+                <th>FormView</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Layout</td>
+                <td>Auto-generated table (field per row)</td>
+                <td>Fully custom HTML templates</td>
+              </tr>
+              <tr>
+                <td>Flexibility</td>
+                <td>Less (structured)</td>
+                <td>More (you design the layout)</td>
+              </tr>
+              <tr>
+                <td>Templates</td>
+                <td>Not required</td>
+                <td>Required: <code>ItemTemplate</code>, <code>EditItemTemplate</code></td>
+              </tr>
+              <tr>
+                <td>Data binding</td>
+                <td><code>BoundField</code></td>
+                <td><code>&lt;%# Eval("FieldName") %&gt;</code></td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Data Binding Expression</h4>
+          <p><code>&lt;%# Eval("StudentName") %&gt;</code> — reads the value of the <code>StudentName</code> column from
+            the bound data source and renders it in the HTML output.</p>
+        </div>
+      </section>
+
+      <!-- SOURCE CODE -->
+      <section id="code-section">
+        <h2>Source Code</h2>
+
+        <div class="tabs-container">
+          <button class="tab-btn active" data-target="part-a7">Part A (DetailsView)</button>
+          <button class="tab-btn" data-target="part-b7">Part B (FormView)</button>
+        </div>
+
+        <!-- Part A: DetailsView -->
+        <div id="part-a7" class="tab-content active">
+
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">DetailsViewExample.aspx</div>
+              <span class="code-lang">aspx</span>
+              <button class="copy-btn">📋 Copy code</button>
+            </div>
+            <div class="terminal-body">
+              <pre><code>&lt;%@ Page Language="C#" AutoEventWireup="true"
+CodeBehind="DetailsViewExample.aspx.cs"
+Inherits="Prac7.DetailsViewExample" %&gt;
+
+&lt;!DOCTYPE html&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
+&lt;head runat="server"&gt;
+    &lt;title&gt;DetailsView Example&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;form id="form1" runat="server"&gt;
+
+    &lt;!-- HiddenField stores the current StudentID across postbacks --&gt;
+    &lt;asp:HiddenField ID="hfCurrentID" runat="server" /&gt;
+
+    &lt;h2&gt;Student Details&lt;/h2&gt;
+
+    &lt;asp:DetailsView
+        ID="DetailsView1" runat="server"
+        AutoGenerateRows="False"
+        DataKeyNames="StudentID"
+        DefaultMode="ReadOnly"
+        OnItemUpdating="DetailsView1_ItemUpdating"
+        OnModeChanging="DetailsView1_ModeChanging"&gt;
+        &lt;Fields&gt;
+            &lt;asp:BoundField DataField="StudentID"   HeaderText="Student ID" ReadOnly="True" /&gt;
+            &lt;asp:BoundField DataField="StudentName" HeaderText="Student Name" /&gt;
+            &lt;asp:BoundField DataField="Course"      HeaderText="Course" /&gt;
+            &lt;asp:BoundField DataField="City"        HeaderText="City" /&gt;
+            &lt;!-- Adds Edit/Update/Cancel buttons automatically --&gt;
+            &lt;asp:CommandField ShowEditButton="True" /&gt;
+        &lt;/Fields&gt;
+    &lt;/asp:DetailsView&gt;
+
+    &lt;br /&gt;
+
+    &lt;!-- Navigation buttons to move between records --&gt;
+    &lt;asp:Button ID="btnPrev" runat="server" Text="Previous" OnClick="btnPrev_Click" /&gt;
+    &lt;asp:Button ID="btnNext" runat="server" Text="Next"     OnClick="btnNext_Click" /&gt;
+
+&lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+            </div>
+          </div>
+
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">DetailsViewExample.aspx.cs</div>
+              <span class="code-lang">csharp</span>
+              <button class="copy-btn">📋 Copy code</button>
+            </div>
+            <div class="terminal-body">
+              <pre><code>using System;
+using System.Data;
+using System.Data.SqlClient;
+using System.Web.UI.WebControls;
+
+namespace Prac7
+{
+    public partial class DetailsViewExample : System.Web.UI.Page
+    {
+        string connString = @"Data Source=localhost\SQLEXPRESS; Initial Catalog=CollegeDB; Integrated Security=True;";
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (!IsPostBack)
+            {
+                BindData(1);   // Load the first student on initial page load
+            }
+        }
+
+        // Fetches a student by ID and binds to DetailsView
+        private void BindData(int studentID)
+        {
+            hfCurrentID.Value = studentID.ToString();  // Remember current ID
+            string query = "SELECT * FROM Students WHERE StudentID = @ID";
+            using (SqlConnection conn = new SqlConnection(connString))
+            {
+                SqlDataAdapter da = new SqlDataAdapter(query, conn);
+                da.SelectCommand.Parameters.AddWithValue("@ID", studentID);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                if (dt.Rows.Count &gt; 0)
+                {
+                    DetailsView1.DataSource = dt;
+                    DetailsView1.DataBind();
+                }
+            }
+        }
+
+        // NEXT button: find the next higher StudentID
+        protected void btnNext_Click(object sender, EventArgs e)
+        {
+            int currentID = int.Parse(hfCurrentID.Value);
+            int nextID = GetNextStudentID(currentID);
+            if (nextID != -1) BindData(nextID);
+        }
+
+        // PREVIOUS button: find the next lower StudentID
+        protected void btnPrev_Click(object sender, EventArgs e)
+        {
+            int currentID = int.Parse(hfCurrentID.Value);
+            int prevID = GetPreviousStudentID(currentID);
+            if (prevID != -1) BindData(prevID);
+        }
+
+        // Query for next StudentID after current
+        private int GetNextStudentID(int currentID)
+        {
+            string query = "SELECT TOP 1 StudentID FROM Students WHERE StudentID &gt; @ID ORDER BY StudentID ASC";
+            using (SqlConnection conn = new SqlConnection(connString))
+            {
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@ID", currentID);
+                conn.Open();
+                object result = cmd.ExecuteScalar();
+                return result != null ? Convert.ToInt32(result) : -1;
+            }
+        }
+
+        // Query for previous StudentID before current
+        private int GetPreviousStudentID(int currentID)
+        {
+            string query = "SELECT TOP 1 StudentID FROM Students WHERE StudentID &lt; @ID ORDER BY StudentID DESC";
+            using (SqlConnection conn = new SqlConnection(connString))
+            {
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@ID", currentID);
+                conn.Open();
+                object result = cmd.ExecuteScalar();
+                return result != null ? Convert.ToInt32(result) : -1;
+            }
+        }
+
+        // Fires when user submits an edit — runs UPDATE SQL
+        protected void DetailsView1_ItemUpdating(object sender, DetailsViewUpdateEventArgs e)
+        {
+            int studentID = Convert.ToInt32(e.Keys["StudentID"]);
+            string name   = ((TextBox)DetailsView1.Rows[1].Cells[1].Controls[0]).Text;
+            string course = ((TextBox)DetailsView1.Rows[2].Cells[1].Controls[0]).Text;
+            string city   = ((TextBox)DetailsView1.Rows[3].Cells[1].Controls[0]).Text;
+
+            string query = "UPDATE Students SET StudentName=@Name, Course=@Course, City=@City WHERE StudentID=@ID";
+            using (SqlConnection conn = new SqlConnection(connString))
+            {
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@Name",   name);
+                cmd.Parameters.AddWithValue("@Course", course);
+                cmd.Parameters.AddWithValue("@City",   city);
+                cmd.Parameters.AddWithValue("@ID",     studentID);
+                conn.Open();
+                cmd.ExecuteNonQuery();
+            }
+
+            DetailsView1.ChangeMode(DetailsViewMode.ReadOnly);
+            BindData(studentID);
+            e.Cancel = true;   // Prevent default update (we handled it manually)
+        }
+
+        // Fires when Edit or Cancel is clicked — switches mode
+        protected void DetailsView1_ModeChanging(object sender, DetailsViewModeEventArgs e)
+        {
+            DetailsView1.ChangeMode(e.NewMode);
+            BindData(int.Parse(hfCurrentID.Value));
+        }
+    }
+}</code></pre>
+            </div>
+          </div>
+
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">Output</div>
+              <span class="code-lang">output</span>
+            </div>
+            <div class="terminal-body">
+              <pre><code>DetailsView shows one row at a time:
+┌──────────────┬──────────────┐
+│  Student ID  │      1       │
+│ Student Name │ Rahul Sharma │
+│    Course    │   B.Sc IT   │
+│     City     │   Mumbai    │
+│              │  [Edit]      │
+└──────────────┴──────────────┘
+[ Previous ]  [ Next ]</code></pre>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Part B: FormView -->
+        <div id="part-b7" class="tab-content">
+
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">FormViewExample.aspx</div>
+              <span class="code-lang">aspx</span>
+              <button class="copy-btn">📋 Copy code</button>
+            </div>
+            <div class="terminal-body">
+              <pre><code>&lt;%@ Page Language="C#" AutoEventWireup="true"
+CodeBehind="FormViewExample.aspx.cs"
+Inherits="Prac7.FormViewExample" %&gt;
+
+&lt;!DOCTYPE html&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
+&lt;head runat="server"&gt;
+    &lt;title&gt;FormView Example&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;form id="form1" runat="server"&gt;
+
+    &lt;h2&gt;Student Details&lt;/h2&gt;
+
+    &lt;asp:HiddenField ID="hfCurrentID" runat="server" /&gt;
+
+    &lt;asp:FormView ID="FormView1" runat="server" DefaultMode="ReadOnly"&gt;
+        &lt;!-- ItemTemplate defines the custom HTML layout for read mode --&gt;
+        &lt;ItemTemplate&gt;
+            &lt;table border="1" cellpadding="6"&gt;
+                &lt;tr&gt;
+                    &lt;td&gt;&lt;b&gt;ID:&lt;/b&gt;&lt;/td&gt;
+                    &lt;!-- Eval() reads the field value from the bound DataTable --&gt;
+                    &lt;td&gt;&lt;%# Eval("StudentID") %&gt;&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                    &lt;td&gt;&lt;b&gt;Name:&lt;/b&gt;&lt;/td&gt;
+                    &lt;td&gt;&lt;%# Eval("StudentName") %&gt;&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                    &lt;td&gt;&lt;b&gt;Course:&lt;/b&gt;&lt;/td&gt;
+                    &lt;td&gt;&lt;%# Eval("Course") %&gt;&lt;/td&gt;
+                &lt;/tr&gt;
+                &lt;tr&gt;
+                    &lt;td&gt;&lt;b&gt;City:&lt;/b&gt;&lt;/td&gt;
+                    &lt;td&gt;&lt;%# Eval("City") %&gt;&lt;/td&gt;
+                &lt;/tr&gt;
+            &lt;/table&gt;
+        &lt;/ItemTemplate&gt;
+    &lt;/asp:FormView&gt;
+
+    &lt;br /&gt;
+
+    &lt;asp:Button ID="btnPrev" runat="server" Text="Previous" OnClick="btnPrev_Click" /&gt;
+    &lt;asp:Button ID="btnNext" runat="server" Text="Next"     OnClick="btnNext_Click" /&gt;
+
+&lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+            </div>
+          </div>
+
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">FormViewExample.aspx.cs</div>
+              <span class="code-lang">csharp</span>
+              <button class="copy-btn">📋 Copy code</button>
+            </div>
+            <div class="terminal-body">
+              <pre><code>using System;
+using System.Data;
+using System.Data.SqlClient;
+
+namespace Prac7
+{
+    public partial class FormViewExample : System.Web.UI.Page
+    {
+        string connString = @"Data Source=localhost\SQLEXPRESS;Initial Catalog=CollegeDB;Integrated Security=True;";
+
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            if (!IsPostBack)
+            {
+                BindData(1);   // Load first record on page load
+            }
+        }
+
+        // Fetch a student by ID and bind to FormView
+        private void BindData(int studentID)
+        {
+            hfCurrentID.Value = studentID.ToString();
+            string query = "SELECT * FROM Students WHERE StudentID = @ID";
+
+            using (SqlConnection conn = new SqlConnection(connString))
+            {
+                SqlDataAdapter da = new SqlDataAdapter(query, conn);
+                da.SelectCommand.Parameters.AddWithValue("@ID", studentID);
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+                if (dt.Rows.Count &gt; 0)
+                {
+                    FormView1.DataSource = dt;
+                    FormView1.DataBind();
+                }
+            }
+        }
+
+        // Get the next higher StudentID
+        private int GetNextID(int currentID)
+        {
+            string query = "SELECT TOP 1 StudentID FROM Students WHERE StudentID &gt; @ID ORDER BY StudentID ASC";
+            using (SqlConnection conn = new SqlConnection(connString))
+            {
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@ID", currentID);
+                conn.Open();
+                object result = cmd.ExecuteScalar();
+                return result != null ? Convert.ToInt32(result) : currentID;
+            }
+        }
+
+        // Get the previous lower StudentID
+        private int GetPreviousID(int currentID)
+        {
+            string query = "SELECT TOP 1 StudentID FROM Students WHERE StudentID &lt; @ID ORDER BY StudentID DESC";
+            using (SqlConnection conn = new SqlConnection(connString))
+            {
+                SqlCommand cmd = new SqlCommand(query, conn);
+                cmd.Parameters.AddWithValue("@ID", currentID);
+                conn.Open();
+                object result = cmd.ExecuteScalar();
+                return result != null ? Convert.ToInt32(result) : currentID;
+            }
+        }
+
+        protected void btnNext_Click(object sender, EventArgs e)
+        {
+            int currentID = int.Parse(hfCurrentID.Value);
+            BindData(GetNextID(currentID));
+        }
+
+        protected void btnPrev_Click(object sender, EventArgs e)
+        {
+            int currentID = int.Parse(hfCurrentID.Value);
+            BindData(GetPreviousID(currentID));
+        }
+    }
+}</code></pre>
+            </div>
+          </div>
+
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">Output</div>
+              <span class="code-lang">output</span>
+            </div>
+            <div class="terminal-body">
+              <pre><code>FormView with custom layout (one record at a time):
+┌──────────┬──────────────┐
+│ ID:      │ 1            │
+│ Name:    │ Rahul Sharma │
+│ Course:  │ B.Sc IT      │
+│ City:    │ Mumbai       │
+└──────────┴──────────────┘
+[ Previous ]  [ Next ]   ← navigate between records</code></pre>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+    </article>
+  </main>
+  <footer class="footer">
+    <p>© 2026 Study Loopholes</p>
+  </footer>
+  <script src="../global.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Practical 8: AJAX Controls - Study Loopholes</title>
+  <link rel="stylesheet" href="../global.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap"
+    rel="stylesheet">
+</head>
+
+<body class="subject-page">
+  <div class="blob-bg"></div>
+  <header class="header">
+    <a href="index.html" class="back-button">← Back to Index</a>
+    <h1>Practical 8: AJAX Controls</h1>
+  </header>
+  <main class="container">
+    <article class="content-container">
+
+      <!-- AIM -->
+      <section id="aim">
+        <h2>Aim</h2>
+        <p><strong>Part B:</strong> Create a Web Application to demonstrate the use of various AJAX Controls
+          (<code>ScriptManager</code> and <code>UpdatePanel</code>) for partial page updates.</p>
+      </section>
+
+      <!-- THEORY -->
+      <section id="theory">
+        <h2>Background Theory</h2>
+
+        <h3>What is AJAX?</h3>
+        <p>
+          <strong>AJAX</strong> (Asynchronous JavaScript and XML) allows a web page to send and receive data from the
+          server <strong>without reloading the entire page</strong>. Only the portion of the page that changed is
+          updated — making web apps faster and more responsive.
+        </p>
+
+        <h3>ASP.NET AJAX Controls</h3>
+        <p>ASP.NET provides built-in AJAX support through the <strong>ScriptManager</strong> and
+          <strong>UpdatePanel</strong> controls:</p>
+
+        <table class="theory-table">
+          <thead>
+            <tr>
+              <th>Control</th>
+              <th>Tag</th>
+              <th>Purpose</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td><code>ScriptManager</code></td>
+              <td><code>&lt;asp:ScriptManager&gt;</code></td>
+              <td>Required on every AJAX-enabled page. Registers the AJAX framework scripts. Must appear before any
+                UpdatePanel.</td>
+            </tr>
+            <tr>
+              <td><code>UpdatePanel</code></td>
+              <td><code>&lt;asp:UpdatePanel&gt;</code></td>
+              <td>Wraps content that should update asynchronously. Only the content inside this panel is refreshed on
+                postback — the rest of the page stays unchanged.</td>
+            </tr>
+            <tr>
+              <td><code>ContentTemplate</code></td>
+              <td><code>&lt;ContentTemplate&gt;</code></td>
+              <td>Required inner tag of UpdatePanel. Contains the controls that should update partially.</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>How It Works (Step by Step)</h3>
+        <ol>
+          <li>User clicks a Button inside the <code>UpdatePanel</code></li>
+          <li>Instead of a full page postback, an <strong>asynchronous HTTP request</strong> is sent to the server</li>
+          <li>The server processes the event (e.g., <code>Button1_Click</code>)</li>
+          <li>Only the <strong>UpdatePanel's content</strong> is refreshed in the browser — the rest of the page is
+            untouched</li>
+          <li>No page flicker, no scroll reset — seamless experience</li>
+        </ol>
+
+        <h3>Normal Postback vs AJAX UpdatePanel</h3>
+        <table class="theory-table">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>Normal Postback</th>
+              <th>AJAX UpdatePanel</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Full page reload</td>
+              <td>Yes — entire HTML resent</td>
+              <td>No — only panel content updated</td>
+            </tr>
+            <tr>
+              <td>Page flicker</td>
+              <td>Yes</td>
+              <td>No (smooth update)</td>
+            </tr>
+            <tr>
+              <td>Speed</td>
+              <td>Slower (full HTML)</td>
+              <td>Faster (partial update)</td>
+            </tr>
+            <tr>
+              <td>Scroll position</td>
+              <td>Reset to top</td>
+              <td>Maintained</td>
+            </tr>
+            <tr>
+              <td>Setup required</td>
+              <td>None</td>
+              <td>ScriptManager + UpdatePanel</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <!-- SOURCE CODE -->
+      <section id="code-section">
+        <h2>Source Code</h2>
+
+        <div class="terminal-card">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <div class="terminal-dot red"></div>
+              <div class="terminal-dot yellow"></div>
+              <div class="terminal-dot green"></div>
+            </div>
+            <div class="terminal-title">ajaxDemo.aspx</div>
+            <span class="code-lang">aspx</span>
+            <button class="copy-btn">📋 Copy code</button>
+          </div>
+          <div class="terminal-body">
+            <pre><code>&lt;%@ Page Language="C#" AutoEventWireup="true" CodeBehind="ajaxDemo.aspx.cs"
+    Inherits="Prac8.ajaxDemo" %&gt;
+&lt;!DOCTYPE html&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
+&lt;head runat="server"&gt;
+    &lt;title&gt;AJAX Example&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+    &lt;form id="form1" runat="server"&gt;
+
+        &lt;!-- Step 1: ScriptManager MUST appear before UpdatePanel.
+             It loads the AJAX client-side JavaScript framework. --&gt;
+        &lt;asp:ScriptManager ID="ScriptManager1" runat="server" /&gt;
+
+        &lt;!-- Step 2: UpdatePanel wraps the content that updates partially.
+             A click inside this panel does NOT reload the whole page. --&gt;
+        &lt;asp:UpdatePanel ID="UpdatePanel1" runat="server"&gt;
+            &lt;ContentTemplate&gt;
+                &lt;!-- Everything inside ContentTemplate refreshes asynchronously --&gt;
+                &lt;asp:Label
+                    ID="Label1"
+                    runat="server"
+                    Text="Click the button"
+                    Font-Size="Large"&gt;
+                &lt;/asp:Label&gt;
+                &lt;br /&gt;&lt;br /&gt;
+                &lt;asp:Button
+                    ID="Button1"
+                    runat="server"
+                    Text="Click Me"
+                    OnClick="Button1_Click" /&gt;
+            &lt;/ContentTemplate&gt;
+        &lt;/asp:UpdatePanel&gt;
+
+        &lt;!-- This content OUTSIDE UpdatePanel is NOT refreshed on button click --&gt;
+        &lt;p&gt;This paragraph is outside the UpdatePanel and stays unchanged.&lt;/p&gt;
+
+    &lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+          </div>
+        </div>
+
+        <div class="terminal-card">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <div class="terminal-dot red"></div>
+              <div class="terminal-dot yellow"></div>
+              <div class="terminal-dot green"></div>
+            </div>
+            <div class="terminal-title">ajaxDemo.aspx.cs</div>
+            <span class="code-lang">csharp</span>
+            <button class="copy-btn">📋 Copy code</button>
+          </div>
+          <div class="terminal-body">
+            <pre><code>using System;
+
+namespace Prac8
+{
+    public partial class ajaxDemo : System.Web.UI.Page
+    {
+        // This event fires when Button1 is clicked
+        // Thanks to UpdatePanel, only the Label inside is updated — no full reload
+        protected void Button1_Click(object sender, EventArgs e)
+        {
+            // Update the Label text with the current server timestamp
+            Label1.Text = "Button clicked at " + DateTime.Now.ToString();
+        }
+    }
+}</code></pre>
+          </div>
+        </div>
+
+        <div class="terminal-card">
+          <div class="terminal-header">
+            <div class="terminal-dots">
+              <div class="terminal-dot red"></div>
+              <div class="terminal-dot yellow"></div>
+              <div class="terminal-dot green"></div>
+            </div>
+            <div class="terminal-title">Output</div>
+            <span class="code-lang">output</span>
+          </div>
+          <div class="terminal-body">
+            <pre><code>Before clicking:
+  Label: "Click the button"
+  [ Click Me ]
+  This paragraph is outside the UpdatePanel and stays unchanged.
+
+After clicking (NO full page reload — only Label updates):
+  Label: "Button clicked at 24-02-2026 23:30:15"
+  [ Click Me ]
+  This paragraph is outside the UpdatePanel and stays unchanged.  ← unchanged</code></pre>
+          </div>
+        </div>
+
+      </section>
+    </article>
+  </main>
+  <footer class="footer">
+    <p>© 2026 Study Loopholes</p>
+  </footer>
+  <script src="../global.js"></script>
+</body>
+
+</html>

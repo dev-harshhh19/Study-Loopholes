@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Practical 4: Validation - Study Loopholes</title>
+  <title>Practical 4: Validation &amp; AdRotator - Study Loopholes</title>
   <link rel="stylesheet" href="../global.css">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,26 +17,171 @@
   <div class="blob-bg"></div>
   <header class="header">
     <a href="index.html" class="back-button">← Back to Index</a>
-    <h1>Practical 4: Validation & AdRotator</h1>
+    <h1>Practical 4: Validation &amp; AdRotator</h1>
   </header>
   <main class="container">
     <article class="content-container">
+
+      <!-- AIM -->
       <section id="aim">
         <h2>Aim</h2>
-        <p><strong>Part A:</strong> Create a registration form with various Validation controls.</p>
-        <p><strong>Part B:</strong> Demonstrate the use of AdRotator control.</p>
+        <p><strong>Part A:</strong> Create a Registration Form to use various Validation Controls.</p>
+        <p><strong>Part B:</strong> Create a Web Form to demonstrate the use of the AdRotator Control.</p>
       </section>
 
+      <!-- THEORY -->
+      <section id="theory">
+        <h2>Background Theory</h2>
+
+        <div class="tabs-container">
+          <button class="tab-btn active" data-target="theory-a4">Part A Theory</button>
+          <button class="tab-btn" data-target="theory-b4">Part B Theory</button>
+        </div>
+
+        <div id="theory-a4" class="tab-content active">
+          <h3>ASP.NET Validation Controls</h3>
+          <p>
+            ASP.NET provides built-in <strong>Validation Controls</strong> that automatically validate user input on
+            both the <strong>client side (JavaScript)</strong> and <strong>server side (C#)</strong>. They prevent
+            invalid data from being submitted without writing manual validation logic.
+          </p>
+          <h4>Validation Controls Used</h4>
+          <table class="theory-table">
+            <thead>
+              <tr>
+                <th>Control</th>
+                <th>Tag</th>
+                <th>Purpose</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>RequiredFieldValidator</td>
+                <td><code>&lt;asp:RequiredFieldValidator&gt;</code></td>
+                <td>Ensures a field is not left empty</td>
+              </tr>
+              <tr>
+                <td>RangeValidator</td>
+                <td><code>&lt;asp:RangeValidator&gt;</code></td>
+                <td>Checks if value is within a min–max range</td>
+              </tr>
+              <tr>
+                <td>RegularExpressionValidator</td>
+                <td><code>&lt;asp:RegularExpressionValidator&gt;</code></td>
+                <td>Validates against a regex pattern (e.g., email format)</td>
+              </tr>
+              <tr>
+                <td>CompareValidator</td>
+                <td><code>&lt;asp:CompareValidator&gt;</code></td>
+                <td>Compares two field values (e.g., password match)</td>
+              </tr>
+              <tr>
+                <td>ValidationSummary</td>
+                <td><code>&lt;asp:ValidationSummary&gt;</code></td>
+                <td>Shows all errors in one box at the top/bottom</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Key Properties</h4>
+          <table class="theory-table">
+            <thead>
+              <tr>
+                <th>Property</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>ControlToValidate</code></td>
+                <td>ID of the input control to validate</td>
+              </tr>
+              <tr>
+                <td><code>ErrorMessage</code></td>
+                <td>Message shown when validation fails</td>
+              </tr>
+              <tr>
+                <td><code>ForeColor="Red"</code></td>
+                <td>Color of the error message</td>
+              </tr>
+              <tr>
+                <td><code>MinimumValue / MaximumValue</code></td>
+                <td>Boundaries for RangeValidator</td>
+              </tr>
+              <tr>
+                <td><code>ValidationExpression</code></td>
+                <td>Regex pattern for RegularExpressionValidator</td>
+              </tr>
+              <tr>
+                <td><code>ControlToCompare</code></td>
+                <td>Other field to compare against in CompareValidator</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>How Validation Works</h4>
+          <ol>
+            <li>User fills the form and clicks Submit</li>
+            <li>Client-side JavaScript validation runs <strong>instantly</strong> (no postback yet)</li>
+            <li>If client-side validation passes, page posts back to the server</li>
+            <li>Server checks <code>Page.IsValid</code> — only <code>true</code> if ALL validators pass</li>
+            <li>If valid, process the form data; otherwise show error messages</li>
+          </ol>
+        </div>
+
+        <div id="theory-b4" class="tab-content">
+          <h3>ASP.NET AdRotator Control</h3>
+          <p>
+            The <strong>AdRotator</strong> control displays rotating advertisements on a web page. It reads ad data from
+            an external <strong>XML file</strong> and randomly shows one ad per page load based on the configured
+            impressions weight.
+          </p>
+          <h4>How AdRotator Works</h4>
+          <ol>
+            <li>The XML file (<code>Ads.xml</code>) contains a list of <code>&lt;Ad&gt;</code> entries</li>
+            <li>Each <code>&lt;Ad&gt;</code> defines: ImageUrl, NavigateUrl, AlternateText, Impressions</li>
+            <li>On each page load, AdRotator randomly picks an ad based on its Impressions weight</li>
+            <li>The <code>AdCreated</code> event fires, allowing URL customization before rendering</li>
+          </ol>
+          <h4>Key Properties</h4>
+          <table class="theory-table">
+            <thead>
+              <tr>
+                <th>Property</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>AdvertisementFile</code></td>
+                <td>Path to the XML file containing all ad entries</td>
+              </tr>
+              <tr>
+                <td><code>Target="_blank"</code></td>
+                <td>Opens the ad link in a new browser tab</td>
+              </tr>
+              <tr>
+                <td><code>Width / Height</code></td>
+                <td>Display size of the ad banner</td>
+              </tr>
+              <tr>
+                <td><code>&lt;Impressions&gt;60&lt;/Impressions&gt;</code></td>
+                <td>Weight for random selection — higher = more frequent</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SOURCE CODE -->
       <section id="code-section">
         <h2>Source Code</h2>
 
         <div class="tabs-container">
-          <button class="tab-btn active" data-target="part-a">Part A (Validation)</button>
-          <button class="tab-btn" data-target="part-b">Part B (AdRotator)</button>
+          <button class="tab-btn active" data-target="part-a4">Part A (Validation)</button>
+          <button class="tab-btn" data-target="part-b4">Part B (AdRotator)</button>
         </div>
 
         <!-- Part A -->
-        <div id="part-a" class="tab-content active">
+        <div id="part-a4" class="tab-content active">
 
           <div class="terminal-card">
             <div class="terminal-header">
@@ -45,11 +190,13 @@
                 <div class="terminal-dot yellow"></div>
                 <div class="terminal-dot green"></div>
               </div>
-              <div class="terminal-title">Practical4A.aspx</div>
-              <span class="code-lang"></span><button class="copy-btn">? Copy code</button>
+              <div class="terminal-title">WebForm.aspx</div>
+              <span class="code-lang">aspx</span>
+              <button class="copy-btn">📋 Copy code</button>
             </div>
             <div class="terminal-body">
-              <pre><code>&lt;%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Practical4A.aspx.cs" Inherits="Practical4A" %&gt;
+              <pre><code>&lt;%@ Page Language="C#" AutoEventWireup="true" CodeBehind="WebForm.aspx.cs"
+Inherits="ValidationDemo.WebForm" %&gt;
 
 &lt;!DOCTYPE html&gt;
 &lt;html&gt;
@@ -57,51 +204,74 @@
     &lt;title&gt;Registration Form&lt;/title&gt;
 &lt;/head&gt;
 &lt;body&gt;
-    &lt;form id="form1" runat="server"&gt;
-        &lt;h2&gt;Registration Form with Validation&lt;/h2&gt;
-        &lt;table&gt;
-            &lt;tr&gt;
-                &lt;td&gt;Username:&lt;/td&gt;
-                &lt;td&gt;&lt;asp:TextBox ID="txtUser" runat="server"&gt;&lt;/asp:TextBox&gt;&lt;/td&gt;
-                &lt;td&gt;&lt;asp:RequiredFieldValidator ID="rfvUser" runat="server" 
-                    ControlToValidate="txtUser" ErrorMessage="Required" ForeColor="Red" /&gt;&lt;/td&gt;
-            &lt;/tr&gt;
-            &lt;tr&gt;
-                &lt;td&gt;Password:&lt;/td&gt;
-                &lt;td&gt;&lt;asp:TextBox ID="txtPass" runat="server" TextMode="Password"&gt;&lt;/asp:TextBox&gt;&lt;/td&gt;
-                &lt;td&gt;&lt;asp:RequiredFieldValidator ID="rfvPass" runat="server" 
-                    ControlToValidate="txtPass" ErrorMessage="Required" ForeColor="Red" /&gt;&lt;/td&gt;
-            &lt;/tr&gt;
-            &lt;tr&gt;
-                &lt;td&gt;Confirm:&lt;/td&gt;
-                &lt;td&gt;&lt;asp:TextBox ID="txtConfirm" runat="server" TextMode="Password"&gt;&lt;/asp:TextBox&gt;&lt;/td&gt;
-                &lt;td&gt;&lt;asp:CompareValidator ID="cvPass" runat="server" 
-                    ControlToValidate="txtConfirm" ControlToCompare="txtPass" 
-                    ErrorMessage="Mismatch" ForeColor="Red" /&gt;&lt;/td&gt;
-            &lt;/tr&gt;
-            &lt;tr&gt;
-                &lt;td&gt;Age (18-100):&lt;/td&gt;
-                &lt;td&gt;&lt;asp:TextBox ID="txtAge" runat="server"&gt;&lt;/asp:TextBox&gt;&lt;/td&gt;
-                &lt;td&gt;&lt;asp:RangeValidator ID="rvAge" runat="server" 
-                    ControlToValidate="txtAge" MinimumValue="18" MaximumValue="100" 
-                    Type="Integer" ErrorMessage="18-100" ForeColor="Red" /&gt;&lt;/td&gt;
-            &lt;/tr&gt;
-            &lt;tr&gt;
-                &lt;td&gt;Email:&lt;/td&gt;
-                &lt;td&gt;&lt;asp:TextBox ID="txtEmail" runat="server"&gt;&lt;/asp:TextBox&gt;&lt;/td&gt;
-                &lt;td&gt;&lt;asp:RegularExpressionValidator ID="revEmail" runat="server" 
-                    ControlToValidate="txtEmail" 
-                    ValidationExpression="\w+@\w+\.\w+" 
-                    ErrorMessage="Invalid" ForeColor="Red" /&gt;&lt;/td&gt;
-            &lt;/tr&gt;
-            &lt;tr&gt;
-                &lt;td&gt;&lt;/td&gt;
-                &lt;td&gt;&lt;asp:Button ID="btnRegister" runat="server" Text="Register" OnClick="btnRegister_Click" /&gt;&lt;/td&gt;
-            &lt;/tr&gt;
-        &lt;/table&gt;
-        &lt;br /&gt;
-        &lt;asp:Label ID="lblResult" runat="server" Font-Bold="true" ForeColor="Green"&gt;&lt;/asp:Label&gt;
-    &lt;/form&gt;
+&lt;form id="form1" runat="server"&gt;
+
+&lt;h2&gt;Registration Form&lt;/h2&gt;
+
+&lt;!-- Name: RequiredFieldValidator ensures it's not blank --&gt;
+Name: &lt;asp:TextBox ID="txtName" runat="server"&gt;&lt;/asp:TextBox&gt;
+&lt;asp:RequiredFieldValidator ID="rfvName" runat="server"
+    ControlToValidate="txtName"
+    ErrorMessage="Name is required"
+    ForeColor="Red"&gt;
+&lt;/asp:RequiredFieldValidator&gt;
+&lt;br /&gt;&lt;br /&gt;
+
+&lt;!-- Age: RangeValidator checks value is between 18 and 60 --&gt;
+Age: &lt;asp:TextBox ID="txtAge" runat="server"&gt;&lt;/asp:TextBox&gt;
+&lt;asp:RangeValidator ID="rvAge" runat="server"
+    ControlToValidate="txtAge"
+    MinimumValue="18" MaximumValue="60"
+    Type="Integer"
+    ErrorMessage="Age must be between 18 and 60"
+    ForeColor="Red"&gt;
+&lt;/asp:RangeValidator&gt;
+&lt;br /&gt;&lt;br /&gt;
+
+&lt;!-- Email: RegularExpressionValidator checks email format --&gt;
+Email: &lt;asp:TextBox ID="txtEmail" runat="server"&gt;&lt;/asp:TextBox&gt;
+&lt;asp:RegularExpressionValidator ID="revEmail" runat="server"
+    ControlToValidate="txtEmail"
+    ValidationExpression="^[^@\s]+@[^@\s]+\.[^@\s]+$"
+    ErrorMessage="Enter a valid email address"
+    ForeColor="Red"&gt;
+&lt;/asp:RegularExpressionValidator&gt;
+&lt;br /&gt;&lt;br /&gt;
+
+&lt;!-- Password: RequiredFieldValidator --&gt;
+Password: &lt;asp:TextBox ID="txtPassword" runat="server" TextMode="Password"&gt;&lt;/asp:TextBox&gt;
+&lt;asp:RequiredFieldValidator ID="rfvPassword" runat="server"
+    ControlToValidate="txtPassword"
+    ErrorMessage="Password is required"
+    ForeColor="Red"&gt;
+&lt;/asp:RequiredFieldValidator&gt;
+&lt;br /&gt;&lt;br /&gt;
+
+&lt;!-- Confirm Password: RequiredFieldValidator + CompareValidator --&gt;
+Confirm Password: &lt;asp:TextBox ID="txtConfirm" runat="server" TextMode="Password"&gt;&lt;/asp:TextBox&gt;
+&lt;asp:RequiredFieldValidator ID="rfvConfirm" runat="server"
+    ControlToValidate="txtConfirm"
+    ErrorMessage="Confirm Password is required"
+    ForeColor="Red"&gt;
+&lt;/asp:RequiredFieldValidator&gt;
+&lt;!-- Compares txtConfirm against txtPassword --&gt;
+&lt;asp:CompareValidator ID="cvPassword" runat="server"
+    ControlToValidate="txtConfirm"
+    ControlToCompare="txtPassword"
+    ErrorMessage="Passwords do not match"
+    ForeColor="Red"&gt;
+&lt;/asp:CompareValidator&gt;
+&lt;br /&gt;&lt;br /&gt;
+
+&lt;asp:Button ID="btnSubmit" runat="server" Text="Submit" OnClick="btnSubmit_Click" /&gt;
+&lt;br /&gt;&lt;br /&gt;
+
+&lt;!-- ValidationSummary shows all errors in one place --&gt;
+&lt;asp:ValidationSummary ID="ValidationSummary1" runat="server" ForeColor="Red" /&gt;
+
+&lt;asp:Label ID="lblMessage" runat="server" ForeColor="Green"&gt;&lt;/asp:Label&gt;
+
+&lt;/form&gt;
 &lt;/body&gt;
 &lt;/html&gt;</code></pre>
             </div>
@@ -114,30 +284,42 @@
                 <div class="terminal-dot yellow"></div>
                 <div class="terminal-dot green"></div>
               </div>
-              <div class="terminal-title">Practical4A.aspx.cs</div>
-              <span class="code-lang"></span><button class="copy-btn">? Copy code</button>
+              <div class="terminal-title">WebForm.aspx.cs</div>
+              <span class="code-lang">csharp</span>
+              <button class="copy-btn">📋 Copy code</button>
             </div>
             <div class="terminal-body">
               <pre><code>using System;
+using System.Web.UI;
 
-public partial class Practical4A : System.Web.UI.Page
+namespace ValidationDemo
 {
-    protected void Page_Load(object sender, EventArgs e) { }
-
-    protected void btnRegister_Click(object sender, EventArgs e)
+    public partial class WebForm : Page
     {
-        if (Page.IsValid)
+        protected void Page_Load(object sender, EventArgs e)
         {
-            lblResult.Text = "Registration Successful!";
+            // Disable unobtrusive validation to use classic inline validation behavior
+            ValidationSettings.UnobtrusiveValidationMode =
+                UnobtrusiveValidationMode.None;
+        }
+
+        protected void btnSubmit_Click(object sender, EventArgs e)
+        {
+            // Page.IsValid = true ONLY if ALL validators on the page pass
+            if (Page.IsValid)
+            {
+                lblMessage.Text = "Form submitted successfully!";
+            }
+            else
+            {
+                // Page.IsValid is false — validators show their error messages
+                lblMessage.Text = "";
+            }
         }
     }
 }</code></pre>
             </div>
           </div>
-        </div>
-
-        <!-- Part B -->
-        <div id="part-b" class="tab-content">
 
           <div class="terminal-card">
             <div class="terminal-header">
@@ -146,29 +328,25 @@ public partial class Practical4A : System.Web.UI.Page
                 <div class="terminal-dot yellow"></div>
                 <div class="terminal-dot green"></div>
               </div>
-              <div class="terminal-title">Practical4B.aspx</div>
-              <span class="code-lang"></span><button class="copy-btn">? Copy code</button>
+              <div class="terminal-title">Output</div>
+              <span class="code-lang">output</span>
             </div>
             <div class="terminal-body">
-              <pre><code>&lt;%@ Page Language="C#" AutoEventWireup="true" CodeBehind="Practical4B.aspx.cs" Inherits="Practical4B" %&gt;
+              <pre><code>On empty submission:
+  • Name is required
+  • Password is required
+  • Confirm Password is required
+  (errors listed in ValidationSummary)
 
-&lt;!DOCTYPE html&gt;
-&lt;html&gt;
-&lt;head runat="server"&gt;
-    &lt;title&gt;AdRotator Demo&lt;/title&gt;
-&lt;/head&gt;
-&lt;body&gt;
-    &lt;form id="form1" runat="server"&gt;
-        &lt;h2&gt;AdRotator Control&lt;/h2&gt;
-        &lt;asp:AdRotator ID="AdRotator1" runat="server" 
-            AdvertisementFile="~/Ads.xml" 
-            Width="400" Height="100" /&gt;
-        &lt;p&gt;Refresh the page to see different ads.&lt;/p&gt;
-    &lt;/form&gt;
-&lt;/body&gt;
-&lt;/html&gt;</code></pre>
+On valid submission:
+  Form submitted successfully!</code></pre>
             </div>
           </div>
+
+        </div>
+
+        <!-- Part B -->
+        <div id="part-b4" class="tab-content">
 
           <div class="terminal-card">
             <div class="terminal-header">
@@ -178,28 +356,121 @@ public partial class Practical4A : System.Web.UI.Page
                 <div class="terminal-dot green"></div>
               </div>
               <div class="terminal-title">Ads.xml</div>
-              <span class="code-lang"></span><button class="copy-btn">? Copy code</button>
+              <span class="code-lang">xml</span>
+              <button class="copy-btn">📋 Copy code</button>
             </div>
             <div class="terminal-body">
               <pre><code>&lt;?xml version="1.0" encoding="utf-8" ?&gt;
 &lt;Advertisements&gt;
-    &lt;Ad&gt;
-        &lt;ImageUrl&gt;~/Images/ad1.jpg&lt;/ImageUrl&gt;
-        &lt;NavigateUrl&gt;https://www.google.com&lt;/NavigateUrl&gt;
-        &lt;AlternateText&gt;Google&lt;/AlternateText&gt;
-        &lt;Keyword&gt;Search&lt;/Keyword&gt;
-        &lt;Impressions&gt;50&lt;/Impressions&gt;
-    &lt;/Ad&gt;
-    &lt;Ad&gt;
-        &lt;ImageUrl&gt;~/Images/ad2.jpg&lt;/ImageUrl&gt;
-        &lt;NavigateUrl&gt;https://www.microsoft.com&lt;/NavigateUrl&gt;
-        &lt;AlternateText&gt;Microsoft&lt;/AlternateText&gt;
-        &lt;Keyword&gt;Tech&lt;/Keyword&gt;
-        &lt;Impressions&gt;50&lt;/Impressions&gt;
-    &lt;/Ad&gt;
+  &lt;!-- First ad: shown 40% of the time based on Impressions weight --&gt;
+  &lt;Ad&gt;
+    &lt;ImageUrl&gt;~/Images/ad1.jpg&lt;/ImageUrl&gt;
+    &lt;NavigateUrl&gt;https://www.microsoft.com&lt;/NavigateUrl&gt;
+    &lt;AlternateText&gt;Microsoft Official Site&lt;/AlternateText&gt;
+    &lt;Impressions&gt;40&lt;/Impressions&gt;
+  &lt;/Ad&gt;
+
+  &lt;!-- Second ad: shown 60% of the time --&gt;
+  &lt;Ad&gt;
+    &lt;ImageUrl&gt;~/Images/ad2.jpg&lt;/ImageUrl&gt;
+    &lt;NavigateUrl&gt;https://www.google.com&lt;/NavigateUrl&gt;
+    &lt;AlternateText&gt;Google Official Site&lt;/AlternateText&gt;
+    &lt;Impressions&gt;60&lt;/Impressions&gt;
+  &lt;/Ad&gt;
 &lt;/Advertisements&gt;</code></pre>
             </div>
           </div>
+
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">WebForm.aspx</div>
+              <span class="code-lang">aspx</span>
+              <button class="copy-btn">📋 Copy code</button>
+            </div>
+            <div class="terminal-body">
+              <pre><code>&lt;%@ Page Language="C#" AutoEventWireup="true"
+CodeBehind="WebForm.aspx.cs"
+Inherits="AdRotatorDemo.WebForm" %&gt;
+
+&lt;!DOCTYPE html&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
+&lt;head runat="server"&gt;
+    &lt;title&gt;AdRotator Example&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+&lt;form id="form1" runat="server"&gt;
+&lt;div&gt;
+    &lt;h2&gt;ASP.NET AdRotator Control Example&lt;/h2&gt;
+
+    &lt;!-- AdRotator reads from Ads.xml and displays one ad randomly per page load --&gt;
+    &lt;asp:AdRotator ID="AdRotator1" runat="server"
+        AdvertisementFile="~/Ads.xml"
+        Target="_blank"
+        Width="300px"
+        Height="250px"
+        BorderColor="Gray"
+        BorderWidth="1px"
+        OnAdCreated="AdRotator1_AdCreated" /&gt;
+&lt;/div&gt;
+&lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+            </div>
+          </div>
+
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">WebForm.aspx.cs</div>
+              <span class="code-lang">csharp</span>
+              <button class="copy-btn">📋 Copy code</button>
+            </div>
+            <div class="terminal-body">
+              <pre><code>using System;
+using System.Web.UI;
+using System.Web.UI.WebControls;
+
+namespace AdRotatorDemo
+{
+    public partial class WebForm : Page
+    {
+        // AdCreated fires each time an ad is selected before it is rendered
+        protected void AdRotator1_AdCreated(object sender, AdCreatedEventArgs e)
+        {
+            // Append a referral query string to the NavigateUrl of the selected ad
+            e.NavigateUrl = e.NavigateUrl + "?ref=mysite";
+        }
+    }
+}</code></pre>
+            </div>
+          </div>
+
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">Output</div>
+              <span class="code-lang">output</span>
+            </div>
+            <div class="terminal-body">
+              <pre><code>Each page load randomly picks one ad:
+  60% chance → Google ad image displayed; clicking opens google.com?ref=mysite
+  40% chance → Microsoft ad image displayed; clicking opens microsoft.com?ref=mysite</code></pre>
+            </div>
+          </div>
+
         </div>
 
       </section>

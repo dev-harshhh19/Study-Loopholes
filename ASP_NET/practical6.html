@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Practical 6: Database - Study Loopholes</title>
+  <link rel="stylesheet" href="../global.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap"
+    rel="stylesheet">
+</head>
+
+<body class="subject-page">
+  <div class="blob-bg"></div>
+  <header class="header">
+    <a href="index.html" class="back-button">← Back to Index</a>
+    <h1>Practical 6: Working with the Database</h1>
+  </header>
+  <main class="container">
+    <article class="content-container">
+
+      <!-- AIM -->
+      <section id="aim">
+        <h2>Aim</h2>
+        <p><strong>Part A:</strong> Create a Web Application to display records from a database using
+          <code>SqlDataReader</code> (Connected Model).</p>
+        <p><strong>Part B:</strong> Display records from a database and bind them to <code>GridView</code> using
+          <code>DataSet</code> and <code>SqlDataAdapter</code> (Disconnected Model).</p>
+      </section>
+
+      <!-- THEORY -->
+      <section id="theory">
+        <h2>Background Theory</h2>
+
+        <div class="tabs-container">
+          <button class="tab-btn active" data-target="theory-a6">Part A Theory</button>
+          <button class="tab-btn" data-target="theory-b6">Part B Theory</button>
+        </div>
+
+        <div id="theory-a6" class="tab-content active">
+          <h3>ADO.NET — Connected Architecture (SqlDataReader)</h3>
+          <p>
+            <strong>ADO.NET</strong> is the data access technology in .NET for connecting to and working with databases.
+            The <strong>Connected Model</strong> keeps the database connection <strong>open while reading</strong> data
+            — ideal for fast, sequential, read-only access.
+          </p>
+          <h4>Objects Used</h4>
+          <table class="theory-table">
+            <thead>
+              <tr>
+                <th>Object</th>
+                <th>Namespace</th>
+                <th>Purpose</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>SqlConnection</code></td>
+                <td><code>System.Data.SqlClient</code></td>
+                <td>Opens connection to SQL Server database</td>
+              </tr>
+              <tr>
+                <td><code>SqlCommand</code></td>
+                <td><code>System.Data.SqlClient</code></td>
+                <td>Executes SQL queries (SELECT, INSERT, etc.)</td>
+              </tr>
+              <tr>
+                <td><code>SqlDataReader</code></td>
+                <td><code>System.Data.SqlClient</code></td>
+                <td>Reads rows one by one in a fast, forward-only manner</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>How Connected Model Works</h4>
+          <ol>
+            <li>Create a <code>SqlConnection</code> with the connection string</li>
+            <li>Create a <code>SqlCommand</code> with the SQL query</li>
+            <li>Call <code>con.Open()</code> to open the connection</li>
+            <li>Call <code>cmd.ExecuteReader()</code> to get a <code>SqlDataReader</code></li>
+            <li>Loop using <code>while (dr.Read())</code> to read each row</li>
+            <li>Call <code>dr.Close()</code> and <code>con.Close()</code> to release resources</li>
+          </ol>
+          <p><strong>Note:</strong> The connection stays open the entire time you're reading data — close it as soon as
+            possible.</p>
+        </div>
+
+        <div id="theory-b6" class="tab-content">
+          <h3>ADO.NET — Disconnected Architecture (DataSet + GridView)</h3>
+          <p>
+            The <strong>Disconnected Model</strong> fetches data, stores it in a <code>DataSet</code> in memory, and
+            <strong>closes the connection immediately</strong>. You work with the data offline without needing an open
+            connection.
+          </p>
+          <h4>Objects Used</h4>
+          <table class="theory-table">
+            <thead>
+              <tr>
+                <th>Object</th>
+                <th>Purpose</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><code>SqlDataAdapter</code></td>
+                <td>Bridge between database and DataSet — opens connection, fills data, closes connection</td>
+              </tr>
+              <tr>
+                <td><code>DataSet</code></td>
+                <td>In-memory container that stores data as DataTable(s)</td>
+              </tr>
+              <tr>
+                <td><code>GridView</code></td>
+                <td>ASP.NET control that displays data in a formatted HTML table</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>Connected vs Disconnected Model</h4>
+          <table class="theory-table">
+            <thead>
+              <tr>
+                <th>Feature</th>
+                <th>Connected (SqlDataReader)</th>
+                <th>Disconnected (DataSet)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Connection</td>
+                <td>Stays open while reading</td>
+                <td>Opens and closes automatically</td>
+              </tr>
+              <tr>
+                <td>Data storage</td>
+                <td>None (row by row)</td>
+                <td>Cached in memory (DataSet)</td>
+              </tr>
+              <tr>
+                <td>Access direction</td>
+                <td>Forward-only</td>
+                <td>Any direction (random access)</td>
+              </tr>
+              <tr>
+                <td>Performance</td>
+                <td>Faster for single-pass reads</td>
+                <td>Better for offline manipulation</td>
+              </tr>
+              <tr>
+                <td>UI Binding</td>
+                <td>Manual (loop)</td>
+                <td>Direct binding to GridView, etc.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- SOURCE CODE -->
+      <section id="code-section">
+        <h2>Source Code</h2>
+
+        <div class="tabs-container">
+          <button class="tab-btn active" data-target="part-a6">Part A (SqlDataReader)</button>
+          <button class="tab-btn" data-target="part-b6">Part B (DataSet + GridView)</button>
+        </div>
+
+        <!-- Part A -->
+        <div id="part-a6" class="tab-content active">
+
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">SQL — Create Table &amp; Insert Data</div>
+              <span class="code-lang">sql</span>
+              <button class="copy-btn">📋 Copy code</button>
+            </div>
+            <div class="terminal-body">
+              <pre><code>CREATE DATABASE CollegeDB;
+GO
+
+USE CollegeDB;
+GO
+
+CREATE TABLE Students (
+    StudentID   INT IDENTITY PRIMARY KEY,
+    StudentName VARCHAR(100),
+    Course      VARCHAR(100),
+    City        VARCHAR(100)
+);
+
+-- Insert sample data
+INSERT INTO Students (StudentName, Course, City)
+VALUES
+('Rahul Sharma', 'B.Sc IT', 'Mumbai'),
+('Janhvi Patel', 'BCA', 'Pune'),
+('Amit Jain', 'B.Sc CS', 'Delhi');
+
+SELECT * FROM Students;</code></pre>
+            </div>
+          </div>
+
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">ConnectedModel.aspx</div>
+              <span class="code-lang">aspx</span>
+              <button class="copy-btn">📋 Copy code</button>
+            </div>
+            <div class="terminal-body">
+              <pre><code>&lt;%@ Page Language="C#" AutoEventWireup="true"
+CodeBehind="ConnectedModel.aspx.cs"
+Inherits="prac6.ConnectedModel" %&gt;
+
+&lt;!DOCTYPE html&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
+&lt;head runat="server"&gt;
+    &lt;title&gt;Connected Model Example&lt;/title&gt;
+&lt;/head&gt;
+&lt;body style="font-family:Arial; padding:20px;"&gt;
+&lt;form id="form1" runat="server"&gt;
+
+    &lt;h2&gt;Connected Model - DataReader Example&lt;/h2&gt;
+
+    &lt;asp:Button ID="btnLoad" runat="server"
+        Text="Load Students" OnClick="btnLoad_Click" /&gt;
+    &lt;br /&gt;&lt;br /&gt;
+
+    &lt;!-- Label to display the fetched records --&gt;
+    &lt;asp:Label ID="lblData" runat="server"&gt;&lt;/asp:Label&gt;
+
+&lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+            </div>
+          </div>
+
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">ConnectedModel.aspx.cs</div>
+              <span class="code-lang">csharp</span>
+              <button class="copy-btn">📋 Copy code</button>
+            </div>
+            <div class="terminal-body">
+              <pre><code>using System;
+using System.Data.SqlClient;
+
+namespace prac6
+{
+    public partial class ConnectedModel : System.Web.UI.Page
+    {
+        protected void btnLoad_Click(object sender, EventArgs e)
+        {
+            // Connection string to connect to SQL Server
+            string cs = @"Data Source=localhost\SQLEXPRESS;
+                          Initial Catalog=CollegeDB;
+                          Integrated Security=True;";
+
+            SqlConnection con = new SqlConnection(cs);
+            SqlCommand cmd = new SqlCommand("SELECT * FROM Students", con);
+
+            con.Open();                          // Open connection to DB
+
+            SqlDataReader dr = cmd.ExecuteReader();  // Execute query; get reader
+
+            string result = "&lt;b&gt;Student List:&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;";
+
+            // dr.Read() moves to next row; returns false when no more rows
+            while (dr.Read())
+            {
+                result += "ID: "     + dr["StudentID"]   + " - ";
+                result += "Name: "   + dr["StudentName"] + " - ";
+                result += "Course: " + dr["Course"]      + " - ";
+                result += "City: "   + dr["City"]        + "&lt;br/&gt;";
+            }
+
+            lblData.Text = result;
+
+            dr.Close();   // Always close the reader
+            con.Close();  // Always close the connection
+        }
+    }
+}</code></pre>
+            </div>
+          </div>
+
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">Output</div>
+              <span class="code-lang">output</span>
+            </div>
+            <div class="terminal-body">
+              <pre><code>Student List:
+ID: 1 - Name: Rahul Sharma - Course: B.Sc IT - City: Mumbai
+ID: 2 - Name: Janhvi Patel - Course: BCA    - City: Pune
+ID: 3 - Name: Amit Jain    - Course: B.Sc CS - City: Delhi</code></pre>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Part B -->
+        <div id="part-b6" class="tab-content">
+
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">DisconnectedModel.aspx</div>
+              <span class="code-lang">aspx</span>
+              <button class="copy-btn">📋 Copy code</button>
+            </div>
+            <div class="terminal-body">
+              <pre><code>&lt;%@ Page Language="C#" AutoEventWireup="true"
+CodeBehind="DisconnectedModel.aspx.cs"
+Inherits="prac6.DisconnectedModel" %&gt;
+
+&lt;!DOCTYPE html&gt;
+&lt;html xmlns="http://www.w3.org/1999/xhtml"&gt;
+&lt;head runat="server"&gt;
+    &lt;title&gt;Disconnected Model Example&lt;/title&gt;
+&lt;/head&gt;
+&lt;body style="font-family:Arial; padding:20px;"&gt;
+&lt;form id="form2" runat="server"&gt;
+
+    &lt;h2&gt;Disconnected Model – DataSet Example&lt;/h2&gt;
+
+    &lt;asp:Button ID="btnLoad" runat="server"
+        Text="Load Students" OnClick="btnLoad_Click" /&gt;
+    &lt;br /&gt;&lt;br /&gt;
+
+    &lt;!-- GridView displays data in a table format automatically --&gt;
+    &lt;asp:GridView
+        ID="GridView1" runat="server"
+        AutoGenerateColumns="true"
+        BorderColor="Black"
+        BorderWidth="2px"
+        CellPadding="5" /&gt;
+
+&lt;/form&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+            </div>
+          </div>
+
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">DisconnectedModel.aspx.cs</div>
+              <span class="code-lang">csharp</span>
+              <button class="copy-btn">📋 Copy code</button>
+            </div>
+            <div class="terminal-body">
+              <pre><code>using System;
+using System.Data;
+using System.Data.SqlClient;
+
+namespace prac6
+{
+    public partial class DisconnectedModel : System.Web.UI.Page
+    {
+        protected void btnLoad_Click(object sender, EventArgs e)
+        {
+            // Connection string
+            string cs = @"Data Source=localhost\SQLEXPRESS;
+                          Initial Catalog=CollegeDB;
+                          Integrated Security=True;";
+
+            // SqlDataAdapter opens connection, runs query, fills DataSet, closes connection
+            SqlDataAdapter da = new SqlDataAdapter("SELECT * FROM Students", cs);
+
+            // DataSet is an in-memory store — connection is NOT needed after Fill()
+            DataSet ds = new DataSet();
+
+            // Fill() automatically opens and closes the connection internally
+            da.Fill(ds, "Students");
+
+            // Bind the DataTable from DataSet to the GridView
+            GridView1.DataSource = ds.Tables["Students"];
+            GridView1.DataBind();
+        }
+    }
+}</code></pre>
+            </div>
+          </div>
+
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">Output</div>
+              <span class="code-lang">output</span>
+            </div>
+            <div class="terminal-body">
+              <pre><code>GridView renders as an HTML table:
+┌───────────┬──────────────┬───────────┬─────────┐
+│ StudentID │ StudentName  │  Course   │  City   │
+├───────────┼──────────────┼───────────┼─────────┤
+│     1     │ Rahul Sharma │ B.Sc IT   │ Mumbai  │
+│     2     │ Janhvi Patel │ BCA       │ Pune    │
+│     3     │ Amit Jain    │ B.Sc CS   │ Delhi   │
+└───────────┴──────────────┴───────────┴─────────┘</code></pre>
+            </div>
+          </div>
+
+        </div>
+
+      </section>
+    </article>
+  </main>
+  <footer class="footer">
+    <p>© 2026 Study Loopholes</p>
+  </footer>
+  <script src="../global.js"></script>
+</body>
+
+</html>
