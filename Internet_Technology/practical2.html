@@ -175,17 +175,15 @@
     <article class="content-container">
       <section id="aim">
         <h2>Aim</h2>
-        <p>Create an inter-lan connection using routers.</p>
+        <p>Create an inter-LAN connection between two separate networks using a router.</p>
       </section>
 
       <section id="background">
         <h2>Background Information</h2>
-        <p>This practical demonstrates the concept of Inter-VLAN routing using a router in Cisco Packet Tracer. VLANs
-          are logical networks created within a switch to separate broadcast domains. Since devices in different VLANs
-          cannot communicate directly, a router is used to enable communication between them. This is achieved using the
-          Router-on-a-Stick method, where a single router interface is divided into multiple sub-interfaces, each
-          corresponding to a VLAN. Connectivity is verified using the <code>ping</code> command, and packet movement is
-          visualized using CPT simulation mode.</p>
+        <p>This practical demonstrates how to connect two different LANs using a single router in Cisco Packet Tracer.
+          Each LAN is connected to its own switch, and the router provides Layer-3 connectivity between the two
+          networks. After assigning IP addresses to the PCs and configuring the router interfaces, connectivity is
+          verified with <code>ping</code> and observed in Simulation Mode.</p>
       </section>
 
       <section id="procedure">
@@ -193,103 +191,62 @@
         <ol>
           <li>
             <h3>Place the network devices</h3>
-            <p>Select one Router and place it on the workspace.</p>
-            <p>Select one Switch (2960) and place it on the workspace.</p>
-            <p>Select two PCs and place them on the workspace.</p>
+            <p>Select <strong>1 Router (1941)</strong> and place it on the workspace.</p>
+            <p>Select <strong>2 Switches (2960)</strong> and place them on the workspace.</p>
+            <p>Select <strong>6 PCs</strong> and place them on the workspace.</p>
           </li>
           <li>
             <h3>Connect the devices</h3>
-            <p>Connect PC0 to Switch Fa0/1 using a copper straight-through cable.</p>
-            <p>Connect PC1 to Switch Fa0/2 using a copper straight-through cable.</p>
-            <p>Connect Switch Fa0/24 to Router Fa0/0 using a copper straight-through cable.</p>
+            <p>Connect PC0, PC1, PC2 to Switch0 using copper straight-through cables.</p>
+            <p>Connect PC3, PC4, PC5 to Switch1 using copper straight-through cables.</p>
+            <p>Connect Switch0 to Router Gig0/0 using a copper straight-through cable.</p>
+            <p>Connect Switch1 to Router Gig0/1 using a copper straight-through cable.</p>
           </li>
           <li>
-            <h3>Create VLANs on the Switch</h3>
-            <p>Click on the Switch and go to the CLI. Enter the following commands:</p>
-            <pre><code>enable 
-configure terminal 
-vlan 10 
-name SALES 
-exit 
-vlan 20 
-name HR 
-exit</code></pre>
-          </li>
-          <li>
-            <h3>Assign VLANs to Switch Ports</h3>
-            <p>Assign PC0 to VLAN 10:</p>
-            <pre><code>interface fastethernet 0/1 
-switchport mode access 
-switchport access vlan 10 
-exit</code></pre>
-            <p>Assign PC1 to VLAN 20:</p>
-            <pre><code>interface fastethernet 0/2 
-switchport mode access 
-switchport access vlan 20 
-exit</code></pre>
-          </li>
-          <li>
-            <h3>Configure Trunk Port on the Switch</h3>
-            <p>Configure the port connecting the switch to the router as a trunk:</p>
-            <pre><code>interface fastethernet 0/24 
-switchport mode trunk 
-exit</code></pre>
-          </li>
-          <li>
-            <h3>Configure the Router for Inter-VLAN Routing</h3>
-            <p>Click on the Router and go to the CLI.</p>
-            <p>Enable the physical interface:</p>
-            <pre><code>enable 
-configure terminal 
-interface fastethernet 0/0 
-no ip address 
-no shutdown 
-exit</code></pre>
-            <p>Create sub-interfaces for each VLAN.</p>
-            <p>For VLAN 10:</p>
-            <pre><code>interface fastethernet 0/0.10 
-encapsulation dot1Q 10 
-ip address 192.168.10.1 255.255.255.0 
-no shutdown 
-exit</code></pre>
-            <p>For VLAN 20:</p>
-            <pre><code>interface fastethernet 0/0.20 
-encapsulation dot1Q 20 
-ip address 192.168.20.1 255.255.255.0 
-no shutdown 
-exit</code></pre>
-          </li>
-          <li>
-            <h3>Configure IP Addresses on PCs</h3>
+            <h3>Configure IP addresses on PCs</h3>
+            <p>Assign static IP addresses to each PC.</p>
             <div class="highlight-box">
-              <strong>PC0 (VLAN 10):</strong><br>
-              IP Address: <code>192.168.10.2</code><br>
-              Subnet Mask: <code>255.255.255.0</code><br>
-              Default Gateway: <code>192.168.10.1</code>
+              <strong>LAN 1 (Switch0 → Router Gig0/0):</strong>
+              <p>PC0: 192.168.1.2 | Mask 255.255.255.0 | Gateway 192.168.1.1</p>
+              <p>PC1: 192.168.1.3 | Mask 255.255.255.0 | Gateway 192.168.1.1</p>
+              <p>PC2: 192.168.1.4 | Mask 255.255.255.0 | Gateway 192.168.1.1</p>
             </div>
             <div class="highlight-box">
-              <strong>PC1 (VLAN 20):</strong><br>
-              IP Address: <code>192.168.20.2</code><br>
-              Subnet Mask: <code>255.255.255.0</code><br>
-              Default Gateway: <code>192.168.20.1</code>
+              <strong>LAN 2 (Switch1 → Router Gig0/1):</strong>
+              <p>PC3: 192.168.2.2 | Mask 255.255.255.0 | Gateway 192.168.2.1</p>
+              <p>PC4: 192.168.2.3 | Mask 255.255.255.0 | Gateway 192.168.2.1</p>
+              <p>PC5: 192.168.2.4 | Mask 255.255.255.0 | Gateway 192.168.2.1</p>
             </div>
           </li>
           <li>
-            <h3>Verify Connectivity Using Ping</h3>
-            <p>Go to PC0 → Desktop → Command Prompt and type:</p>
-            <pre><code>ping 192.168.20.2</code></pre>
-            <p>You will receive a reply, which shows that PC0 can communicate with PC1.</p>
-            <p>Now go to PC1 → Desktop → Command Prompt and type:</p>
-            <pre><code>ping 192.168.10.2</code></pre>
-            <p>You will receive a reply, which confirms successful Inter-VLAN communication.</p>
+            <h3>Configure the router</h3>
+            <p>Open the router CLI and configure both interfaces:</p>
+            <pre><code>enable
+configure terminal
+
+interface gigabitEthernet 0/0
+ip address 192.168.1.1 255.255.255.0
+no shutdown
+exit
+
+interface gigabitEthernet 0/1
+ip address 192.168.2.1 255.255.255.0
+no shutdown
+exit
+
+end
+write memory</code></pre>
+          </li>
+          <li>
+            <h3>Verify connectivity using ping</h3>
+            <p>On any PC, open <em>Desktop → Command Prompt</em> and test:</p>
+            <pre><code>ping 192.168.2.2</code></pre>
+            <p>If the configuration is correct, you should receive <em>Reply from</em> responses.</p>
           </li>
           <li>
             <h3>Simulation Mode in Cisco Packet Tracer</h3>
-            <p>Switch to Simulation Mode in CPT.</p>
-            <p>Click on Edit Filters and select ICMP and ARP.</p>
-            <p>Run the ping command again from PC0 to PC1.</p>
-            <p>Click Capture / Forward to observe packet movement from PC0 → Switch → Router → Switch → PC1 and back.
-            </p>
+            <p>Switch to Simulation Mode, filter for ICMP and ARP, send a ping between LANs, then use <strong>Capture / Forward</strong>
+              to observe packet flow: PC → Switch → Router → other Switch → destination PC.</p>
           </li>
         </ol>
       </section>
