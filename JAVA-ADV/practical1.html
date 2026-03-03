@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Practical 1: Applet Basics - Study Loopholes</title>
+  <link rel="stylesheet" href="../global.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap"
+    rel="stylesheet">
+</head>
+
+<body class="subject-page">
+  <div class="blob-bg"></div>
+  <header class="header">
+    <a href="index.html" class="back-button">← Back to Index</a>
+    <h1>Practical 1: Applet Basics</h1>
+  </header>
+  <main class="container">
+    <article class="content-container">
+      <section id="aim">
+        <h2>Aim</h2>
+        <p><strong>Part A:</strong> Write a Java program to create an Applet that displays student information and also
+          set foreground and backgrounds.</p>
+        <p><strong>Part B:</strong> Write a Java Program to create an applet that scrolls a message from left to right.
+        </p>
+        <p><strong>Part C:</strong> Write a Java program to create an Applet that reads Employee information using
+          parameters and displays name of employee, designation, salary and tax.</p>
+      </section>
+
+      <section id="code-section">
+        <h2>Source Code</h2>
+
+        <div class="tabs-container">
+          <button class="tab-btn active" data-target="part-a">Part A (Student Info)</button>
+          <button class="tab-btn" data-target="part-b">Part B (Scroll Message)</button>
+          <button class="tab-btn" data-target="part-c">Part C (Employee Details)</button>
+        </div>
+
+        <!-- Part A -->
+        <div id="part-a" class="tab-content active">
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">StudentInfo.java</div>
+              <span class="code-lang">java</span>
+              <button class="copy-btn">📋 Copy code</button>
+            </div>
+            <div class="terminal-body">
+              <pre><code>import java.applet.Applet;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+
+/* 
+ * &lt;applet code="StudentInfo.class" width="400" height="300"&gt;
+ * &lt;/applet&gt; 
+ */
+
+public class StudentInfo extends Applet {
+
+    // The init() method is called when the applet is first initialized
+    public void init() {
+        // Set the background color to a nice cyan
+        setBackground(Color.cyan);
+        
+        // Set the default foreground color (text color) to dark blue
+        setForeground(Color.blue);
+    }
+    
+    // The paint() method is used for drawing operations
+    public void paint(Graphics g) {
+        // Set a custom font for better visibility
+        Font myFont = new Font("Arial", Font.BOLD, 20);
+        g.setFont(myFont);
+        
+        // Displaying student information at specific X, Y coordinates
+        g.drawString("Student Information Panel", 80, 40);
+        
+        // Changing font for details
+        Font detailFont = new Font("Serif", Font.PLAIN, 18);
+        g.setFont(detailFont);
+        
+        g.setColor(Color.black); // Setting text color to black for data
+        g.drawString("Name: John Doe", 50, 100);
+        g.drawString("Roll No: 101", 50, 140);
+        g.drawString("Course: B.Sc Computer Science", 50, 180);
+        g.drawString("Grade: A+", 50, 220);
+    }
+}
+</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- Part B -->
+        <div id="part-b" class="tab-content">
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">ScrollMessage.java</div>
+              <span class="code-lang">java</span>
+              <button class="copy-btn">📋 Copy code</button>
+            </div>
+            <div class="terminal-body">
+              <pre><code>import java.applet.Applet;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+
+/* 
+ * &lt;applet code="ScrollMessage.class" width="500" height="200"&gt;
+ * &lt;/applet&gt; 
+ */
+
+public class ScrollMessage extends Applet implements Runnable {
+    String msg = " Welcome to Advanced Java Applet Programming! ";
+    Thread t;
+    int x; // X-coordinate of the scrolling text
+    boolean stopFlag;
+
+    public void init() {
+        setBackground(Color.black);
+        setForeground(Color.green);
+        x = 0; // start from left
+    }
+
+    public void start() {
+        t = new Thread(this);
+        stopFlag = false;
+        t.start(); // starts the thread
+    }
+
+    // Thread automatically runs this method
+    public void run() {
+        while (true) {
+            try {
+                repaint();
+                Thread.sleep(150); // Pause for 150 milliseconds
+                
+                x += 10; // Move text to the right
+                
+                // If text moves beyond the applet width, reset to left side
+                if (x &gt; getWidth()) {
+                    x = -300; 
+                }
+                
+                if(stopFlag) {
+                    break;
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    
+    public void stop() {
+        stopFlag = true;
+        t = null;
+    }
+
+    public void paint(Graphics g) {
+        Font f = new Font("Courier New", Font.BOLD, 24);
+        g.setFont(f);
+        g.drawString(msg, x, 100);
+    }
+}
+</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- Part C -->
+        <div id="part-c" class="tab-content">
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">EmpInfo.java</div>
+              <span class="code-lang">java</span>
+              <button class="copy-btn">📋 Copy code</button>
+            </div>
+            <div class="terminal-body">
+              <pre><code>import java.applet.Applet;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.Graphics;
+
+/* 
+ * &lt;applet code="EmpInfo.class" width="400" height="300"&gt;
+ *   &lt;param name="empName" value="Alice Smith"&gt;
+ *   &lt;param name="designation" value="Senior Software Engineer"&gt;
+ *   &lt;param name="salary" value="95000"&gt;
+ *   &lt;param name="tax" value="9500"&gt;
+ * &lt;/applet&gt; 
+ */
+
+public class EmpInfo extends Applet {
+    String name, desig, sal, tax;
+
+    public void init() {
+        setBackground(Color.lightGray);
+        
+        // Reading parameters passed from HTML
+        name = getParameter("empName");
+        desig = getParameter("designation");
+        sal = getParameter("salary");
+        tax = getParameter("tax");
+        
+        // Handling null cases just in case parameters are not defined
+        if(name == null) name = "Not Available";
+        if(desig == null) desig = "Not Available";
+        if(sal == null) sal = "0.0";
+        if(tax == null) tax = "0.0";
+    }
+
+    public void paint(Graphics g) {
+        Font titleFont = new Font("Verdana", Font.BOLD, 22);
+        Font dataFont = new Font("Arial", Font.PLAIN, 18);
+        
+        g.setFont(titleFont);
+        g.setColor(Color.blue);
+        g.drawString("Employee Details", 100, 50);
+        
+        g.setFont(dataFont);
+        g.setColor(Color.black);
+        g.drawString("Employee Name : " + name, 40, 100);
+        g.drawString("Designation : " + desig, 40, 140);
+        g.drawString("Salary : $" + sal, 40, 180);
+        g.drawString("Tax Deducted : $" + tax, 40, 220);
+        
+        // Draw a simple box around it
+        g.drawRect(20, 20, 350, 250);
+    }
+}
+</code></pre>
+            </div>
+          </div>
+        </div>
+
+      </section>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <p>© 2026 Study Loopholes</p>
+  </footer>
+  <script src="../global.js"></script>
+</body>
+
+</html>

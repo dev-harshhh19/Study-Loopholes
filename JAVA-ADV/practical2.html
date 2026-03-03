@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Practical 2: Applet Drawings - Study Loopholes</title>
+  <link rel="stylesheet" href="../global.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap"
+    rel="stylesheet">
+</head>
+
+<body class="subject-page">
+  <div class="blob-bg"></div>
+  <header class="header">
+    <a href="index.html" class="back-button">← Back to Index</a>
+    <h1>Practical 2: Applet Drawings</h1>
+  </header>
+  <main class="container">
+    <article class="content-container">
+      <section id="aim">
+        <h2>Aim</h2>
+        <p><strong>Part A:</strong> Write a java program to draw Lines, ovals, filled ovals and arcs, filled arcs.</p>
+        <p><strong>Part B:</strong> Write a java program to draw rectangle, filled rectangle and rounded rectangle and
+          filled rounded rectangle with any two colors.</p>
+        <p><strong>Part C:</strong> Write a java program to draw a smiley face.</p>
+      </section>
+
+      <section id="code-section">
+        <h2>Source Code</h2>
+
+        <div class="tabs-container">
+          <button class="tab-btn active" data-target="part-a">Part A (Ovals & Arcs)</button>
+          <button class="tab-btn" data-target="part-b">Part B (Rectangles)</button>
+          <button class="tab-btn" data-target="part-c">Part C (Smiley Face)</button>
+        </div>
+
+        <!-- Part A -->
+        <div id="part-a" class="tab-content active">
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">DrawShapes.java</div>
+              <span class="code-lang">java</span>
+              <button class="copy-btn">📋 Copy code</button>
+            </div>
+            <div class="terminal-body">
+              <pre><code>import java.applet.Applet;
+import java.awt.Color;
+import java.awt.Graphics;
+
+/* 
+ * &lt;applet code="DrawShapes.class" width="500" height="400"&gt;
+ * &lt;/applet&gt; 
+ */
+
+public class DrawShapes extends Applet {
+
+    public void init() {
+        setBackground(Color.white);
+    }
+
+    public void paint(Graphics g) {
+        g.setColor(Color.black);
+        g.drawString("Drawing Lines, Ovals, and Arcs", 150, 20);
+
+        // Drawing Lines
+        g.setColor(Color.red);
+        g.drawString("draw line:", 20, 60);
+        g.drawLine(100, 50, 400, 50);
+        g.drawLine(100, 60, 400, 60); // another line parallel
+
+        // Drawing Ovals
+        g.setColor(Color.blue);
+        g.drawString("draw oval:", 20, 130);
+        g.drawOval(100, 100, 100, 50); // width 100, height 50
+        g.drawOval(250, 80, 80, 80);   // width 80, height 80 (perfect circle)
+
+        // Drawing Filled Ovals
+        g.setColor(Color.magenta);
+        g.drawString("fill oval:", 20, 230);
+        g.fillOval(100, 200, 100, 50);
+        g.fillOval(250, 180, 80, 80);
+
+        // Drawing Arcs
+        g.setColor(Color.darkGray);
+        g.drawString("draw arc:", 20, 310);
+        g.drawArc(100, 280, 80, 80, 0, 180); // semi circle
+        g.drawArc(200, 280, 80, 80, 0, 90);  // quarter circle
+
+        // Drawing Filled Arcs
+        g.setColor(Color.orange);
+        g.drawString("fill arc:", 300, 310);
+        g.fillArc(380, 280, 80, 80, 0, 270); // pie shape
+    }
+}
+</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- Part B -->
+        <div id="part-b" class="tab-content">
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">Rectangles.java</div>
+              <span class="code-lang">java</span>
+              <button class="copy-btn">📋 Copy code</button>
+            </div>
+            <div class="terminal-body">
+              <pre><code>import java.applet.Applet;
+import java.awt.Color;
+import java.awt.Graphics;
+
+/* 
+ * &lt;applet code="Rectangles.class" width="500" height="400"&gt;
+ * &lt;/applet&gt; 
+ */
+
+public class Rectangles extends Applet {
+    
+    public void init() {
+        setBackground(Color.white);
+    }
+    
+    public void paint(Graphics g) {
+        g.drawString("Drawing Various Rectangles", 150, 20);
+
+        // 1. Standard outline rectangle
+        g.setColor(Color.red);
+        g.drawString("drawRect", 50, 60);
+        g.drawRect(50, 80, 150, 80);
+
+        // 2. Standard filled rectangle
+        g.setColor(Color.blue);
+        g.drawString("fillRect", 280, 60);
+        g.fillRect(280, 80, 150, 80);
+        
+        // 3. Rounded outline rectangle
+        g.setColor(Color.green);
+        g.drawString("drawRoundRect", 50, 220);
+        // last two parameters determine the arc width & height for rounded corners
+        g.drawRoundRect(50, 240, 150, 80, 30, 30);
+        
+        // 4. Rounded filled rectangle
+        g.setColor(Color.magenta);
+        g.drawString("fillRoundRect", 280, 220);
+        g.fillRoundRect(280, 240, 150, 80, 30, 30);
+    }
+}
+</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- Part C -->
+        <div id="part-c" class="tab-content">
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">Smiley.java</div>
+              <span class="code-lang">java</span>
+              <button class="copy-btn">📋 Copy code</button>
+            </div>
+            <div class="terminal-body">
+              <pre><code>import java.applet.Applet;
+import java.awt.Color;
+import java.awt.Graphics;
+
+/* 
+ * &lt;applet code="Smiley.class" width="400" height="400"&gt;
+ * &lt;/applet&gt; 
+ */
+
+public class Smiley extends Applet {
+
+    public void init() {
+        setBackground(Color.white);
+    }
+
+    public void paint(Graphics g) {
+        // Base Face Circle (Yellow)
+        g.setColor(Color.yellow);
+        g.fillOval(50, 50, 300, 300);
+        
+        // Outline of the Face (Black)
+        g.setColor(Color.black);
+        g.drawOval(50, 50, 300, 300);
+        
+        // Left Eye
+        g.fillOval(120, 130, 40, 40); 
+        
+        // Right Eye
+        g.fillOval(240, 130, 40, 40); 
+        
+        // Nose (Optional - just to add more detail)
+        g.drawLine(200, 180, 200, 220);
+        
+        // Smile using Arc
+        // drawArc(x, y, width, height, startAngle, arcAngle)
+        // Note: Negative arcAngle draws clockwise, making a smile.
+        g.setColor(Color.red);
+        g.fillArc(120, 180, 160, 100, 0, -180);
+        
+        // Outline for smile to pop more
+        g.setColor(Color.black);
+        g.drawArc(120, 180, 160, 100, 0, -180);
+        
+        // Optional text
+        g.drawString("Have a Great Day!", 140, 380);
+    }
+}
+</code></pre>
+            </div>
+          </div>
+        </div>
+
+      </section>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <p>© 2026 Study Loopholes</p>
+  </footer>
+  <script src="../global.js"></script>
+</body>
+
+</html>

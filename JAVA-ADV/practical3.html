@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Practical 3: Event Handling - Study Loopholes</title>
+  <link rel="stylesheet" href="../global.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap"
+    rel="stylesheet">
+</head>
+
+<body class="subject-page">
+  <div class="blob-bg"></div>
+  <header class="header">
+    <a href="index.html" class="back-button">← Back to Index</a>
+    <h1>Practical 3: Event Handling</h1>
+  </header>
+  <main class="container">
+    <article class="content-container">
+      <section id="aim">
+        <h2>Aim</h2>
+        <p><strong>Part A:</strong> Write a Java program to create an Applet that displays 4 buttons each represents
+          different colors. If a user click on particular button then that color is set as back ground to applet.</p>
+        <p><strong>Part B:</strong> Write a Java program to create an Applet that displays 2 buttons. If a user clicks
+          on one button then change name of another button and display the button clicked and vice-versa.</p>
+        <p><strong>Part C:</strong> Write a Java program to create an Applet that displays 2 TextFields and labels User
+          Name and Password. Display Text Field entered and display selected text in username & display password.</p>
+        <p><strong>Part D:</strong> Write a Java program that displays 4 buttons and also count Number of button clicks
+          on each button.</p>
+      </section>
+
+      <section id="code-section">
+        <h2>Source Code</h2>
+
+        <div class="tabs-container">
+          <button class="tab-btn active" data-target="part-a">Part A (Color Buttons)</button>
+          <button class="tab-btn" data-target="part-b">Part B (Toggle Name)</button>
+          <button class="tab-btn" data-target="part-c">Part C (Login Form)</button>
+          <button class="tab-btn" data-target="part-d">Part D (Click Counters)</button>
+        </div>
+
+        <!-- Part A -->
+        <div id="part-a" class="tab-content active">
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">ColorButtons.java</div>
+              <span class="code-lang">java</span>
+              <button class="copy-btn">📋 Copy code</button>
+            </div>
+            <div class="terminal-body">
+              <pre><code>import java.applet.Applet;
+import java.awt.Button;
+import java.awt.Color;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+/* 
+ * &lt;applet code="ColorButtons.class" width="400" height="300"&gt;
+ * &lt;/applet&gt; 
+ */
+
+public class ColorButtons extends Applet implements ActionListener {
+    Button btnRed, btnGreen, btnBlue, btnYellow;
+
+    public void init() {
+        btnRed = new Button("Red");
+        btnGreen = new Button("Green");
+        btnBlue = new Button("Blue");
+        btnYellow = new Button("Yellow");
+
+        btnRed.setBackground(Color.red);
+        btnGreen.setBackground(Color.green);
+        btnBlue.setBackground(Color.blue);
+        btnYellow.setBackground(Color.yellow);
+        
+        btnBlue.setForeground(Color.white);
+        btnRed.setForeground(Color.white);
+
+        add(btnRed);
+        add(btnGreen);
+        add(btnBlue);
+        add(btnYellow);
+        
+        // Register the buttons to the Action Listener
+        btnRed.addActionListener(this);
+        btnGreen.addActionListener(this);
+        btnBlue.addActionListener(this);
+        btnYellow.addActionListener(this);
+    }
+
+    // Handles the button click events
+    public void actionPerformed(ActionEvent e) {
+        String command = e.getActionCommand();
+        
+        if (command.equals("Red")) {
+            setBackground(Color.red);
+        } else if (command.equals("Green")) {
+            setBackground(Color.green);
+        } else if (command.equals("Blue")) {
+            setBackground(Color.blue);
+        } else if (command.equals("Yellow")) {
+            setBackground(Color.yellow);
+        }
+        
+        // Force the applet to redraw its UI
+        repaint(); 
+    }
+}
+</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- Part B -->
+        <div id="part-b" class="tab-content">
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">ToggleButtons.java</div>
+              <span class="code-lang">java</span>
+              <button class="copy-btn">📋 Copy code</button>
+            </div>
+            <div class="terminal-body">
+              <pre><code>import java.applet.Applet;
+import java.awt.Button;
+import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+/* 
+ * &lt;applet code="ToggleButtons.class" width="400" height="300"&gt;
+ * &lt;/applet&gt; 
+ */
+
+public class ToggleButtons extends Applet implements ActionListener {
+    Button b1, b2;
+    String statusMessage = "Click a button above.";
+
+    public void init() {
+        b1 = new Button("Button A");
+        b2 = new Button("Button B");
+        
+        add(b1);
+        add(b2);
+        
+        b1.addActionListener(this);
+        b2.addActionListener(this);
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        // Did user click Button 1?
+        if (e.getSource() == b1) {
+            b2.setLabel("I was changed by A!");
+            statusMessage = "You just clicked on the First Button.";
+        } 
+        // Or did user click Button 2?
+        else if(e.getSource() == b2) {
+            b1.setLabel("I was changed by B!");
+            statusMessage = "You just clicked on the Second Button.";
+        }
+        repaint();
+    }
+
+    public void paint(Graphics g) {
+        g.setFont(new Font("Arial", Font.BOLD, 16));
+        g.drawString(statusMessage, 50, 150);
+    }
+}
+</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- Part C -->
+        <div id="part-c" class="tab-content">
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">LoginApplet.java</div>
+              <span class="code-lang">java</span>
+              <button class="copy-btn">📋 Copy code</button>
+            </div>
+            <div class="terminal-body">
+              <pre><code>import java.applet.Applet;
+import java.awt.Button;
+import java.awt.Label;
+import java.awt.TextField;
+import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+/* 
+ * &lt;applet code="LoginApplet.class" width="400" height="250"&gt;
+ * &lt;/applet&gt; 
+ */
+
+public class LoginApplet extends Applet implements ActionListener {
+    TextField txtUsername, txtPassword;
+    Button btnSubmit;
+    String displayMsg = "";
+
+    public void init() {
+        // Label & TextField for Username
+        add(new Label("User Name: "));
+        txtUsername = new TextField(20);
+        add(txtUsername);
+        
+        // Label & TextField for Password
+        add(new Label("Password: "));
+        txtPassword = new TextField(20);
+        txtPassword.setEchoChar('*'); // Hides password typing
+        add(txtPassword);
+        
+        btnSubmit = new Button("Login / Submit");
+        add(btnSubmit);
+        
+        btnSubmit.addActionListener(this);
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        String uName = txtUsername.getText();
+        String uPass = txtPassword.getText();
+        
+        // This is only for demonstrating UI update
+        displayMsg = "Output - User: " + uName + " | Pass: " + uPass; 
+        repaint();
+    }
+
+    public void paint(Graphics g) {
+        g.drawString(displayMsg, 20, 150);
+    }
+}
+</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- Part D -->
+        <div id="part-d" class="tab-content">
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">ButtonCounts.java</div>
+              <span class="code-lang">java</span>
+              <button class="copy-btn">📋 Copy code</button>
+            </div>
+            <div class="terminal-body">
+              <pre><code>import java.applet.Applet;
+import java.awt.Button;
+import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+/* 
+ * &lt;applet code="ButtonCounts.class" width="400" height="250"&gt;
+ * &lt;/applet&gt; 
+ */
+
+public class ButtonCounts extends Applet implements ActionListener {
+    Button b1, b2, b3, b4;
+    int c1 = 0, c2 = 0, c3 = 0, c4 = 0; // The four counters
+
+    public void init() {
+        b1 = new Button("Option 1"); 
+        b2 = new Button("Option 2");
+        b3 = new Button("Option 3"); 
+        b4 = new Button("Option 4");
+        
+        add(b1); 
+        add(b2); 
+        add(b3); 
+        add(b4);
+        
+        b1.addActionListener(this); 
+        b2.addActionListener(this);
+        b3.addActionListener(this); 
+        b4.addActionListener(this);
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        Object source = e.getSource();
+        
+        if (source == b1) {
+            c1++;
+        } else if(source == b2) {
+            c2++;
+        } else if(source == b3) {
+            c3++;
+        } else if(source == b4) {
+            c4++;
+        }
+        
+        repaint();
+    }
+
+    public void paint(Graphics g) {
+        g.drawString("Option 1 Clicks: " + c1, 50, 100);
+        g.drawString("Option 2 Clicks: " + c2, 50, 130);
+        g.drawString("Option 3 Clicks: " + c3, 50, 160);
+        g.drawString("Option 4 Clicks: " + c4, 50, 190);
+    }
+}
+</code></pre>
+            </div>
+          </div>
+        </div>
+
+      </section>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <p>© 2026 Study Loopholes</p>
+  </footer>
+  <script src="../global.js"></script>
+</body>
+
+</html>

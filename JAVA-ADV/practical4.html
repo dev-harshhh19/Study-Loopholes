@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Practical 4: Applet Logic - Study Loopholes</title>
+  <link rel="stylesheet" href="../global.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&family=Fira+Code:wght@400;500&display=swap"
+    rel="stylesheet">
+</head>
+
+<body class="subject-page">
+  <div class="blob-bg"></div>
+  <header class="header">
+    <a href="index.html" class="back-button">← Back to Index</a>
+    <h1>Practical 4: Applet Logic</h1>
+  </header>
+  <main class="container">
+    <article class="content-container">
+      <section id="aim">
+        <h2>Aim</h2>
+        <p><strong>Part A:</strong> Write a Java Program to create an applet that receives an integer in one text field,
+          and computes its factorial value and returns it in another text field, when the button named "Compute" is
+          clicked.</p>
+        <p><strong>Part B:</strong> Write a Java Program to create an applet that receives a string and returns either
+          it Uppercase or Lowercase, Reverse of it.</p>
+      </section>
+
+      <section id="code-section">
+        <h2>Source Code</h2>
+
+        <div class="tabs-container">
+          <button class="tab-btn active" data-target="part-a">Part A (Factorial)</button>
+          <button class="tab-btn" data-target="part-b">Part B (String Ops)</button>
+        </div>
+
+        <!-- Part A -->
+        <div id="part-a" class="tab-content active">
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">FactorialApplet.java</div>
+              <span class="code-lang">java</span>
+              <button class="copy-btn">📋 Copy code</button>
+            </div>
+            <div class="terminal-body">
+              <pre><code>import java.applet.Applet;
+import java.awt.Button;
+import java.awt.Label;
+import java.awt.TextField;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+/* 
+ * &lt;applet code="FactorialApplet.class" width="450" height="150"&gt;
+ * &lt;/applet&gt; 
+ */
+
+public class FactorialApplet extends Applet implements ActionListener {
+    TextField inputField, resultField;
+    Button btnCompute;
+
+    public void init() {
+        add(new Label("Enter a Number:"));
+        
+        inputField = new TextField(10);
+        add(inputField);
+        
+        btnCompute = new Button("Compute");
+        add(btnCompute);
+        btnCompute.addActionListener(this);
+        
+        add(new Label("Factorial Result:"));
+        
+        resultField = new TextField(20);
+        resultField.setEditable(false); // Make it read-only
+        add(resultField);
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        try {
+            int number = Integer.parseInt(inputField.getText());
+            long fact = 1;
+            
+            // Simple Factorial Loop
+            for (int i = 1; i &lt;= number; i++) {
+                fact = fact * i;
+            }
+            
+            resultField.setText(String.valueOf(fact));
+        } catch(NumberFormatException ex) {
+            resultField.setText("Error: Not a valid number!");
+        }
+    }
+}
+</code></pre>
+            </div>
+          </div>
+        </div>
+
+        <!-- Part B -->
+        <div id="part-b" class="tab-content">
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">StringOps.java</div>
+              <span class="code-lang">java</span>
+              <button class="copy-btn">📋 Copy code</button>
+            </div>
+            <div class="terminal-body">
+              <pre><code>import java.applet.Applet;
+import java.awt.Button;
+import java.awt.Label;
+import java.awt.TextField;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
+/* 
+ * &lt;applet code="StringOps.class" width="500" height="200"&gt;
+ * &lt;/applet&gt; 
+ */
+
+public class StringOps extends Applet implements ActionListener {
+    TextField txtInput, txtOutput;
+    Button btnUpper, btnLower, btnReverse;
+
+    public void init() {
+        add(new Label("Original String: "));
+        txtInput = new TextField(30);
+        add(txtInput);
+        
+        btnUpper = new Button("Uppercase");
+        btnLower = new Button("Lowercase");
+        btnReverse = new Button("Reverse");
+        
+        add(btnUpper); 
+        add(btnLower); 
+        add(btnReverse);
+        
+        btnUpper.addActionListener(this);
+        btnLower.addActionListener(this);
+        btnReverse.addActionListener(this);
+        
+        add(new Label("Final Result: "));
+        txtOutput = new TextField(30);
+        txtOutput.setEditable(false);
+        add(txtOutput);
+    }
+
+    public void actionPerformed(ActionEvent e) {
+        String str = txtInput.getText();
+        Object source = e.getSource();
+        
+        if (source == btnUpper) {
+            txtOutput.setText(str.toUpperCase());
+        } else if (source == btnLower) {
+            txtOutput.setText(str.toLowerCase());
+        } else if (source == btnReverse) {
+            // Using StringBuilder to easily reverse the string
+            StringBuilder sb = new StringBuilder(str);
+            txtOutput.setText(sb.reverse().toString());
+        }
+    }
+}
+</code></pre>
+            </div>
+          </div>
+        </div>
+
+      </section>
+    </article>
+  </main>
+
+  <footer class="footer">
+    <p>© 2026 Study Loopholes</p>
+  </footer>
+  <script src="../global.js"></script>
+</body>
+
+</html>
