@@ -35,6 +35,7 @@
         <div class="tabs-container">
           <button class="tab-btn active" data-target="part-a">Part A (Product)</button>
           <button class="tab-btn" data-target="part-b">Part B (Operations)</button>
+          <button class="tab-btn" data-target="single-file">Part B (Single File)</button>
         </div>
 
         <!-- Part A - Console App -->
@@ -281,6 +282,152 @@ class ReverseSum
             </div>
           </div>
 
+        </div>
+
+        <!-- Part B - Single File -->
+        <div id="single-file" class="tab-content">
+
+          <div class="terminal-card">
+            <div class="terminal-header">
+              <div class="terminal-dots">
+                <div class="terminal-dot red"></div>
+                <div class="terminal-dot yellow"></div>
+                <div class="terminal-dot green"></div>
+              </div>
+              <div class="terminal-title">Program.cs</div>
+              <span class="code-lang">csharp</span>
+              <button class="copy-btn">📋 Copy code</button>
+            </div>
+            <div class="terminal-body">
+              <pre><code>using System;
+namespace Operations
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            int choice;
+            do {
+                Console.WriteLine("\n--- MENU ---");
+                Console.WriteLine("1. Generate Fibonacci Series");
+                Console.WriteLine("2. Test for Prime Number");
+                Console.WriteLine("3. Test for Vowel");
+                Console.WriteLine("4. Use of foreach loop with arrays");
+                Console.WriteLine("5. Reverse a number and find sum of digits");
+                Console.WriteLine("6. Exit");
+                Console.Write("Enter your choice: ");
+
+                choice = Convert.ToInt32(Console.ReadLine());
+                switch (choice)
+                {
+                    case 1:
+                        Fibonacci();
+                        break;
+                    case 2:
+                        PrimeCheck();
+                        break;
+                    case 3:
+                        VowelCheck();
+                        break;
+                    case 4:
+                        ForeachArrayDemo();
+                        break;
+                    case 5:
+                        ReverseAndSum();
+                        break;
+                    case 6:
+                        Console.WriteLine("Exiting program...");
+                        break;
+                    default:
+                        Console.WriteLine("Invalid choice!");
+                        break;
+                }
+            } while (choice != 6);
+        }
+
+        // I. Fibonacci Series
+        static void Fibonacci()
+        {
+            Console.Write("Enter number of terms: ");
+            int n = Convert.ToInt32(Console.ReadLine());
+            int a = 0, b = 1, c;
+            Console.Write("Fibonacci Series: ");
+            for (int i = 1; i &lt;= n; i++)
+            {
+                Console.Write(a + " ");
+                c = a + b;
+                a = b;
+                b = c;
+            }
+            Console.WriteLine();
+        }
+
+        // II. Prime Number Check
+        static void PrimeCheck()
+        {
+            Console.Write("Enter a number: ");
+            int num = Convert.ToInt32(Console.ReadLine());
+            bool isPrime = true;
+            if (num &lt;= 1)
+                isPrime = false;
+
+            for (int i = 2; i &lt;= num / 2; i++)
+            {
+                if (num % i == 0)
+                {
+                    isPrime = false;
+                    break;
+                }
+            }
+
+            Console.WriteLine(isPrime ? "Prime Number" : "Not a Prime Number");
+        }
+
+        // III. Vowel Check
+        static void VowelCheck()
+        {
+            Console.Write("Enter a character: ");
+            char ch = Convert.ToChar(Console.ReadLine().ToLower());
+
+            if ("aeiou".Contains(ch))
+                Console.WriteLine("Vowel");
+            else
+                Console.WriteLine("Not a Vowel");
+        }
+
+        // IV. foreach loop with arrays
+        static void ForeachArrayDemo()
+        {
+            int[] numbers = { 10, 20, 30, 40, 50 };
+
+            Console.WriteLine("Array elements using foreach:");
+            foreach (int num in numbers)
+            {
+                Console.WriteLine(num);
+            }
+        }
+
+        // V. Reverse number and sum of digits
+        static void ReverseAndSum()
+        {
+            Console.Write("Enter a number: ");
+            int num = Convert.ToInt32(Console.ReadLine());
+            int reverse = 0, sum = 0, temp;
+
+            while (num &gt; 0)
+            {
+                temp = num % 10;
+                reverse = reverse * 10 + temp;
+                sum += temp;
+                num /= 10;
+            }
+            Console.WriteLine("Reversed Number: " + reverse);
+            Console.WriteLine("Sum of Digits: " + sum);
+        }
+    }
+}</code></pre>
+            </div>
+          </div>
         </div>
 
       </section>
