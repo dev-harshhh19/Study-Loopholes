@@ -1,0 +1,541 @@
+import { useState, useEffect, useRef } from 'react';
+import Editor, { useMonaco } from '@monaco-editor/react';
+import FILE_SYSTEM from './data/fileSystem.json';
+
+const getSavedState = (key, defaultValue) => {
+    try {
+        const saved = localStorage.getItem(key);
+        return saved ? JSON.parse(saved) : defaultValue;
+    } catch {
+        return defaultValue;
+    }
+};
+
+const TreeFile = ({ node, path, depth, hiddenPaths, openFile, contextMenuHandler }) => {
+    if (hiddenPaths.includes(path)) return null;
+    
+    const getIcon = (name) => {
+        if (name.endsWith('.java')) return <i className="codicon codicon-file-code mr-1.5 text-[#e34c26]"></i>;
+        if (name.endsWith('.py')) return <i className="codicon codicon-file-code mr-1.5 text-[#3572A5]"></i>;
+        if (name.endsWith('.html')) return <i className="codicon codicon-file-code mr-1.5 text-[#e34c26]"></i>;
+        return <i className="codicon codicon-file mr-1.5 text-[#cccccc]"></i>;
+    };
+
+    return (
+        <div 
+           className="flex items-center hover:bg-[#2a2d2e] cursor-pointer text-[13px] h-[22px] text-[#cccccc] select-none"
+           style={{ paddingLeft: `${depth * 12 + 20}px` }}
+           onClick={() => openFile(node, path)}
+           onContextMenu={(e) => contextMenuHandler(e, path)}
+        >
+            {getIcon(node.name)}
+            <span>{node.name}</span>
+        </div>
+    );
+};
+
+const TreeFolder = ({ node, path, depth, hiddenPaths, setHiddenPaths, openFile, contextMenuHandler }) => {
+    const [isOpen, setIsOpen] = useState(() => getSavedState(`folder_${path}`, depth === 0));
+    
+    useEffect(() => {
+        localStorage.setItem(`folder_${path}`, JSON.stringify(isOpen));
+    }, [isOpen, path]);
+
+    if (hiddenPaths.includes(path)) return null;
+
+    return (
+        <div>
+            <div 
+               className="flex items-center hover:bg-[#2a2d2e] cursor-pointer text-[13px] h-[22px] text-[#cccccc] select-none"
+               style={{ paddingLeft: `${depth * 12 + 4}px` }}
+               onClick={() => setIsOpen(!isOpen)}
+               onContextMenu={(e) => contextMenuHandler(e, path)}
+            >
+                <i className={`codicon codicon-chevron-${isOpen ? 'down' : 'right'} mr-1`}></i>
+                <i className={`codicon codicon-${isOpen ? 'folder-opened' : 'folder'} mr-1.5 text-[#dcb67a]`}></i>
+                <span>{node.name}</span>
+            </div>
+            {isOpen && node.children.map(child => (
+                child.type === 'folder' ? 
+                <TreeFolder key={child.name} node={child} path={`${path}/${child.name}`} depth={depth + 1} hiddenPaths={hiddenPaths} setHiddenPaths={setHiddenPaths} openFile={openFile} contextMenuHandler={contextMenuHandler} /> :
+                <TreeFile key={child.name} node={child} path={`${path}/${child.name}`} depth={depth + 1} hiddenPaths={hiddenPaths} openFile={openFile} contextMenuHandler={contextMenuHandler} />
+            ))}
+        </div>
+    );
+};
+
+const App = () => {
+    const [fileTree] = useState(FILE_SYSTEM);
+    
+    // Persisted State
+    const [hiddenPaths, setHiddenPaths] = useState(() => getSavedState('vscode_hiddenPaths', []));
+    const [openTabs, setOpenTabs] = useState(() => getSavedState('vscode_openTabs', []));
+    const [activeTabPath, setActiveTabPath] = useState(() => getSavedState('vscode_activeTabPath', null));
+    const [sidebarOpen, setSidebarOpen] = useState(() => getSavedState('vscode_sidebarOpen', true));
+    
+    const [terminalOpen, setTerminalOpen] = useState(() => getSavedState('vscode_terminalOpen', false));
+    const [terminalHistory, setTerminalHistory] = useState(() => getSavedState('vscode_terminalHistory', [
+        "Welcome to Visual Studio Code Terminal (Integrated Bash)",
+        "Type 'help' to see available commands."
+    ]));
+    
+    const [terminalInput, setTerminalInput] = useState("");
+    const [contextMenu, setContextMenu] = useState({ isOpen: false, x: 0, y: 0, path: null });
+    const terminalEndRef = useRef(null);
+
+    const monaco = useMonaco();
+
+    // Save State to Local Storage
+    useEffect(() => {
+        localStorage.setItem('vscode_hiddenPaths', JSON.stringify(hiddenPaths));
+        localStorage.setItem('vscode_openTabs', JSON.stringify(openTabs));
+        localStorage.setItem('vscode_activeTabPath', JSON.stringify(activeTabPath));
+        localStorage.setItem('vscode_sidebarOpen', JSON.stringify(sidebarOpen));
+        localStorage.setItem('vscode_terminalOpen', JSON.stringify(terminalOpen));
+        localStorage.setItem('vscode_terminalHistory', JSON.stringify(terminalHistory));
+    }, [hiddenPaths, openTabs, activeTabPath, sidebarOpen, terminalOpen, terminalHistory]);
+
+    useEffect(() => {
+        if (monaco) {
+            monaco.editor.defineTheme('github-dark', {
+                base: 'vs-dark',
+                inherit: true,
+                rules: [
+                    { background: '0d1117' },
+                    { token: 'comment', foreground: '8b949e', fontStyle: 'italic' },
+                    { token: 'keyword', foreground: 'ff7b72' },
+                    { token: 'string', foreground: 'a5d6ff' },
+                    { token: 'number', foreground: '79c0ff' },
+                    { token: 'type', foreground: 'ff7b72' },
+                    { token: 'class', foreground: 'd2a8ff' },
+                    { token: 'function', foreground: 'd2a8ff' },
+                    { token: 'variable', foreground: 'c9d1d9' },
+                    { token: 'operator', foreground: '79c0ff' }
+                ],
+                colors: {
+                    'editor.background': '#0d1117',
+                    'editor.foreground': '#c9d1d9',
+                    'editorLineNumber.foreground': '#484f58',
+                    'editorCursor.foreground': '#58a6ff',
+                    'editor.selectionBackground': '#3392FF44',
+                    'editorIndentGuide.background': '#21262d',
+                    'editorIndentGuide.activeBackground': '#30363d'
+                }
+            });
+            monaco.editor.setTheme('github-dark');
+        }
+    }, [monaco]);
+
+    // Keyboard Shortcuts
+    useEffect(() => {
+        const handleKeyDown = (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') {
+                e.preventDefault();
+                setSidebarOpen(prev => !prev);
+            }
+            if ((e.ctrlKey || e.metaKey) && e.key === '`') {
+                e.preventDefault();
+                setTerminalOpen(prev => !prev);
+            }
+        };
+        window.addEventListener('keydown', handleKeyDown);
+        return () => window.removeEventListener('keydown', handleKeyDown);
+    }, []);
+
+    // Close context menu on click
+    useEffect(() => {
+        const handleClick = () => setContextMenu({ ...contextMenu, isOpen: false });
+        window.addEventListener('click', handleClick);
+        return () => window.removeEventListener('click', handleClick);
+    }, [contextMenu]);
+
+    // Auto-scroll terminal
+    useEffect(() => {
+        if (terminalEndRef.current && terminalOpen) {
+            terminalEndRef.current.scrollIntoView();
+        }
+    }, [terminalHistory, terminalOpen]);
+
+    const contextMenuHandler = (e, path) => {
+        e.preventDefault();
+        setContextMenu({ isOpen: true, x: e.clientX, y: e.clientY, path });
+    };
+
+    const openFile = (file, path) => {
+        if (!openTabs.find(t => t.path === path)) {
+            setOpenTabs([...openTabs, { ...file, path, editedContent: file.content }]);
+        }
+        setActiveTabPath(path);
+    };
+
+    const closeTab = (path) => {
+        const newTabs = openTabs.filter(t => t.path !== path);
+        setOpenTabs(newTabs);
+        if (activeTabPath === path) {
+            setActiveTabPath(newTabs.length > 0 ? newTabs[newTabs.length - 1].path : null);
+        }
+    };
+
+    const handleEditorChange = (value, path) => {
+        setOpenTabs(tabs => tabs.map(t => t.path === path ? { ...t, editedContent: value } : t));
+    };
+
+    const handleTerminalCommand = (e) => {
+        if (e.key === 'Enter') {
+            const cmd = terminalInput.trim();
+            setTerminalInput("");
+            
+            const newHistory = [...terminalHistory, `PC00420@admin:~$ ${cmd}`];
+            
+            if (cmd === '') {
+                setTerminalHistory(newHistory);
+                return;
+            }
+
+            if (cmd === 'clear') {
+                setTerminalHistory([]);
+                return;
+            } else if (cmd === 'cal') {
+                const calOutput = [
+                    "    October 2026    ",
+                    "Su Mo Tu We Th Fr Sa",
+                    "             1  2  3",
+                    " 4  5  6  7  8  9 10",
+                    "11 12 13 14 15 16 17",
+                    "18 19 20 21 22 23 24",
+                    "25 26 27 28 29 30 31"
+                ].join('\n');
+                newHistory.push(calOutput);
+            } else if (cmd === 'ls') {
+                newHistory.push("BlockChain  DAA  FLNN  STQA");
+            } else if (cmd === 'help') {
+                newHistory.push("Available commands: cal, clear, ls, help, echo");
+            } else if (cmd.startsWith('echo ')) {
+                newHistory.push(cmd.substring(5));
+            } else if (cmd.startsWith('python ') || cmd.startsWith('java ') || cmd.startsWith('node ')) {
+                newHistory.push(`Error: Cannot execute ${cmd.split(' ')[0]} in browser environment. Use real VS Code to compile.`);
+            } else {
+                newHistory.push(`bash: ${cmd}: command not found`);
+            }
+            
+            setTerminalHistory(newHistory);
+        }
+    };
+
+    const activeFile = openTabs.find(t => t.path === activeTabPath);
+    const activeLanguage = activeFile?.name.endsWith('.py') ? 'python' : 
+                           activeFile?.name.endsWith('.java') ? 'java' : 
+                           activeFile?.name.endsWith('.html') ? 'html' : 'javascript';
+
+    return (
+        <div className="h-screen w-screen flex flex-col text-[#cccccc] font-sans overflow-hidden bg-[#1e1e1e]" onContextMenu={(e) => e.preventDefault()}>
+            
+            {/* Title Bar */}
+            <header className="h-[35px] flex items-center justify-between bg-[#181818] select-none shrink-0 border-b border-[#2b2b2b]">
+                <div className="flex items-center h-full">
+                    <div className="px-3 flex items-center h-full">
+                        <img src="https://upload.wikimedia.org/wikipedia/commons/9/9a/Visual_Studio_Code_1.35_icon.svg" alt="VS Code" className="w-5 h-5" />
+                    </div>
+                    <div className="hidden md:flex items-center text-[13px] h-full text-[#cccccc]">
+                        {['File', 'Edit', 'Selection', 'View', 'Go', 'Run', 'Terminal', 'Help'].map(m => (
+                            <div key={m} className="px-2 h-full flex items-center hover:bg-[#2a2d2e] cursor-default" onClick={m === 'Terminal' ? () => setTerminalOpen(!terminalOpen) : undefined}>{m}</div>
+                        ))}
+                    </div>
+                </div>
+                <div className="absolute left-1/2 -translate-x-1/2 flex items-center h-full">
+                    <div className="flex items-center justify-center bg-[#2b2d2e] hover:bg-[#333536] border border-[#3c3c3c] rounded-md px-3 w-[450px] h-[26px] text-[12px] transition-colors cursor-pointer text-center text-[#cccccc] shadow-sm">
+                        <i className="codicon codicon-search mr-2 text-[#a8a8a8] text-[14px]"></i>
+                        <span>Visual Studio Code</span>
+                    </div>
+                </div>
+                <div className="flex h-full">
+                    <div className="w-[46px] h-full flex items-center justify-center hover:bg-[#2a2d2e] cursor-pointer"><i className="codicon codicon-chrome-minimize"></i></div>
+                    <div className="w-[46px] h-full flex items-center justify-center hover:bg-[#2a2d2e] cursor-pointer"><i className="codicon codicon-chrome-maximize"></i></div>
+                    <div className="w-[46px] h-full flex items-center justify-center hover:bg-[#e81123] hover:text-white cursor-pointer"><i className="codicon codicon-chrome-close"></i></div>
+                </div>
+            </header>
+
+            <div className="flex flex-1 overflow-hidden">
+                {/* Activity Bar */}
+                <div className="w-[48px] h-full flex flex-col items-center py-2 bg-[#181818] border-r border-[#2b2b2b] shrink-0">
+                    <div className="relative cursor-pointer text-[#cccccc] flex justify-center items-center w-full h-[48px]">
+                        <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-[#007fd4]"></div>
+                        <i className="codicon codicon-files text-[24px]"></i>
+                    </div>
+                    <div className="cursor-pointer text-[#858585] hover:text-[#cccccc] flex justify-center items-center w-full h-[48px]">
+                        <i className="codicon codicon-search text-[24px]"></i>
+                    </div>
+                    <div className="cursor-pointer text-[#858585] hover:text-[#cccccc] flex justify-center items-center w-full h-[48px]">
+                        <div className="relative">
+                            <i className="codicon codicon-source-control text-[24px]"></i>
+                            <span className="absolute -top-0.5 -right-1 bg-[#007fd4] text-white text-[9px] w-[14px] h-[14px] rounded-full flex items-center justify-center font-semibold">1</span>
+                        </div>
+                    </div>
+                    <div className="cursor-pointer text-[#858585] hover:text-[#cccccc] flex justify-center items-center w-full h-[48px]">
+                        <i className="codicon codicon-debug-alt text-[24px]"></i>
+                    </div>
+                    <div className="cursor-pointer text-[#858585] hover:text-[#cccccc] flex justify-center items-center w-full h-[48px]">
+                        <i className="codicon codicon-extensions text-[24px]"></i>
+                    </div>
+                    <div className="mt-auto flex flex-col w-full">
+                        <div className="cursor-pointer text-[#858585] hover:text-[#cccccc] flex justify-center items-center w-full h-[48px]">
+                            <i className="codicon codicon-account text-[24px]"></i>
+                        </div>
+                        <div className="cursor-pointer text-[#858585] hover:text-[#cccccc] flex justify-center items-center w-full h-[48px] mb-2">
+                            <i className="codicon codicon-settings-gear text-[24px]"></i>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Sidebar */}
+                {sidebarOpen && (
+                    <div className="w-[250px] h-full flex flex-col bg-[#181818] border-r border-[#2b2b2b] shrink-0">
+                        <div className="h-[35px] flex items-center px-5 text-[11px] tracking-wide text-[#cccccc] justify-between select-none">
+                            <span>EXPLORER</span>
+                            <i className="codicon codicon-ellipsis cursor-pointer hover:text-white"></i>
+                        </div>
+                        <div className="flex-1 overflow-y-auto no-scrollbar">
+                            <div className="flex items-center px-1 h-[22px] cursor-pointer font-bold text-[11px] text-[#cccccc] hover:text-white select-none">
+                                <i className="codicon codicon-chevron-down mr-0.5 text-[16px]"></i>
+                                <span className="tracking-wide">WORKSPACE</span>
+                            </div>
+                            <div className="py-1">
+                                {fileTree.map(node => (
+                                    <TreeFolder 
+                                        key={node.name} 
+                                        node={node} 
+                                        path={node.name} 
+                                        depth={0} 
+                                        hiddenPaths={hiddenPaths} 
+                                        setHiddenPaths={setHiddenPaths} 
+                                        openFile={openFile} 
+                                        contextMenuHandler={contextMenuHandler} 
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {/* Editor Area & Terminal Stack */}
+                <div className="flex-1 flex flex-col min-w-0 bg-[#0d1117]">
+                    
+                    {/* Top Editor Segment */}
+                    <div className="flex-1 flex flex-col min-h-0 relative">
+                        {openTabs.length > 0 ? (
+                            <>
+                                <div className="h-[35px] flex bg-[#181818] overflow-x-auto no-scrollbar shrink-0" style={{boxShadow: 'inset 0 -1px 0 #2b2b2b'}}>
+                                    {openTabs.map(tab => (
+                                        <div 
+                                            key={tab.path} 
+                                            onClick={() => setActiveTabPath(tab.path)}
+                                            className={`h-full px-3 flex items-center gap-2 cursor-pointer border-r border-[#2b2b2b] group min-w-fit shrink-0 ${activeTabPath === tab.path ? 'bg-[#0d1117] text-white border-t border-t-[#007fd4]' : 'bg-[#2d2d2d] text-[#969696] hover:bg-[#1e1e1e]'}`}
+                                        >
+                                            <i className="codicon codicon-file-code text-[#e34c26]"></i>
+                                            <span className="text-[13px] select-none">{tab.name}</span>
+                                            {tab.editedContent !== tab.content && <span className="w-2 h-2 rounded-full bg-white ml-1"></span>}
+                                            <div 
+                                                className={`p-0.5 rounded hover:bg-[#333333] flex items-center justify-center ${activeTabPath === tab.path ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}`}
+                                                onClick={(e) => { e.stopPropagation(); closeTab(tab.path); }}
+                                            >
+                                                <i className="codicon codicon-close text-[14px]"></i>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                                <div className="h-[22px] flex items-center px-4 text-[12px] shrink-0 bg-[#0d1117] shadow-[0_1px_2px_rgba(0,0,0,0.2)] z-10 select-none">
+                                    <span className="text-[#cccccc]">Workspace</span>
+                                    <i className="codicon codicon-chevron-right text-[14px] mx-1 text-[#858585]"></i>
+                                    <span className="text-[#cccccc]">{activeFile?.path.replace(/\//g, ' > ')}</span>
+                                </div>
+                                <div className="flex-1 overflow-hidden pt-2 relative">
+                                    <Editor
+                                        height="100%"
+                                        language={activeLanguage}
+                                        theme="github-dark"
+                                        value={activeFile?.editedContent}
+                                        onChange={(val) => handleEditorChange(val, activeFile?.path)}
+                                        path={activeFile?.path} // helps monaco keep states separate
+                                        options={{
+                                            fontSize: 14,
+                                            fontFamily: "'Consolas', 'Courier New', monospace",
+                                            minimap: { enabled: false },
+                                            scrollbar: { vertical: 'hidden', horizontal: 'hidden' },
+                                            scrollBeyondLastLine: false,
+                                            wordWrap: 'on',
+                                            padding: { top: 16 }
+                                        }}
+                                    />
+                                </div>
+                            </>
+                        ) : (
+                            <div className="flex-1 flex flex-col items-center justify-center select-none bg-[#1e1e1e]">
+                                <svg viewBox="0 0 24 24" className="w-[280px] h-[280px] text-[#2c2c2d] mb-12" xmlns="http://www.w3.org/2000/svg">
+                                    <path fill="currentColor" d="M23.15 2.587L18.21.21a1.494 1.494 0 0 0-1.705.29l-9.46 8.63-4.12-3.128a.999.999 0 0 0-1.276.057L.327 7.261A1 1 0 0 0 .326 8.74L3.899 12 .326 15.26a1 1 0 0 0 .001 1.479L1.65 17.94a.999.999 0 0 0 1.276.057l4.12-3.128 9.46 8.63a1.492 1.492 0 0 0 1.704.29l4.942-2.377A1.5 1.5 0 0 0 24 20.06V3.939a1.5 1.5 0 0 0-.85-1.352zm-5.146 14.861L10.826 12l7.178-5.448v10.896z"/>
+                                </svg>
+                                <div className="flex flex-col gap-3 text-[13px] text-[#cccccc]">
+                                    <div className="flex items-center justify-between w-[350px]">
+                                        <span className="text-[#858585]">Open Chat</span>
+                                        <div className="flex items-center gap-1.5 font-sans">
+                                            <span className="bg-[#2d2d2d] border border-[#3c3c3c] rounded px-2 py-0.5 shadow-sm text-[12px]">Ctrl</span>
+                                            <span className="text-[#858585] text-[14px] font-bold">+</span>
+                                            <span className="bg-[#2d2d2d] border border-[#3c3c3c] rounded px-2 py-0.5 shadow-sm text-[12px]">Alt</span>
+                                            <span className="text-[#858585] text-[14px] font-bold">+</span>
+                                            <span className="bg-[#2d2d2d] border border-[#3c3c3c] rounded px-2 py-0.5 shadow-sm text-[12px]">I</span>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center justify-between w-[350px]">
+                                        <span className="text-[#858585]">Show All Commands</span>
+                                        <div className="flex items-center gap-1.5 font-sans">
+                                            <span className="bg-[#2d2d2d] border border-[#3c3c3c] rounded px-2 py-0.5 shadow-sm text-[12px]">Ctrl</span>
+                                            <span className="text-[#858585] text-[14px] font-bold">+</span>
+                                            <span className="bg-[#2d2d2d] border border-[#3c3c3c] rounded px-2 py-0.5 shadow-sm text-[12px]">Shift</span>
+                                            <span className="text-[#858585] text-[14px] font-bold">+</span>
+                                            <span className="bg-[#2d2d2d] border border-[#3c3c3c] rounded px-2 py-0.5 shadow-sm text-[12px]">P</span>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center justify-between w-[350px]">
+                                        <span className="text-[#858585]">Find in Files</span>
+                                        <div className="flex items-center gap-1.5 font-sans">
+                                            <span className="bg-[#2d2d2d] border border-[#3c3c3c] rounded px-2 py-0.5 shadow-sm text-[12px]">Ctrl</span>
+                                            <span className="text-[#858585] text-[14px] font-bold">+</span>
+                                            <span className="bg-[#2d2d2d] border border-[#3c3c3c] rounded px-2 py-0.5 shadow-sm text-[12px]">Shift</span>
+                                            <span className="text-[#858585] text-[14px] font-bold">+</span>
+                                            <span className="bg-[#2d2d2d] border border-[#3c3c3c] rounded px-2 py-0.5 shadow-sm text-[12px]">F</span>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center justify-between w-[350px] mt-2">
+                                        <span className="text-[#858585]">Toggle Terminal</span>
+                                        <div className="flex items-center gap-1.5 font-sans">
+                                            <span className="bg-[#2d2d2d] border border-[#3c3c3c] rounded px-2 py-0.5 shadow-sm text-[12px]">Ctrl</span>
+                                            <span className="text-[#858585] text-[14px] font-bold">+</span>
+                                            <span className="bg-[#2d2d2d] border border-[#3c3c3c] rounded px-2.5 py-0.5 shadow-sm text-[12px]">`</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Bottom Terminal Panel */}
+                    {terminalOpen && (
+                        <div className="h-[250px] bg-[#1e1e1e] border-t border-[#2b2b2b] flex flex-col font-mono text-[13px] shrink-0 z-20">
+                            {/* Terminal Tabs */}
+                            <div className="flex items-center justify-between px-4 h-[35px] border-b border-[#2b2b2b] select-none text-[#cccccc] bg-[#181818]">
+                                <div className="flex items-center gap-4 text-[11px] tracking-wide uppercase">
+                                    <span className="cursor-pointer hover:text-white">Problems</span>
+                                    <span className="cursor-pointer hover:text-white">Output</span>
+                                    <span className="cursor-pointer hover:text-white">Debug Console</span>
+                                    <span className="cursor-pointer text-white border-b border-[#007fd4] pb-[10px] pt-[10px]">Terminal</span>
+                                </div>
+                                <div className="flex items-center gap-3">
+                                    <i className="codicon codicon-add cursor-pointer hover:text-white text-[14px]"></i>
+                                    <i className="codicon codicon-trash cursor-pointer hover:text-white text-[14px]" onClick={() => setTerminalHistory([])}></i>
+                                    <i className="codicon codicon-close cursor-pointer hover:text-white text-[14px]" onClick={() => setTerminalOpen(false)}></i>
+                                </div>
+                            </div>
+                            {/* Terminal Output Window */}
+                            <div className="flex-1 overflow-y-auto p-3 no-scrollbar text-[#cccccc]" onClick={() => document.getElementById('terminal-input').focus()}>
+                                {terminalHistory.map((line, i) => (
+                                    <div key={i} className="whitespace-pre-wrap leading-[22px]">{line}</div>
+                                ))}
+                                <div className="flex items-center mt-1 leading-[22px]">
+                                    <span className="text-[#858585] mr-2">PC00420@admin:~$</span>
+                                    <input 
+                                        id="terminal-input"
+                                        type="text" 
+                                        value={terminalInput}
+                                        onChange={(e) => setTerminalInput(e.target.value)}
+                                        onKeyDown={handleTerminalCommand}
+                                        className="flex-1 bg-transparent outline-none border-none text-[#cccccc] font-mono"
+                                        autoComplete="off"
+                                        spellCheck="false"
+                                        autoFocus
+                                    />
+                                </div>
+                                <div ref={terminalEndRef} />
+                            </div>
+                        </div>
+                    )}
+                </div>
+            </div>
+
+            {/* Status Bar */}
+            <footer className="h-[22px] flex items-center justify-between text-[#ffffff] text-[12px] font-sans z-30 select-none bg-[#007acc] shrink-0 px-2">
+                <div className="flex items-center h-full">
+                    <div className="flex items-center h-full px-2 cursor-pointer hover:bg-[#1f8ad6] gap-1">
+                        <i className="codicon codicon-remote text-[14px]"></i>
+                    </div>
+                    <div className="flex items-center h-full px-2 cursor-pointer hover:bg-[#1f8ad6] gap-1">
+                        <i className="codicon codicon-source-control text-[14px]"></i> main*
+                    </div>
+                    <div className="flex items-center h-full px-2 cursor-pointer hover:bg-[#1f8ad6] gap-1">
+                        <i className="codicon codicon-sync text-[14px]"></i> 0 &darr; 0 &uarr;
+                    </div>
+                    <div className="flex items-center h-full px-2 cursor-pointer hover:bg-[#1f8ad6] gap-1.5">
+                        <span className="flex items-center"><i className="codicon codicon-error text-[14px] mr-0.5"></i>0</span>
+                        <span className="flex items-center"><i className="codicon codicon-warning text-[14px] mr-0.5"></i>0</span>
+                    </div>
+                </div>
+                
+                <div className="flex items-center h-full">
+                    <div className="flex items-center h-full px-2 cursor-pointer hover:bg-[#1f8ad6]">Ln 1, Col 1</div>
+                    <div className="flex items-center h-full px-2 cursor-pointer hover:bg-[#1f8ad6]">Spaces: 4</div>
+                    <div className="flex items-center h-full px-2 cursor-pointer hover:bg-[#1f8ad6]">UTF-8</div>
+                    <div className="flex items-center h-full px-2 cursor-pointer hover:bg-[#1f8ad6]">LF</div>
+                    <div className="flex items-center h-full px-2 cursor-pointer hover:bg-[#1f8ad6] gap-1">
+                        <i className="codicon codicon-check-all text-[14px]"></i> Prettier
+                    </div>
+                    <div className="flex items-center h-full px-2 cursor-pointer hover:bg-[#1f8ad6]">
+                        <i className="codicon codicon-bell text-[14px]"></i>
+                    </div>
+                </div>
+            </footer>
+
+            {/* Context Menu */}
+            {contextMenu.isOpen && (
+                <div 
+                    className="fixed bg-[#252526] border border-[#454545] rounded shadow-[0_4px_10px_rgba(0,0,0,0.5)] py-1.5 z-50 text-[13px] text-[#cccccc] min-w-[300px]"
+                    style={{ top: Math.min(contextMenu.y, window.innerHeight - 450), left: contextMenu.x }}
+                >
+                    <div className="px-6 py-1 hover:bg-[#04395e] hover:text-white cursor-pointer" onClick={() => setContextMenu({ ...contextMenu, isOpen: false })}>New File...</div>
+                    <div className="px-6 py-1 hover:bg-[#04395e] hover:text-white cursor-pointer" onClick={() => setContextMenu({ ...contextMenu, isOpen: false })}>New Folder...</div>
+                    <div className="px-6 py-1 hover:bg-[#04395e] hover:text-white cursor-pointer flex justify-between" onClick={() => setContextMenu({ ...contextMenu, isOpen: false })}><span>Reveal in File Explorer</span><span className="text-[#858585]">Shift+Alt+R</span></div>
+                    <div className="px-6 py-1 hover:bg-[#04395e] hover:text-white cursor-pointer" onClick={() => { setTerminalOpen(true); setContextMenu({ ...contextMenu, isOpen: false }); }}>Open in Integrated Terminal</div>
+                    <div className="h-[1px] bg-[#454545] my-1.5"></div>
+                    
+                    <div className="px-6 py-1 hover:bg-[#04395e] hover:text-white cursor-pointer" onClick={() => setContextMenu({ ...contextMenu, isOpen: false })}>Select Files as Context</div>
+                    <div className="h-[1px] bg-[#454545] my-1.5"></div>
+
+                    <div className="px-6 py-1 hover:bg-[#04395e] hover:text-white cursor-pointer flex justify-between" onClick={() => setContextMenu({ ...contextMenu, isOpen: false })}><span>New Java File</span><i className="codicon codicon-chevron-right text-[12px] mt-0.5"></i></div>
+                    <div className="px-6 py-1 hover:bg-[#04395e] hover:text-white cursor-pointer" onClick={() => setContextMenu({ ...contextMenu, isOpen: false })}>New Java Package...</div>
+                    <div className="px-6 py-1 hover:bg-[#04395e] hover:text-white cursor-pointer flex justify-between" onClick={() => setContextMenu({ ...contextMenu, isOpen: false })}><span>Maven</span><i className="codicon codicon-chevron-right text-[12px] mt-0.5"></i></div>
+                    <div className="h-[1px] bg-[#454545] my-1.5"></div>
+                    
+                    <div className="px-6 py-1 hover:bg-[#04395e] hover:text-white cursor-pointer flex justify-between" onClick={() => setContextMenu({ ...contextMenu, isOpen: false })}><span>Find in Folder...</span><span className="text-[#858585]">Shift+Alt+F</span></div>
+                    <div className="h-[1px] bg-[#454545] my-1.5"></div>
+                    
+                    <div className="px-6 py-1 hover:bg-[#04395e] hover:text-white cursor-pointer text-[#858585] flex justify-between"><span>Paste</span><span>Ctrl+V</span></div>
+                    <div className="h-[1px] bg-[#454545] my-1.5"></div>
+
+                    <div className="px-6 py-1 hover:bg-[#04395e] hover:text-white cursor-pointer flex justify-between" onClick={() => setContextMenu({ ...contextMenu, isOpen: false })}><span>Copy Path</span><span className="text-[#858585]">Shift+Alt+C</span></div>
+                    <div className="px-6 py-1 hover:bg-[#04395e] hover:text-white cursor-pointer flex justify-between" onClick={() => setContextMenu({ ...contextMenu, isOpen: false })}><span>Copy Relative Path</span><span className="text-[#858585]">Ctrl+K Ctrl+Shift+C</span></div>
+                    <div className="h-[1px] bg-[#454545] my-1.5"></div>
+                    
+                    {/* The real functional action */}
+                    <div 
+                        className="px-6 py-1.5 hover:bg-[#04395e] hover:text-white cursor-pointer flex items-center text-[#e81123]"
+                        onClick={() => {
+                            setHiddenPaths([...hiddenPaths, contextMenu.path]);
+                            setContextMenu({ ...contextMenu, isOpen: false });
+                        }}
+                    >
+                        <i className="codicon codicon-eye-closed mr-3"></i> Hide from Explorer
+                    </div>
+                </div>
+            )}
+        </div>
+    );
+};
+
+export default App;

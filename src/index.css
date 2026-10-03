@@ -1,0 +1,23 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --vscode-editor-background: #0d1117;
+    --vscode-sideBar-background: #181818;
+    --vscode-activityBar-background: #181818;
+    --vscode-statusBar-background: #007acc;
+    --vscode-text: #cccccc;
+  }
+
+  body {
+    background-color: var(--vscode-editor-background);
+    color: var(--vscode-text);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe WPC", "Segoe UI", sans-serif;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+  }
+}
+
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
