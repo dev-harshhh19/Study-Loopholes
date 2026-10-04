@@ -57,6 +57,45 @@ const updateNodeInTree = (tree, targetPath, newContent) => {
     return walk(tree, 0);
 };
 
+const deleteNodeFromTree = (tree, targetPath) => {
+    if (!targetPath) return tree;
+    const pathParts = targetPath.split('/');
+    const walk = (nodes, currentDepth) => {
+        return nodes.filter(node => {
+            if (node.name === pathParts[currentDepth] && currentDepth === pathParts.length - 1) {
+                return false;
+            }
+            return true;
+        }).map(node => {
+            if (node.name === pathParts[currentDepth]) {
+                return { ...node, children: walk(node.children || [], currentDepth + 1) };
+            }
+            return node;
+        });
+    };
+    return walk(tree, 0);
+};
+
+const renameNodeInTree = (tree, targetPath, newName) => {
+    const pathParts = targetPath.split('/');
+    const walk = (nodes, currentDepth) => {
+        return nodes.map(node => {
+            if (node.name === pathParts[currentDepth]) {
+                if (currentDepth === pathParts.length - 1) {
+                    return { ...node, name: newName };
+                } else {
+                    return { ...node, children: walk(node.children || [], currentDepth + 1) };
+                }
+            }
+            return node;
+        }).sort((a, b) => {
+            if (a.type !== b.type) return a.type === 'folder' ? -1 : 1;
+            return a.name.localeCompare(b.name);
+        });
+    };
+    return walk(tree, 0);
+};
+
 const isNodeFolder = (tree, targetPath) => {
     if (!targetPath) return true;
     const parts = targetPath.split('/');
@@ -70,42 +109,82 @@ const isNodeFolder = (tree, targetPath) => {
     return false;
 };
 
-const InlineInput = ({ type, depth, onSubmit, onCancel }) => {
-    const [val, setVal] = useState("");
+const FileIcon = ({ name }) => {
+    if (name.endsWith('.py')) {
+        return (
+            <svg viewBox="0 0 110 110" className="w-[14px] h-[14px] mr-1.5 shrink-0" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M54.7 15.6c-18.7 0-21.6 8.2-21.6 8.2l.1 11.2h22.2v3.2H32s-10.4-1.2-10.4 15.3c0 16.5 9 15.8 9 15.8h5.9v-8.4s-.2-9.6 9.8-9.6h15.2s8.6.2 8.6-8.5v-18c0-8.6-8.8-9.2-8.8-9.2h-16.6zm-10.7 6.4c1.8 0 3.2 1.4 3.2 3.2 0 1.8-1.4 3.2-3.2 3.2-1.8 0-3.2-1.4-3.2-3.2 0-1.8 1.4-3.2 3.2-3.2z" fill="#387EB8"/>
+                <path d="M55.5 94.4c18.7 0 21.6-8.2 21.6-8.2l-.1-11.2H54.8v-3.2h23.4s10.4 1.2 10.4-15.3c0-16.5-9-15.8-9-15.8h-5.9v8.4s.2 9.6-9.8 9.6H48.7s-8.6-.2-8.6 8.5v18c0 8.6 8.8 9.2 8.8 9.2h16.6zm10.7-6.4c-1.8 0-3.2-1.4-3.2-3.2 0-1.8 1.4-3.2 3.2-3.2 1.8 0 3.2 1.4 3.2 3.2 0 1.8-1.4 3.2-3.2 3.2z" fill="#FFE052"/>
+            </svg>
+        );
+    }
+    if (name.endsWith('.java')) {
+        return (
+            <svg viewBox="0 0 50 50" className="w-[14px] h-[14px] mr-1.5 shrink-0" xmlns="http://www.w3.org/2000/svg">
+                <path d="M28.4 19.3c-2.8-1.7-5.9-.6-6.4-.4-1 .3-1.6 1.4-1.3 2.4.3 1 1.4 1.6 2.4 1.3 0 0 1.9-.6 3.4.3 1.5 1 2.2 2.6 1.9 4.1-.3 1.5-1.5 2.7-3.1 3-3.6.7-10.7-.7-10.7-.7-1-.3-2 .3-2.3 1.3-.3 1 .3 2 1.3 2.3 0 0 7.8 1.6 12.3.8 2.5-.5 4.5-2.3 5-4.7.7-2.6-.4-5.2-2.5-6.7z" fill="#E76F00"/>
+                <path d="M22.8 2.2C15.9 4 16 11.2 16 11.2c0 1 1 1.9 2 1.8 1.1-.1 1.9-1 1.8-2 0 0-.2-4.1 4.1-5.1 4.2-1 6.5 1.7 6.5 1.7.6.8 1.8.9 2.6.2.8-.6.9-1.8.2-2.6 0 0-3.8-4.4-10.4-3zM35 15.5c-3-2.8-7.5-3.3-10.9-2.3-.9.3-1.4 1.2-1.1 2.1.3.9 1.2 1.4 2.1 1.1 2-.6 4.7-.2 6.6 1.6 2 1.8 2 4.4 1.5 6.3-.3.9.3 1.9 1.2 2.2 1 .3 1.9-.3 2.2-1.2.9-2.9.8-6.6-1.6-9.8z" fill="#5382A1"/>
+                <path d="M38.8 35.8c-2-1.9-5.1-3.2-8.5-3.8-7.5-1.4-15-.1-15-.1-1-.2-1.7.5-1.9 1.5-.2 1 .5 1.7 1.5 1.9 0 0 6.6 1.2 13.3 0 2.6-.5 4.8-1.4 5.9-2.4 1.2-1.2 1-2.5 1-2.5.2-1-.4-1.9-1.4-2.1-1-.2-1.9.4-2.1 1.4 0 0 0 1.2-.8 2zM33 41.5c-4.4-1.3-9.5-1.5-14-.6-1 .2-1.6 1.2-1.4 2.1.2 1 1.2 1.6 2.1 1.4 3.7-.8 7.9-.7 11.6.4 1 .3 1.9-.3 2.2-1.3.2-1-.4-1.9-1.3-2.2z" fill="#5382A1"/>
+            </svg>
+        );
+    }
+    if (name.endsWith('.js') || name.endsWith('.jsx')) {
+        return (
+            <svg viewBox="0 0 24 24" className="w-[14px] h-[14px] mr-1.5 shrink-0" fill="#F7DF1E" xmlns="http://www.w3.org/2000/svg">
+                <path d="M0 0h24v24H0V0z" fill="none"/><path d="M21.2 18.2c-.3-.9-1.1-1.3-2.3-1.3-1.6 0-2.4.9-2.5 2.1-.1 1.4 1 2.3 2.8 2.3 1.3 0 2.3-.4 2.8-1.2l-1.3-.8c-.4.5-.8.7-1.4.7-.7 0-1.2-.4-1.2-1h3.9c0-.2 0-.4.1-.6.1-2-1.2-3.1-2.9-3.1-1.8 0-3 1.2-3 3 0 1.9 1.2 3.1 3 3.1 2 0 3-1.1 3.5-2.2l-1.5-.9zm-3.2 2c0-.4.3-.8.9-.8.6 0 .9.3.9.8h-1.8zM14 15h1.6v5.8c0 1.5-.7 2.2-2.1 2.2-.9 0-1.6-.3-2.1-.9l1.1-1.1c.3.4.7.5 1.2.5.6 0 1-.3 1-.8v-5.7z"/>
+            </svg>
+        );
+    }
+    if (name.endsWith('.json')) {
+        return <i className="codicon codicon-json mr-1.5 text-[#cbcb41] text-[14px]"></i>;
+    }
+    if (name.endsWith('.html')) {
+        return <i className="codicon codicon-file-code mr-1.5 text-[#e34c26] text-[14px]"></i>;
+    }
+    return <i className="codicon codicon-file mr-1.5 text-[#cccccc] text-[14px]"></i>;
+};
+
+const InlineInput = ({ type, depth, initialValue = "", onSubmit, onCancel }) => {
+    const [val, setVal] = useState(initialValue);
     const inputRef = useRef(null);
     useEffect(() => {
-        if (inputRef.current) inputRef.current.focus();
-    }, []);
+        if (inputRef.current) {
+            inputRef.current.focus();
+            if (initialValue) {
+                const dotIndex = initialValue.lastIndexOf('.');
+                inputRef.current.setSelectionRange(0, dotIndex > 0 ? dotIndex : initialValue.length);
+            }
+        }
+    }, [initialValue]);
+    
     return (
-        <div className="flex items-center h-[22px]" style={{ paddingLeft: `${depth * 12 + 20}px` }}>
-            <i className={`codicon codicon-${type === 'folder' ? 'folder' : 'file'} mr-1.5 text-[#cccccc]`}></i>
+        <div className="flex items-center h-[22px]" style={{ paddingLeft: `${depth * 12 + (type === 'folder' ? 4 : 20)}px` }}>
+            {type === 'folder' && <i className="codicon codicon-chevron-right mr-1 text-[#cccccc]"></i>}
+            {type === 'folder' ? <i className="codicon codicon-folder mr-1.5 text-[#dcb67a]"></i> : <FileIcon name={val || 'file'} />}
             <input 
                 ref={inputRef}
                 className="bg-[#3c3c3c] text-[#cccccc] border border-[#007fd4] outline-none text-[13px] h-[20px] w-[120px] px-1"
                 value={val}
                 onChange={e => setVal(e.target.value)}
                 onKeyDown={e => {
-                    if (e.key === 'Enter') onSubmit(val);
-                    if (e.key === 'Escape') onCancel();
+                    if (e.key === 'Enter') { e.stopPropagation(); onSubmit(val); }
+                    if (e.key === 'Escape') { e.stopPropagation(); onCancel(); }
                 }}
                 onBlur={() => {
                     if (val.trim()) onSubmit(val);
                     else onCancel();
                 }}
+                onClick={e => e.stopPropagation()}
             />
         </div>
     );
 };
 
-const TreeFile = ({ node, path, depth, hiddenPaths, openFile, contextMenuHandler }) => {
+const TreeFile = ({ node, path, depth, hiddenPaths, openFile, contextMenuHandler, renamingPath, onRenameSubmit, onRenameCancel }) => {
     if (hiddenPaths.includes(path)) return null;
-    
-    const getIcon = (name) => {
-        if (name.endsWith('.java')) return <i className="codicon codicon-file-code mr-1.5 text-[#e34c26]"></i>;
-        if (name.endsWith('.py')) return <i className="codicon codicon-file-code mr-1.5 text-[#3572A5]"></i>;
-        if (name.endsWith('.html')) return <i className="codicon codicon-file-code mr-1.5 text-[#e34c26]"></i>;
-        return <i className="codicon codicon-file mr-1.5 text-[#cccccc]"></i>;
-    };
+
+    if (renamingPath === path) {
+        return <InlineInput type="file" depth={depth} initialValue={node.name} onSubmit={(val) => onRenameSubmit(path, val)} onCancel={onRenameCancel} />;
+    }
 
     return (
         <div 
@@ -114,13 +193,13 @@ const TreeFile = ({ node, path, depth, hiddenPaths, openFile, contextMenuHandler
            onClick={() => openFile(node, path)}
            onContextMenu={(e) => contextMenuHandler(e, path)}
         >
-            {getIcon(node.name)}
+            <FileIcon name={node.name} />
             <span>{node.name}</span>
         </div>
     );
 };
 
-const TreeFolder = ({ node, path, depth, hiddenPaths, setHiddenPaths, openFile, contextMenuHandler, creatingNode, onCreateSubmit, onCreateCancel }) => {
+const TreeFolder = ({ node, path, depth, hiddenPaths, setHiddenPaths, openFile, contextMenuHandler, creatingNode, onCreateSubmit, onCreateCancel, renamingPath, onRenameSubmit, onRenameCancel }) => {
     const [isOpen, setIsOpen] = useState(() => getSavedState(`folder_${path}`, depth === 0));
     
     useEffect(() => {
@@ -128,6 +207,10 @@ const TreeFolder = ({ node, path, depth, hiddenPaths, setHiddenPaths, openFile, 
     }, [isOpen, path]);
 
     if (hiddenPaths.includes(path)) return null;
+
+    if (renamingPath === path) {
+        return <InlineInput type="folder" depth={depth} initialValue={node.name} onSubmit={(val) => onRenameSubmit(path, val)} onCancel={onRenameCancel} />;
+    }
 
     return (
         <div>
@@ -143,8 +226,8 @@ const TreeFolder = ({ node, path, depth, hiddenPaths, setHiddenPaths, openFile, 
             </div>
             {isOpen && node.children.map(child => (
                 child.type === 'folder' ? 
-                <TreeFolder key={child.name} node={child} path={`${path}/${child.name}`} depth={depth + 1} hiddenPaths={hiddenPaths} setHiddenPaths={setHiddenPaths} openFile={openFile} contextMenuHandler={contextMenuHandler} creatingNode={creatingNode} onCreateSubmit={onCreateSubmit} onCreateCancel={onCreateCancel} /> :
-                <TreeFile key={child.name} node={child} path={`${path}/${child.name}`} depth={depth + 1} hiddenPaths={hiddenPaths} openFile={openFile} contextMenuHandler={contextMenuHandler} />
+                <TreeFolder key={child.name} node={child} path={`${path}/${child.name}`} depth={depth + 1} hiddenPaths={hiddenPaths} setHiddenPaths={setHiddenPaths} openFile={openFile} contextMenuHandler={contextMenuHandler} creatingNode={creatingNode} onCreateSubmit={onCreateSubmit} onCreateCancel={onCreateCancel} renamingPath={renamingPath} onRenameSubmit={onRenameSubmit} onRenameCancel={onRenameCancel} /> :
+                <TreeFile key={child.name} node={child} path={`${path}/${child.name}`} depth={depth + 1} hiddenPaths={hiddenPaths} openFile={openFile} contextMenuHandler={contextMenuHandler} renamingPath={renamingPath} onRenameSubmit={onRenameSubmit} onRenameCancel={onRenameCancel} />
             ))}
             {creatingNode && creatingNode.parentPath === path && isOpen && (
                 <InlineInput type={creatingNode.type} depth={depth + 1} onSubmit={onCreateSubmit} onCancel={onCreateCancel} />
@@ -171,7 +254,8 @@ const App = () => {
     
     const [terminalInput, setTerminalInput] = useState("");
     const [contextMenu, setContextMenu] = useState({ isOpen: false, x: 0, y: 0, path: null });
-    const [creatingNode, setCreatingNode] = useState(null); // { type: 'file' | 'folder', parentPath: string }
+    const [creatingNode, setCreatingNode] = useState(null);
+    const [renamingPath, setRenamingPath] = useState(null);
     const terminalEndRef = useRef(null);
 
     const monaco = useMonaco();
@@ -181,7 +265,6 @@ const App = () => {
         stateRef.current = { activeTabPath, openTabs, fileTree, sidebarOpen };
     });
 
-    // Save State to Local Storage
     useEffect(() => {
         localStorage.setItem('vscode_fileTree', JSON.stringify(fileTree));
         localStorage.setItem('vscode_hiddenPaths', JSON.stringify(hiddenPaths));
@@ -223,7 +306,6 @@ const App = () => {
         }
     }, [monaco]);
 
-    // Keyboard Shortcuts
     useEffect(() => {
         const handleKeyDown = (e) => {
             const { activeTabPath, openTabs, fileTree, sidebarOpen } = stateRef.current;
@@ -245,7 +327,8 @@ const App = () => {
                     setOpenTabs(openTabs.map(t => t.path === activeTabPath ? { ...t, content: tab.editedContent } : t));
                 }
             }
-            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'w') {
+            // Alt+W to close tab, because browsers enforce Ctrl+W to close the browser window.
+            if (e.altKey && e.key.toLowerCase() === 'w') {
                 e.preventDefault();
                 if (activeTabPath) {
                     const newTabs = openTabs.filter(t => t.path !== activeTabPath);
@@ -258,14 +341,12 @@ const App = () => {
         return () => window.removeEventListener('keydown', handleKeyDown);
     }, []);
 
-    // Close context menu on click
     useEffect(() => {
         const handleClick = () => setContextMenu({ ...contextMenu, isOpen: false });
         window.addEventListener('click', handleClick);
         return () => window.removeEventListener('click', handleClick);
     }, [contextMenu]);
 
-    // Auto-scroll terminal
     useEffect(() => {
         if (terminalEndRef.current && terminalOpen) {
             terminalEndRef.current.scrollIntoView();
@@ -280,7 +361,7 @@ const App = () => {
 
     const openFile = (file, path) => {
         if (!openTabs.find(t => t.path === path)) {
-            setOpenTabs([...openTabs, { ...file, path, editedContent: file.content }]);
+            setOpenTabs([...openTabs, { ...file, path, editedContent: file.content || '' }]);
         }
         setActiveTabPath(path);
     };
@@ -324,6 +405,51 @@ const App = () => {
             }
         }
         setCreatingNode(null);
+    };
+
+    const handleRenameSubmit = (oldPath, newName) => {
+        const newNameTrimmed = newName.trim();
+        if (newNameTrimmed) {
+            const newTree = renameNodeInTree(fileTree, oldPath, newNameTrimmed);
+            setFileTree(newTree);
+            
+            // Update open tabs if a file was renamed
+            const oldPathParts = oldPath.split('/');
+            oldPathParts[oldPathParts.length - 1] = newNameTrimmed;
+            const newPath = oldPathParts.join('/');
+            
+            setOpenTabs(tabs => tabs.map(t => {
+                if (t.path === oldPath) {
+                    return { ...t, name: newNameTrimmed, path: newPath };
+                } else if (t.path.startsWith(oldPath + '/')) {
+                    // If a folder was renamed, update paths of all open children
+                    return { ...t, path: t.path.replace(oldPath, newPath) };
+                }
+                return t;
+            }));
+            
+            if (activeTabPath === oldPath) {
+                setActiveTabPath(newPath);
+            } else if (activeTabPath?.startsWith(oldPath + '/')) {
+                setActiveTabPath(activeTabPath.replace(oldPath, newPath));
+            }
+        }
+        setRenamingPath(null);
+    };
+
+    const handleDelete = () => {
+        if (contextMenu.path) {
+            const newTree = deleteNodeFromTree(fileTree, contextMenu.path);
+            setFileTree(newTree);
+            
+            // Close tab if deleted
+            const newTabs = openTabs.filter(t => !t.path.startsWith(contextMenu.path));
+            setOpenTabs(newTabs);
+            if (activeTabPath?.startsWith(contextMenu.path)) {
+                setActiveTabPath(newTabs.length > 0 ? newTabs[newTabs.length - 1].path : null);
+            }
+        }
+        setContextMenu({ ...contextMenu, isOpen: false });
     };
 
     const handleTerminalCommand = (e) => {
@@ -371,12 +497,12 @@ const App = () => {
     const activeFile = openTabs.find(t => t.path === activeTabPath);
     const activeLanguage = activeFile?.name.endsWith('.py') ? 'python' : 
                            activeFile?.name.endsWith('.java') ? 'java' : 
-                           activeFile?.name.endsWith('.html') ? 'html' : 'javascript';
+                           activeFile?.name.endsWith('.html') ? 'html' : 
+                           activeFile?.name.endsWith('.json') ? 'json' : 'javascript';
 
     return (
         <div className="h-screen w-screen flex flex-col text-[#cccccc] font-sans overflow-hidden bg-[#1e1e1e]" onContextMenu={(e) => e.preventDefault()}>
             
-            {/* Title Bar */}
             <header className="h-[35px] flex items-center justify-between bg-[#181818] select-none shrink-0 border-b border-[#2b2b2b]">
                 <div className="flex items-center h-full">
                     <div className="px-3 flex items-center h-full">
@@ -402,7 +528,6 @@ const App = () => {
             </header>
 
             <div className="flex flex-1 overflow-hidden">
-                {/* Activity Bar */}
                 <div className="w-[48px] h-full flex flex-col items-center py-2 bg-[#181818] border-r border-[#2b2b2b] shrink-0">
                     <div className="relative cursor-pointer text-[#cccccc] flex justify-center items-center w-full h-[48px]">
                         <div className="absolute left-0 top-0 bottom-0 w-[2px] bg-[#007fd4]"></div>
@@ -433,7 +558,6 @@ const App = () => {
                     </div>
                 </div>
 
-                {/* Sidebar */}
                 {sidebarOpen && (
                     <div className="w-[250px] h-full flex flex-col bg-[#181818] border-r border-[#2b2b2b] shrink-0" onContextMenu={(e) => contextMenuHandler(e, null)}>
                         <div className="h-[35px] flex items-center px-5 text-[11px] tracking-wide text-[#cccccc] justify-between select-none">
@@ -462,6 +586,9 @@ const App = () => {
                                         creatingNode={creatingNode}
                                         onCreateSubmit={handleCreateSubmit}
                                         onCreateCancel={() => setCreatingNode(null)}
+                                        renamingPath={renamingPath}
+                                        onRenameSubmit={handleRenameSubmit}
+                                        onRenameCancel={() => setRenamingPath(null)}
                                     />
                                 ))}
                             </div>
@@ -469,10 +596,7 @@ const App = () => {
                     </div>
                 )}
 
-                {/* Editor Area & Terminal Stack */}
                 <div className="flex-1 flex flex-col min-w-0 bg-[#0d1117]">
-                    
-                    {/* Top Editor Segment */}
                     <div className="flex-1 flex flex-col min-h-0 relative">
                         {openTabs.length > 0 ? (
                             <>
@@ -483,7 +607,7 @@ const App = () => {
                                             onClick={() => setActiveTabPath(tab.path)}
                                             className={`h-full px-3 flex items-center gap-2 cursor-pointer border-r border-[#2b2b2b] group min-w-fit shrink-0 ${activeTabPath === tab.path ? 'bg-[#0d1117] text-white border-t border-t-[#007fd4]' : 'bg-[#2d2d2d] text-[#969696] hover:bg-[#1e1e1e]'}`}
                                         >
-                                            <i className="codicon codicon-file-code text-[#e34c26]"></i>
+                                            <FileIcon name={tab.name} />
                                             <span className="text-[13px] select-none">{tab.name}</span>
                                             {tab.editedContent !== tab.content && <span className="w-2 h-2 rounded-full bg-white ml-1"></span>}
                                             <div 
@@ -507,7 +631,7 @@ const App = () => {
                                         theme="github-dark"
                                         value={activeFile?.editedContent}
                                         onChange={(val) => handleEditorChange(val, activeFile?.path)}
-                                        path={activeFile?.path} // helps monaco keep states separate
+                                        path={activeFile?.path}
                                         options={{
                                             fontSize: 14,
                                             fontFamily: "'Consolas', 'Courier New', monospace",
@@ -527,16 +651,6 @@ const App = () => {
                                 </svg>
                                 <div className="flex flex-col gap-3 text-[13px] text-[#cccccc]">
                                     <div className="flex items-center justify-between w-[350px]">
-                                        <span className="text-[#858585]">Open Chat</span>
-                                        <div className="flex items-center gap-1.5 font-sans">
-                                            <span className="bg-[#2d2d2d] border border-[#3c3c3c] rounded px-2 py-0.5 shadow-sm text-[12px]">Ctrl</span>
-                                            <span className="text-[#858585] text-[14px] font-bold">+</span>
-                                            <span className="bg-[#2d2d2d] border border-[#3c3c3c] rounded px-2 py-0.5 shadow-sm text-[12px]">Alt</span>
-                                            <span className="text-[#858585] text-[14px] font-bold">+</span>
-                                            <span className="bg-[#2d2d2d] border border-[#3c3c3c] rounded px-2 py-0.5 shadow-sm text-[12px]">I</span>
-                                        </div>
-                                    </div>
-                                    <div className="flex items-center justify-between w-[350px]">
                                         <span className="text-[#858585]">Show All Commands</span>
                                         <div className="flex items-center gap-1.5 font-sans">
                                             <span className="bg-[#2d2d2d] border border-[#3c3c3c] rounded px-2 py-0.5 shadow-sm text-[12px]">Ctrl</span>
@@ -554,6 +668,14 @@ const App = () => {
                                             <span className="bg-[#2d2d2d] border border-[#3c3c3c] rounded px-2 py-0.5 shadow-sm text-[12px]">S</span>
                                         </div>
                                     </div>
+                                    <div className="flex items-center justify-between w-[350px]">
+                                        <span className="text-[#858585]">Close Active File</span>
+                                        <div className="flex items-center gap-1.5 font-sans">
+                                            <span className="bg-[#2d2d2d] border border-[#3c3c3c] rounded px-2 py-0.5 shadow-sm text-[12px]">Alt</span>
+                                            <span className="text-[#858585] text-[14px] font-bold">+</span>
+                                            <span className="bg-[#2d2d2d] border border-[#3c3c3c] rounded px-2 py-0.5 shadow-sm text-[12px]">W</span>
+                                        </div>
+                                    </div>
                                     <div className="flex items-center justify-between w-[350px] mt-2">
                                         <span className="text-[#858585]">Toggle Terminal</span>
                                         <div className="flex items-center gap-1.5 font-sans">
@@ -567,10 +689,8 @@ const App = () => {
                         )}
                     </div>
 
-                    {/* Bottom Terminal Panel */}
                     {terminalOpen && (
                         <div className="h-[250px] bg-[#1e1e1e] border-t border-[#2b2b2b] flex flex-col font-mono text-[13px] shrink-0 z-20">
-                            {/* Terminal Tabs */}
                             <div className="flex items-center justify-between px-4 h-[35px] border-b border-[#2b2b2b] select-none text-[#cccccc] bg-[#181818]">
                                 <div className="flex items-center gap-4 text-[11px] tracking-wide uppercase">
                                     <span className="cursor-pointer hover:text-white">Problems</span>
@@ -584,7 +704,6 @@ const App = () => {
                                     <i className="codicon codicon-close cursor-pointer hover:text-white text-[14px]" onClick={() => setTerminalOpen(false)}></i>
                                 </div>
                             </div>
-                            {/* Terminal Output Window */}
                             <div className="flex-1 overflow-y-auto p-3 no-scrollbar text-[#cccccc]" onClick={() => document.getElementById('terminal-input').focus()}>
                                 {terminalHistory.map((line, i) => (
                                     <div key={i} className="whitespace-pre-wrap leading-[22px]">{line}</div>
@@ -610,7 +729,6 @@ const App = () => {
                 </div>
             </div>
 
-            {/* Status Bar */}
             <footer className="h-[22px] flex items-center justify-between text-[#ffffff] text-[12px] font-sans z-30 select-none bg-[#007acc] shrink-0 px-2">
                 <div className="flex items-center h-full">
                     <div className="flex items-center h-full px-2 cursor-pointer hover:bg-[#1f8ad6] gap-1">
@@ -642,11 +760,10 @@ const App = () => {
                 </div>
             </footer>
 
-            {/* Context Menu */}
             {contextMenu.isOpen && (
                 <div 
                     className="fixed bg-[#252526] border border-[#454545] rounded shadow-[0_4px_10px_rgba(0,0,0,0.5)] py-1.5 z-50 text-[13px] text-[#cccccc] min-w-[300px]"
-                    style={{ top: Math.min(contextMenu.y, window.innerHeight - 450), left: contextMenu.x }}
+                    style={{ top: Math.min(contextMenu.y, window.innerHeight - 500), left: contextMenu.x }}
                 >
                     <div className="px-6 py-1 hover:bg-[#04395e] hover:text-white cursor-pointer" onClick={() => handleCreateStart('file')}>New File...</div>
                     <div className="px-6 py-1 hover:bg-[#04395e] hover:text-white cursor-pointer" onClick={() => handleCreateStart('folder')}>New Folder...</div>
@@ -654,8 +771,17 @@ const App = () => {
                     <div className="px-6 py-1 hover:bg-[#04395e] hover:text-white cursor-pointer" onClick={() => { setTerminalOpen(true); setContextMenu({ ...contextMenu, isOpen: false }); }}>Open in Integrated Terminal</div>
                     <div className="h-[1px] bg-[#454545] my-1.5"></div>
                     
-                    <div className="px-6 py-1 hover:bg-[#04395e] hover:text-white cursor-pointer" onClick={() => setContextMenu({ ...contextMenu, isOpen: false })}>Select Files as Context</div>
-                    <div className="h-[1px] bg-[#454545] my-1.5"></div>
+                    {contextMenu.path && (
+                        <>
+                            <div className="px-6 py-1 hover:bg-[#04395e] hover:text-white cursor-pointer flex justify-between" onClick={() => { setRenamingPath(contextMenu.path); setContextMenu({ ...contextMenu, isOpen: false }); }}>
+                                <span>Rename</span><span className="text-[#858585]">F2</span>
+                            </div>
+                            <div className="px-6 py-1 hover:bg-[#e81123] hover:text-white cursor-pointer flex justify-between text-[#e81123]" onClick={handleDelete}>
+                                <span>Delete</span><span className="text-[#858585]">Del</span>
+                            </div>
+                            <div className="h-[1px] bg-[#454545] my-1.5"></div>
+                        </>
+                    )}
 
                     <div className="px-6 py-1 hover:bg-[#04395e] hover:text-white cursor-pointer flex justify-between" onClick={() => handleCreateStart('file')}><span>New Java File</span><i className="codicon codicon-chevron-right text-[12px] mt-0.5"></i></div>
                     <div className="px-6 py-1 hover:bg-[#04395e] hover:text-white cursor-pointer" onClick={() => handleCreateStart('folder')}>New Java Package...</div>
@@ -673,7 +799,7 @@ const App = () => {
                     <div className="h-[1px] bg-[#454545] my-1.5"></div>
                     
                     <div 
-                        className="px-6 py-1.5 hover:bg-[#04395e] hover:text-white cursor-pointer flex items-center text-[#e81123]"
+                        className="px-6 py-1.5 hover:bg-[#04395e] hover:text-white cursor-pointer flex items-center text-[#cccccc]"
                         onClick={() => {
                             if (contextMenu.path) setHiddenPaths([...hiddenPaths, contextMenu.path]);
                             setContextMenu({ ...contextMenu, isOpen: false });
