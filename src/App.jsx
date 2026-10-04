@@ -11,6 +11,92 @@ const getSavedState = (key, defaultValue) => {
     }
 };
 
+const addNodeToTree = (tree, parentPath, newNode) => {
+    if (!parentPath || parentPath === '') {
+        return [...tree, newNode].sort((a, b) => {
+            if (a.type !== b.type) return a.type === 'folder' ? -1 : 1;
+            return a.name.localeCompare(b.name);
+        });
+    }
+    const pathParts = parentPath.split('/');
+    const walk = (nodes, currentDepth) => {
+        return nodes.map(node => {
+            if (node.name === pathParts[currentDepth]) {
+                if (currentDepth === pathParts.length - 1) {
+                    return { 
+                        ...node, 
+                        children: [...(node.children || []), newNode].sort((a, b) => {
+                            if (a.type !== b.type) return a.type === 'folder' ? -1 : 1;
+                            return a.name.localeCompare(b.name);
+                        })
+                    };
+                } else {
+                    return { ...node, children: walk(node.children || [], currentDepth + 1) };
+                }
+            }
+            return node;
+        });
+    };
+    return walk(tree, 0);
+};
+
+const updateNodeInTree = (tree, targetPath, newContent) => {
+    const pathParts = targetPath.split('/');
+    const walk = (nodes, currentDepth) => {
+        return nodes.map(node => {
+            if (node.name === pathParts[currentDepth]) {
+                if (currentDepth === pathParts.length - 1) {
+                    return { ...node, content: newContent };
+                } else {
+                    return { ...node, children: walk(node.children || [], currentDepth + 1) };
+                }
+            }
+            return node;
+        });
+    };
+    return walk(tree, 0);
+};
+
+const isNodeFolder = (tree, targetPath) => {
+    if (!targetPath) return true;
+    const parts = targetPath.split('/');
+    let currentNodes = tree;
+    for (let i=0; i<parts.length; i++) {
+        const node = currentNodes.find(n => n.name === parts[i]);
+        if (!node) return false;
+        if (i === parts.length - 1) return node.type === 'folder';
+        currentNodes = node.children || [];
+    }
+    return false;
+};
+
+const InlineInput = ({ type, depth, onSubmit, onCancel }) => {
+    const [val, setVal] = useState("");
+    const inputRef = useRef(null);
+    useEffect(() => {
+        if (inputRef.current) inputRef.current.focus();
+    }, []);
+    return (
+        <div className="flex items-center h-[22px]" style={{ paddingLeft: `${depth * 12 + 20}px` }}>
+            <i className={`codicon codicon-${type === 'folder' ? 'folder' : 'file'} mr-1.5 text-[#cccccc]`}></i>
+            <input 
+                ref={inputRef}
+                className="bg-[#3c3c3c] text-[#cccccc] border border-[#007fd4] outline-none text-[13px] h-[20px] w-[120px] px-1"
+                value={val}
+                onChange={e => setVal(e.target.value)}
+                onKeyDown={e => {
+                    if (e.key === 'Enter') onSubmit(val);
+                    if (e.key === 'Escape') onCancel();
+                }}
+                onBlur={() => {
+                    if (val.trim()) onSubmit(val);
+                    else onCancel();
+                }}
+            />
+        </div>
+    );
+};
+
 const TreeFile = ({ node, path, depth, hiddenPaths, openFile, contextMenuHandler }) => {
     if (hiddenPaths.includes(path)) return null;
     
@@ -34,7 +120,7 @@ const TreeFile = ({ node, path, depth, hiddenPaths, openFile, contextMenuHandler
     );
 };
 
-const TreeFolder = ({ node, path, depth, hiddenPaths, setHiddenPaths, openFile, contextMenuHandler }) => {
+const TreeFolder = ({ node, path, depth, hiddenPaths, setHiddenPaths, openFile, contextMenuHandler, creatingNode, onCreateSubmit, onCreateCancel }) => {
     const [isOpen, setIsOpen] = useState(() => getSavedState(`folder_${path}`, depth === 0));
     
     useEffect(() => {
@@ -57,15 +143,19 @@ const TreeFolder = ({ node, path, depth, hiddenPaths, setHiddenPaths, openFile, 
             </div>
             {isOpen && node.children.map(child => (
                 child.type === 'folder' ? 
-                <TreeFolder key={child.name} node={child} path={`${path}/${child.name}`} depth={depth + 1} hiddenPaths={hiddenPaths} setHiddenPaths={setHiddenPaths} openFile={openFile} contextMenuHandler={contextMenuHandler} /> :
+                <TreeFolder key={child.name} node={child} path={`${path}/${child.name}`} depth={depth + 1} hiddenPaths={hiddenPaths} setHiddenPaths={setHiddenPaths} openFile={openFile} contextMenuHandler={contextMenuHandler} creatingNode={creatingNode} onCreateSubmit={onCreateSubmit} onCreateCancel={onCreateCancel} /> :
                 <TreeFile key={child.name} node={child} path={`${path}/${child.name}`} depth={depth + 1} hiddenPaths={hiddenPaths} openFile={openFile} contextMenuHandler={contextMenuHandler} />
             ))}
+            {creatingNode && creatingNode.parentPath === path && isOpen && (
+                <InlineInput type={creatingNode.type} depth={depth + 1} onSubmit={onCreateSubmit} onCancel={onCreateCancel} />
+            )}
         </div>
     );
 };
 
 const App = () => {
-    const [fileTree] = useState(FILE_SYSTEM);
+    // Persisted File Tree
+    const [fileTree, setFileTree] = useState(() => getSavedState('vscode_fileTree', FILE_SYSTEM));
     
     // Persisted State
     const [hiddenPaths, setHiddenPaths] = useState(() => getSavedState('vscode_hiddenPaths', []));
@@ -81,19 +171,26 @@ const App = () => {
     
     const [terminalInput, setTerminalInput] = useState("");
     const [contextMenu, setContextMenu] = useState({ isOpen: false, x: 0, y: 0, path: null });
+    const [creatingNode, setCreatingNode] = useState(null); // { type: 'file' | 'folder', parentPath: string }
     const terminalEndRef = useRef(null);
 
     const monaco = useMonaco();
+    const stateRef = useRef({ activeTabPath, openTabs, fileTree, sidebarOpen });
+
+    useEffect(() => {
+        stateRef.current = { activeTabPath, openTabs, fileTree, sidebarOpen };
+    });
 
     // Save State to Local Storage
     useEffect(() => {
+        localStorage.setItem('vscode_fileTree', JSON.stringify(fileTree));
         localStorage.setItem('vscode_hiddenPaths', JSON.stringify(hiddenPaths));
         localStorage.setItem('vscode_openTabs', JSON.stringify(openTabs));
         localStorage.setItem('vscode_activeTabPath', JSON.stringify(activeTabPath));
         localStorage.setItem('vscode_sidebarOpen', JSON.stringify(sidebarOpen));
         localStorage.setItem('vscode_terminalOpen', JSON.stringify(terminalOpen));
         localStorage.setItem('vscode_terminalHistory', JSON.stringify(terminalHistory));
-    }, [hiddenPaths, openTabs, activeTabPath, sidebarOpen, terminalOpen, terminalHistory]);
+    }, [fileTree, hiddenPaths, openTabs, activeTabPath, sidebarOpen, terminalOpen, terminalHistory]);
 
     useEffect(() => {
         if (monaco) {
@@ -129,13 +226,32 @@ const App = () => {
     // Keyboard Shortcuts
     useEffect(() => {
         const handleKeyDown = (e) => {
+            const { activeTabPath, openTabs, fileTree, sidebarOpen } = stateRef.current;
             if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'b') {
                 e.preventDefault();
-                setSidebarOpen(prev => !prev);
+                setSidebarOpen(!sidebarOpen);
             }
             if ((e.ctrlKey || e.metaKey) && e.key === '`') {
                 e.preventDefault();
                 setTerminalOpen(prev => !prev);
+            }
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 's') {
+                e.preventDefault();
+                if (!activeTabPath) return;
+                const tab = openTabs.find(t => t.path === activeTabPath);
+                if (tab && tab.editedContent !== tab.content) {
+                    const newTree = updateNodeInTree(fileTree, activeTabPath, tab.editedContent);
+                    setFileTree(newTree);
+                    setOpenTabs(openTabs.map(t => t.path === activeTabPath ? { ...t, content: tab.editedContent } : t));
+                }
+            }
+            if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'w') {
+                e.preventDefault();
+                if (activeTabPath) {
+                    const newTabs = openTabs.filter(t => t.path !== activeTabPath);
+                    setOpenTabs(newTabs);
+                    setActiveTabPath(newTabs.length > 0 ? newTabs[newTabs.length - 1].path : null);
+                }
             }
         };
         window.addEventListener('keydown', handleKeyDown);
@@ -158,6 +274,7 @@ const App = () => {
 
     const contextMenuHandler = (e, path) => {
         e.preventDefault();
+        e.stopPropagation();
         setContextMenu({ isOpen: true, x: e.clientX, y: e.clientY, path });
     };
 
@@ -178,6 +295,35 @@ const App = () => {
 
     const handleEditorChange = (value, path) => {
         setOpenTabs(tabs => tabs.map(t => t.path === path ? { ...t, editedContent: value } : t));
+    };
+
+    const handleCreateStart = (type) => {
+        let parentPath = '';
+        if (contextMenu.path) {
+            const isFolder = isNodeFolder(fileTree, contextMenu.path);
+            parentPath = isFolder ? contextMenu.path : contextMenu.path.substring(0, contextMenu.path.lastIndexOf('/'));
+        }
+        setCreatingNode({ type, parentPath });
+        if (parentPath !== '') {
+            localStorage.setItem(`folder_${parentPath}`, JSON.stringify(true));
+        }
+        setContextMenu({ ...contextMenu, isOpen: false });
+    };
+
+    const handleCreateSubmit = (name) => {
+        const nameTrimmed = name.trim();
+        if (nameTrimmed && creatingNode) {
+            const newNode = creatingNode.type === 'folder' 
+                ? { name: nameTrimmed, type: 'folder', children: [] }
+                : { name: nameTrimmed, type: 'file', content: '' };
+            const newTree = addNodeToTree(fileTree, creatingNode.parentPath, newNode);
+            setFileTree(newTree);
+            if (creatingNode.type === 'file') {
+                const newPath = creatingNode.parentPath ? `${creatingNode.parentPath}/${nameTrimmed}` : nameTrimmed;
+                openFile(newNode, newPath);
+            }
+        }
+        setCreatingNode(null);
     };
 
     const handleTerminalCommand = (e) => {
@@ -289,7 +435,7 @@ const App = () => {
 
                 {/* Sidebar */}
                 {sidebarOpen && (
-                    <div className="w-[250px] h-full flex flex-col bg-[#181818] border-r border-[#2b2b2b] shrink-0">
+                    <div className="w-[250px] h-full flex flex-col bg-[#181818] border-r border-[#2b2b2b] shrink-0" onContextMenu={(e) => contextMenuHandler(e, null)}>
                         <div className="h-[35px] flex items-center px-5 text-[11px] tracking-wide text-[#cccccc] justify-between select-none">
                             <span>EXPLORER</span>
                             <i className="codicon codicon-ellipsis cursor-pointer hover:text-white"></i>
@@ -300,6 +446,9 @@ const App = () => {
                                 <span className="tracking-wide">WORKSPACE</span>
                             </div>
                             <div className="py-1">
+                                {creatingNode && creatingNode.parentPath === '' && (
+                                    <InlineInput type={creatingNode.type} depth={0} onSubmit={handleCreateSubmit} onCancel={() => setCreatingNode(null)} />
+                                )}
                                 {fileTree.map(node => (
                                     <TreeFolder 
                                         key={node.name} 
@@ -310,6 +459,9 @@ const App = () => {
                                         setHiddenPaths={setHiddenPaths} 
                                         openFile={openFile} 
                                         contextMenuHandler={contextMenuHandler} 
+                                        creatingNode={creatingNode}
+                                        onCreateSubmit={handleCreateSubmit}
+                                        onCreateCancel={() => setCreatingNode(null)}
                                     />
                                 ))}
                             </div>
@@ -395,13 +547,11 @@ const App = () => {
                                         </div>
                                     </div>
                                     <div className="flex items-center justify-between w-[350px]">
-                                        <span className="text-[#858585]">Find in Files</span>
+                                        <span className="text-[#858585]">Save Active File</span>
                                         <div className="flex items-center gap-1.5 font-sans">
                                             <span className="bg-[#2d2d2d] border border-[#3c3c3c] rounded px-2 py-0.5 shadow-sm text-[12px]">Ctrl</span>
                                             <span className="text-[#858585] text-[14px] font-bold">+</span>
-                                            <span className="bg-[#2d2d2d] border border-[#3c3c3c] rounded px-2 py-0.5 shadow-sm text-[12px]">Shift</span>
-                                            <span className="text-[#858585] text-[14px] font-bold">+</span>
-                                            <span className="bg-[#2d2d2d] border border-[#3c3c3c] rounded px-2 py-0.5 shadow-sm text-[12px]">F</span>
+                                            <span className="bg-[#2d2d2d] border border-[#3c3c3c] rounded px-2 py-0.5 shadow-sm text-[12px]">S</span>
                                         </div>
                                     </div>
                                     <div className="flex items-center justify-between w-[350px] mt-2">
@@ -498,8 +648,8 @@ const App = () => {
                     className="fixed bg-[#252526] border border-[#454545] rounded shadow-[0_4px_10px_rgba(0,0,0,0.5)] py-1.5 z-50 text-[13px] text-[#cccccc] min-w-[300px]"
                     style={{ top: Math.min(contextMenu.y, window.innerHeight - 450), left: contextMenu.x }}
                 >
-                    <div className="px-6 py-1 hover:bg-[#04395e] hover:text-white cursor-pointer" onClick={() => setContextMenu({ ...contextMenu, isOpen: false })}>New File...</div>
-                    <div className="px-6 py-1 hover:bg-[#04395e] hover:text-white cursor-pointer" onClick={() => setContextMenu({ ...contextMenu, isOpen: false })}>New Folder...</div>
+                    <div className="px-6 py-1 hover:bg-[#04395e] hover:text-white cursor-pointer" onClick={() => handleCreateStart('file')}>New File...</div>
+                    <div className="px-6 py-1 hover:bg-[#04395e] hover:text-white cursor-pointer" onClick={() => handleCreateStart('folder')}>New Folder...</div>
                     <div className="px-6 py-1 hover:bg-[#04395e] hover:text-white cursor-pointer flex justify-between" onClick={() => setContextMenu({ ...contextMenu, isOpen: false })}><span>Reveal in File Explorer</span><span className="text-[#858585]">Shift+Alt+R</span></div>
                     <div className="px-6 py-1 hover:bg-[#04395e] hover:text-white cursor-pointer" onClick={() => { setTerminalOpen(true); setContextMenu({ ...contextMenu, isOpen: false }); }}>Open in Integrated Terminal</div>
                     <div className="h-[1px] bg-[#454545] my-1.5"></div>
@@ -507,8 +657,8 @@ const App = () => {
                     <div className="px-6 py-1 hover:bg-[#04395e] hover:text-white cursor-pointer" onClick={() => setContextMenu({ ...contextMenu, isOpen: false })}>Select Files as Context</div>
                     <div className="h-[1px] bg-[#454545] my-1.5"></div>
 
-                    <div className="px-6 py-1 hover:bg-[#04395e] hover:text-white cursor-pointer flex justify-between" onClick={() => setContextMenu({ ...contextMenu, isOpen: false })}><span>New Java File</span><i className="codicon codicon-chevron-right text-[12px] mt-0.5"></i></div>
-                    <div className="px-6 py-1 hover:bg-[#04395e] hover:text-white cursor-pointer" onClick={() => setContextMenu({ ...contextMenu, isOpen: false })}>New Java Package...</div>
+                    <div className="px-6 py-1 hover:bg-[#04395e] hover:text-white cursor-pointer flex justify-between" onClick={() => handleCreateStart('file')}><span>New Java File</span><i className="codicon codicon-chevron-right text-[12px] mt-0.5"></i></div>
+                    <div className="px-6 py-1 hover:bg-[#04395e] hover:text-white cursor-pointer" onClick={() => handleCreateStart('folder')}>New Java Package...</div>
                     <div className="px-6 py-1 hover:bg-[#04395e] hover:text-white cursor-pointer flex justify-between" onClick={() => setContextMenu({ ...contextMenu, isOpen: false })}><span>Maven</span><i className="codicon codicon-chevron-right text-[12px] mt-0.5"></i></div>
                     <div className="h-[1px] bg-[#454545] my-1.5"></div>
                     
@@ -522,11 +672,10 @@ const App = () => {
                     <div className="px-6 py-1 hover:bg-[#04395e] hover:text-white cursor-pointer flex justify-between" onClick={() => setContextMenu({ ...contextMenu, isOpen: false })}><span>Copy Relative Path</span><span className="text-[#858585]">Ctrl+K Ctrl+Shift+C</span></div>
                     <div className="h-[1px] bg-[#454545] my-1.5"></div>
                     
-                    {/* The real functional action */}
                     <div 
                         className="px-6 py-1.5 hover:bg-[#04395e] hover:text-white cursor-pointer flex items-center text-[#e81123]"
                         onClick={() => {
-                            setHiddenPaths([...hiddenPaths, contextMenu.path]);
+                            if (contextMenu.path) setHiddenPaths([...hiddenPaths, contextMenu.path]);
                             setContextMenu({ ...contextMenu, isOpen: false });
                         }}
                     >
