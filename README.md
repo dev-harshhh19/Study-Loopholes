@@ -1,16 +1,31 @@
-# React + Vite
+# VS Code Web Clone
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A browser-based replica of the Visual Studio Code interface built with React, Vite, and Tailwind CSS. It is designed to act as a stealthy cheat sheet platform that looks identical to a local code editor environment.
 
-Currently, two official plugins are available:
+## Features
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+* Integrated File Explorer with full CRUD operations (Create, Rename, Delete).
+* Monaco Editor integration for accurate syntax highlighting.
+* Native keyboard shortcuts support (Ctrl+S, Alt+W, Ctrl+B).
+* Local Storage persistence for the entire workspace and file tree.
+* Simulated integrated terminal with basic bash commands.
+* Custom VS Code authentic language icons (Python, Java, HTML, JS).
+* Fullscreen toggle functionality mimicking desktop applications.
 
-## React Compiler
+## Development Setup
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+1. Install dependencies:
+npm install
 
-## Expanding the Oxlint configuration
+2. Start the development server:
+npm run dev
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and Oxlint's TypeScript related rules in your project.
+3. Build for production:
+npm run build
+
+## File System Generation
+
+The workspace files are loaded dynamically. To update the file tree structure, run the generator script from the root directory:
+python generate_fs.py
+
+This will scan the target directories and update the data configuration file.
