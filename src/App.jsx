@@ -508,7 +508,6 @@ const App = () => {
 
     const handleClose = () => {
         window.close();
-        document.body.innerHTML = '<div style="background:#000;width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;color:#fff;font-family:sans-serif;">Window closed. You can now close this tab.</div>';
     };
 
     const activeFile = openTabs.find(t => t.path === activeTabPath);
