@@ -494,6 +494,23 @@ const App = () => {
         }
     };
 
+    const handleMaximize = () => {
+        if (!document.fullscreenElement) {
+            document.documentElement.requestFullscreen().catch(e => console.error(e));
+        }
+    };
+
+    const handleMinimize = () => {
+        if (document.fullscreenElement) {
+            document.exitFullscreen().catch(e => console.error(e));
+        }
+    };
+
+    const handleClose = () => {
+        window.close();
+        document.body.innerHTML = '<div style="background:#000;width:100vw;height:100vh;display:flex;align-items:center;justify-content:center;color:#fff;font-family:sans-serif;">Window closed. You can now close this tab.</div>';
+    };
+
     const activeFile = openTabs.find(t => t.path === activeTabPath);
     const activeLanguage = activeFile?.name.endsWith('.py') ? 'python' : 
                            activeFile?.name.endsWith('.java') ? 'java' : 
@@ -521,9 +538,9 @@ const App = () => {
                     </div>
                 </div>
                 <div className="flex h-full">
-                    <div className="w-[46px] h-full flex items-center justify-center hover:bg-[#2a2d2e] cursor-pointer"><i className="codicon codicon-chrome-minimize"></i></div>
-                    <div className="w-[46px] h-full flex items-center justify-center hover:bg-[#2a2d2e] cursor-pointer"><i className="codicon codicon-chrome-maximize"></i></div>
-                    <div className="w-[46px] h-full flex items-center justify-center hover:bg-[#e81123] hover:text-white cursor-pointer"><i className="codicon codicon-chrome-close"></i></div>
+                    <div className="w-[46px] h-full flex items-center justify-center hover:bg-[#2a2d2e] cursor-pointer" onClick={handleMinimize}><i className="codicon codicon-chrome-minimize"></i></div>
+                    <div className="w-[46px] h-full flex items-center justify-center hover:bg-[#2a2d2e] cursor-pointer" onClick={handleMaximize}><i className="codicon codicon-chrome-maximize"></i></div>
+                    <div className="w-[46px] h-full flex items-center justify-center hover:bg-[#e81123] hover:text-white cursor-pointer" onClick={handleClose}><i className="codicon codicon-chrome-close"></i></div>
                 </div>
             </header>
 
