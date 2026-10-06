@@ -200,7 +200,7 @@ const TreeFile = ({ node, path, depth, hiddenPaths, openFile, contextMenuHandler
 };
 
 const TreeFolder = ({ node, path, depth, hiddenPaths, setHiddenPaths, openFile, contextMenuHandler, creatingNode, onCreateSubmit, onCreateCancel, renamingPath, onRenameSubmit, onRenameCancel }) => {
-    const [isOpen, setIsOpen] = useState(() => getSavedState(`folder_${path}`, depth === 0));
+    const [isOpen, setIsOpen] = useState(() => getSavedState(`folder_${path}`, false));
     
     useEffect(() => {
         localStorage.setItem(`folder_${path}`, JSON.stringify(isOpen));
