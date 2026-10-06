@@ -200,7 +200,7 @@ const TreeFile = ({ node, path, depth, hiddenPaths, openFile, contextMenuHandler
 };
 
 const TreeFolder = ({ node, path, depth, hiddenPaths, setHiddenPaths, openFile, contextMenuHandler, creatingNode, onCreateSubmit, onCreateCancel, renamingPath, onRenameSubmit, onRenameCancel }) => {
-    const [isOpen, setIsOpen] = useState(() => getSavedState(`folder_${path}`, depth === 0));
+    const [isOpen, setIsOpen] = useState(() => getSavedState(`folder_${path}`, true));
     
     useEffect(() => {
         localStorage.setItem(`folder_${path}`, JSON.stringify(isOpen));
@@ -241,7 +241,7 @@ const App = () => {
     const [fileTree, setFileTree] = useState(() => getSavedState('vscode_fileTree', FILE_SYSTEM));
     
     // Persisted State
-    const [hiddenPaths, setHiddenPaths] = useState(() => getSavedState('vscode_hiddenPaths', []));
+    const [hiddenPaths, setHiddenPaths] = useState(() => getSavedState('vscode_hiddenPaths', ['DAA', 'IAI', 'FLNN']));
     const [openTabs, setOpenTabs] = useState(() => getSavedState('vscode_openTabs', []));
     const [activeTabPath, setActiveTabPath] = useState(() => getSavedState('vscode_activeTabPath', null));
     const [sidebarOpen, setSidebarOpen] = useState(() => getSavedState('vscode_sidebarOpen', true));
