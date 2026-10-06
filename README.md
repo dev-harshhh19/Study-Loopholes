@@ -21,7 +21,7 @@ npm install
 npm run dev
 
 3. Build for production:
-npm run build
+npm run lint && npm run build
 
 ## File System Generation
 
