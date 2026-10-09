@@ -238,16 +238,16 @@ const TreeFolder = ({ node, path, depth, hiddenPaths, setHiddenPaths, openFile, 
 
 const App = () => {
     // Persisted File Tree
-    const [fileTree, setFileTree] = useState(() => getSavedState('vscode_fileTree', FILE_SYSTEM));
+    const [fileTree, setFileTree] = useState(() => getSavedState('vscode_v4_fileTree', FILE_SYSTEM));
     
     // Persisted State
-    const [hiddenPaths, setHiddenPaths] = useState(() => getSavedState('vscode_hiddenPaths', ['DAA', 'IAI', 'FLNN']));
-    const [openTabs, setOpenTabs] = useState(() => getSavedState('vscode_openTabs', []));
-    const [activeTabPath, setActiveTabPath] = useState(() => getSavedState('vscode_activeTabPath', null));
-    const [sidebarOpen, setSidebarOpen] = useState(() => getSavedState('vscode_sidebarOpen', true));
+    const [hiddenPaths, setHiddenPaths] = useState(() => getSavedState('vscode_v4_hiddenPaths', []));
+    const [openTabs, setOpenTabs] = useState(() => getSavedState('vscode_v4_openTabs', []));
+    const [activeTabPath, setActiveTabPath] = useState(() => getSavedState('vscode_v4_activeTabPath', null));
+    const [sidebarOpen, setSidebarOpen] = useState(() => getSavedState('vscode_v4_sidebarOpen', true));
     
-    const [terminalOpen, setTerminalOpen] = useState(() => getSavedState('vscode_terminalOpen', false));
-    const [terminalHistory, setTerminalHistory] = useState(() => getSavedState('vscode_terminalHistory', [
+    const [terminalOpen, setTerminalOpen] = useState(() => getSavedState('vscode_v4_terminalOpen', false));
+    const [terminalHistory, setTerminalHistory] = useState(() => getSavedState('vscode_v4_terminalHistory', [
         "Welcome to Visual Studio Code Terminal (Integrated Bash)",
         "Type 'help' to see available commands."
     ]));
@@ -266,13 +266,13 @@ const App = () => {
     });
 
     useEffect(() => {
-        localStorage.setItem('vscode_fileTree', JSON.stringify(fileTree));
-        localStorage.setItem('vscode_hiddenPaths', JSON.stringify(hiddenPaths));
-        localStorage.setItem('vscode_openTabs', JSON.stringify(openTabs));
-        localStorage.setItem('vscode_activeTabPath', JSON.stringify(activeTabPath));
-        localStorage.setItem('vscode_sidebarOpen', JSON.stringify(sidebarOpen));
-        localStorage.setItem('vscode_terminalOpen', JSON.stringify(terminalOpen));
-        localStorage.setItem('vscode_terminalHistory', JSON.stringify(terminalHistory));
+        localStorage.setItem('vscode_v4_fileTree', JSON.stringify(fileTree));
+        localStorage.setItem('vscode_v4_hiddenPaths', JSON.stringify(hiddenPaths));
+        localStorage.setItem('vscode_v4_openTabs', JSON.stringify(openTabs));
+        localStorage.setItem('vscode_v4_activeTabPath', JSON.stringify(activeTabPath));
+        localStorage.setItem('vscode_v4_sidebarOpen', JSON.stringify(sidebarOpen));
+        localStorage.setItem('vscode_v4_terminalOpen', JSON.stringify(terminalOpen));
+        localStorage.setItem('vscode_v4_terminalHistory', JSON.stringify(terminalHistory));
     }, [fileTree, hiddenPaths, openTabs, activeTabPath, sidebarOpen, terminalOpen, terminalHistory]);
 
     useEffect(() => {
@@ -450,6 +450,35 @@ const App = () => {
             }
         }
         setContextMenu({ ...contextMenu, isOpen: false });
+    };
+
+    const handleDownload = (targetPath) => {
+        if (!targetPath) return;
+        const parts = targetPath.split('/');
+        let currentNodes = fileTree;
+        let fileNode = null;
+        for (let i = 0; i < parts.length; i++) {
+            const node = currentNodes.find(n => n.name === parts[i]);
+            if (!node) return;
+            if (i === parts.length - 1) {
+                fileNode = node;
+            } else {
+                currentNodes = node.children || [];
+            }
+        }
+        
+        if (fileNode && fileNode.type === 'file') {
+            const contentToDownload = openTabs.find(t => t.path === targetPath)?.editedContent ?? fileNode.content;
+            const blob = new Blob([contentToDownload || ''], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileNode.name;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
     };
 
     const handleTerminalCommand = (e) => {
@@ -635,10 +664,19 @@ const App = () => {
                                         </div>
                                     ))}
                                 </div>
-                                <div className="h-[22px] flex items-center px-4 text-[12px] shrink-0 bg-[#0d1117] shadow-[0_1px_2px_rgba(0,0,0,0.2)] z-10 select-none">
-                                    <span className="text-[#cccccc]">Workspace</span>
-                                    <i className="codicon codicon-chevron-right text-[14px] mx-1 text-[#858585]"></i>
-                                    <span className="text-[#cccccc]">{activeFile?.path.replace(/\//g, ' > ')}</span>
+                                <div className="h-[22px] flex items-center justify-between px-4 text-[12px] shrink-0 bg-[#0d1117] shadow-[0_1px_2px_rgba(0,0,0,0.2)] z-10 select-none">
+                                    <div className="flex items-center">
+                                        <span className="text-[#cccccc]">Workspace</span>
+                                        <i className="codicon codicon-chevron-right text-[14px] mx-1 text-[#858585]"></i>
+                                        <span className="text-[#cccccc]">{activeFile?.path.replace(/\//g, ' > ')}</span>
+                                    </div>
+                                    <div 
+                                        className="flex items-center text-[#cccccc] hover:text-white cursor-pointer px-1" 
+                                        onClick={() => handleDownload(activeFile?.path)}
+                                        title="Download File"
+                                    >
+                                        <i className="codicon codicon-cloud-download text-[14px]"></i>
+                                    </div>
                                 </div>
                                 <div className="flex-1 overflow-hidden pt-2 relative">
                                     <Editor
@@ -789,6 +827,9 @@ const App = () => {
                     
                     {contextMenu.path && (
                         <>
+                            <div className="px-6 py-1 hover:bg-[#04395e] hover:text-white cursor-pointer flex justify-between" onClick={() => { handleDownload(contextMenu.path); setContextMenu({ ...contextMenu, isOpen: false }); }}>
+                                <span>Download</span><span className="text-[#858585]"></span>
+                            </div>
                             <div className="px-6 py-1 hover:bg-[#04395e] hover:text-white cursor-pointer flex justify-between" onClick={() => { setRenamingPath(contextMenu.path); setContextMenu({ ...contextMenu, isOpen: false }); }}>
                                 <span>Rename</span><span className="text-[#858585]">F2</span>
                             </div>
